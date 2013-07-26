@@ -69,4 +69,19 @@ class BasicExpression implements Expression
     {
         return $this->type;
     }
+
+    /**
+     * Check if $value is an Expression. If not, wrap it with a BasicExpression
+     *
+     * @param mixed $value
+     *
+     * @return Expression
+     */
+    protected function buildExpression($value)
+    {
+        if (!$value instanceof Expression)
+            return new BasicExpression($value);
+
+        return $value;
+    }
 } 
