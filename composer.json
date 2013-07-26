@@ -1,5 +1,5 @@
 {
-    "name": "nicmart/domain-specific-query",
+    "name": "comperio/domain-specific-query",
     "type": "library",
     "description": "Build and define queries specific to the application domain and compile them into other formats",
     "keywords": [],
