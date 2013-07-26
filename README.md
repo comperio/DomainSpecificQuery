@@ -6,7 +6,7 @@ Build and define queries specific to the application domain and compile them int
 
 Library is not completed yet and it is in early development stage
 
-[![Build Status](https://secure.travis-ci.org/nicmart/DomainSpecificQuery.png?branch=master)](http://travis-ci.org/nicmart/DomainSpecificQuery)
+[![Build Status](https://travis-ci.org/comperio/DomainSpecificQuery.png?branch=master)](https://travis-ci.org/comperio/DomainSpecificQuery)
 
 ## Install
 
