@@ -18,6 +18,15 @@ class TreeExpression extends BasicExpression
      */
     private $children = array();
 
+    public function __construct($value, $type = null)
+    {
+        if (!isset($type))
+            $type = $value;
+
+        parent::__construct($value, $type);
+    }
+
+
     /**
      * @param Expression $child
      *

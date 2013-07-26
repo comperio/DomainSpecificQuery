@@ -19,22 +19,27 @@ namespace DSQ\Expression;
  */
 class BasicExpression implements Expression
 {
-    private $name;
+    private $value;
+    private $type;
 
     /**
-     * @param string $name The name of the expression
+     * @param string $value The name of the expression
+     * @param string $type The type of the expression
      */
-    public function __construct($name)
+    public function __construct($value, $type = 'basic')
     {
-        $this->setName($name);
+        $this
+            ->setValue($value)
+            ->setType($type)
+        ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setName($name)
+    public function setValue($value)
     {
-        $this->name = $name;
+        $this->value = $value;
 
         return $this;
     }
@@ -42,9 +47,26 @@ class BasicExpression implements Expression
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getValue()
     {
-        return $this->name;
+        return $this->value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 } 

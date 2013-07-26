@@ -23,15 +23,24 @@ class BasicExpressionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->expression = new BasicExpression('foo');
+        $this->expression = new BasicExpression('foo', 'fantastic-type');
     }
 
-    public function testSetAndGetName()
+    public function testSetAndGetValue()
     {
-        $this->assertEquals('foo', $this->expression->getName());
+        $this->assertEquals('foo', $this->expression->getValue());
 
-        $this->expression->setName('bar');
+        $this->expression->setValue('bar');
 
-        $this->assertEquals('bar', $this->expression->getName());
+        $this->assertEquals('bar', $this->expression->getValue());
+    }
+
+    public function testSetAndGetType()
+    {
+        $this->assertEquals('fantastic-type', $this->expression->getType());
+
+        $this->expression->setType('bad-type');
+
+        $this->assertEquals('bad-type', $this->expression->getType());
     }
 }

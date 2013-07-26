@@ -13,13 +13,24 @@ namespace DSQ\Expression;
 interface Expression
 {
     /**
-     * @param string $name The name of the expression
+     * @param string $type The type of the expression
      * @return $this The current instance
      */
-    public function setName($name);
+    public function setType($type);
 
     /**
      * @return string
      */
-    public function getName();
+    public function getType();
+
+    /**
+     * @param string $value The name of the expression
+     * @return $this The current instance
+     */
+    public function setValue($value);
+
+    /**
+     * @return string
+     */
+    public function getValue();
 } 
