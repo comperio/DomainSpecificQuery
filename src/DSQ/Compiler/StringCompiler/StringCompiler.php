@@ -37,6 +37,7 @@ class StringCompiler extends TypeBasedCompiler
             ->registerTransformation(array($this, 'binaryExpressionWithNoSpaces'), 'DSQ\Expression\BinaryExpression', '^')
 
             ->setOpWeight('^', 1100)
+            ->setOpWeight('_', 1100)
             ->setOpWeight('*', 1000)
             ->setOpWeight('/', 1000)
             ->setOpWeight('%', 1000)
