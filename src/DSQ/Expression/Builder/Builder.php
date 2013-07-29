@@ -36,8 +36,11 @@ class Builder
     {
         $field = new BinaryExpression($operator, $name, $value);
 
-        if (!$this->isStackEmpty())
+        if (!$this->isStackEmpty()) {
             $this->addChild($field);
+        } else {
+            $this->push($field);
+        }
 
         return $this;
     }
@@ -86,7 +89,7 @@ class Builder
      */
     private function isStackEmpty()
     {
-        return (bool) $this->stack;
+        return !(bool) $this->stack;
     }
 
     /**
