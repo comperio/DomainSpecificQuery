@@ -10,6 +10,7 @@
 
 namespace DSQ\Expression\Builder;
 
+use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
@@ -21,6 +22,25 @@ class Builder
      */
     private $stack = array();
 
+    /**
+     * Build a basic expression
+     *
+     * @param mixed $value
+     *
+     * @return $this The current instance
+     */
+    public function value($value)
+    {
+        $expression = new BasicExpression($value);
+
+        if (!$this->isStackEmpty()) {
+            $this->addChild($expression);
+        } else {
+            $this->push($expression);
+        }
+
+        return $this;;
+    }
     /**
      * Build a field expression (i.e. a binary expression)
      *

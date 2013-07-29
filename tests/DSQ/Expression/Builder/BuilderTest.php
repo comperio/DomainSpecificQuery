@@ -101,6 +101,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
                     ->field('hi', 'all')
                     ->field('my', 'god')
                 ->end()
+                ->value('plainValue')
             ->getExpression();
 
         $this->assertInstanceOf('DSQ\Expression\TreeExpression', $exp);
@@ -111,6 +112,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $child1 = $children[0];
         $child2 = $children[1];
         $child3 = $children[2];
+        $child4 = $children[3];
 
         $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $child1);
         $this->assertEquals('AND', $exp->getValue());
@@ -122,6 +124,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $subchildren = $child3->getChildren();
 
         $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $subchildren[0]);
+
+        $this->assertInstanceOf('DSQ\Expression\BasicExpression', $child4);
+        $this->assertEquals('plainValue', $child4->getValue());
 
     }
  }
