@@ -12,6 +12,7 @@ namespace DSQ\Test\Compiler;
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;
+use DSQ\Expression\TreeExpression;
 
 /**
  * Unit tests for class FirstClass
@@ -25,6 +26,7 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
 
     protected $transformationFoo;
     protected $transformationBar;
+    protected $transformationNic;
 
     public function setUp()
     {
@@ -38,9 +40,14 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
             return 'bar:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
         };
 
+        $this->transformationNic = function(Expression $exp, TypeBasedCompiler $c) {
+            return 'nic:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
+        };
+
         $this->compiler
-            ->registerTransformation('foo', $this->transformationFoo)
-            ->registerTransformation('bar', $this->transformationBar)
+            ->registerTransformation($this->transformationNic, 'DSQ\Expression\BasicExpression', 'nic')
+            ->registerTransformation($this->transformationFoo, '*', 'foo')
+            ->registerTransformation($this->transformationBar, 'DSQ\Expression\BasicExpression', '*')
         ;
     }
 
@@ -48,19 +55,22 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $compiler = $this->compiler;
 
-        $exp1 = new BasicExpression('ciao', 'foo');
+        $exp1 = new TreeExpression('ciao', 'foo');
         $exp2 = new BasicExpression('ciao', 'bar');
+        $exp3 = new BasicExpression('ciao', 'nic');
 
         $this->assertEquals(call_user_func($this->transformationFoo, $exp1, $compiler), $compiler->compile($exp1));
         $this->assertEquals(call_user_func($this->transformationBar, $exp2, $compiler), $compiler->compile($exp2));
+        $this->assertEquals(call_user_func($this->transformationNic, $exp3, $compiler), $compiler->compile($exp3));
     }
 
-    /**
-     * @expectedException \DSQ\Compiler\UnregisteredTransformationException
-     */
     public function testGetTransformationThrowsAnExceptionWhenRequestingAnUnregistedTransformation()
     {
-        $this->compiler->getTransformation('baz');
+        $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
+        $this->compiler->getTransformation('*', 'baz');
+
+        $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
+        $this->compiler->getTransformation('baz', '*');
     }
 
     /**
@@ -68,13 +78,15 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRegisterTransformationWithInvalidArgumentThrowsAnException()
     {
-        $this->compiler->registerTransformation('foo', 'alksdjhalksdjh');
+        $this->compiler->registerTransformation('foo', 'alksdjhalksdjh', 'asdasdasd');
     }
 
-    public function testHasTransformation()
+    public function testCanTransform()
     {
-        $this->assertTrue($this->compiler->hasTransformation('foo'));
-        $this->assertTrue($this->compiler->hasTransformation('bar'));
-        $this->assertFalse($this->compiler->hasTransformation('poo'));
+        $this->assertTrue($this->compiler->canTransform('MyClass', 'foo'));
+        $this->assertTrue($this->compiler->canTransform('DSQ\Expression\BasicExpression'));
+        $this->assertTrue($this->compiler->canTransform('DSQ\Expression\BasicExpression', 'poo'));
+        $this->assertFalse($this->compiler->canTransform('*', 'moo'));
+        $this->assertFalse($this->compiler->canTransform('MyClass', '*'));
     }
 }

@@ -31,46 +31,64 @@ class TypeBasedCompiler implements Compiler
     /**
      * Register a transformation for the compiler
      *
+     * @param string $class The class of the expression that will be transformed
      * @param string $type The type of the expression that will be transformed
      * @param callable $transformation The transformation
      * @return $this The current instance
      *
      * @throws \InvalidArgumentException
      */
-    public function registerTransformation($type, $transformation)
+    public function registerTransformation($transformation, $class = '*', $type = '*')
     {
         if (!is_callable($transformation))
             throw new InvalidTransformationException('Transformations must be callable objects');
 
-        $this->transformations[$type] = $transformation;
+        $this->transformations[$class][$type] = $transformation;
 
         return $this;
     }
 
     /**
-     * @param string $type
-     * @return bool
-     */
-    public function hasTransformation($type)
-    {
-        return isset($this->transformations[$type]);
-    }
-
-    /**
      * Get the transformation for the given expression type
      *
+     * @param string $class
      * @param string $type
      *
      * @return callable The transformation
      *
      * @throws UnregisteredTransformationException
      */
-    public function getTransformation($type)
+    public function getTransformation($class, $type)
     {
-        if (!$this->hasTransformation($type))
-            throw new UnregisteredTransformationException("There is no transformation registered for the Expression type \"$type\"");
+        if (isset($this->transformations[$class][$type]))
+            return $this->transformations[$class][$type];
 
-        return $this->transformations[$type];
+        if (isset($this->transformations['*'][$type]))
+            return $this->transformations['*'][$type];
+
+        if (isset($this->transformations[$class]['*']))
+            return $this->transformations[$class]['*'];
+
+        if (isset($this->transformations['*']['*']))
+            return $this->transformations['*']['*'];
+
+        throw new UnregisteredTransformationException("There is no transformation that match the selector \"$class:$type\"");
+    }
+
+    /**
+     * @param string $class
+     * @param string $type
+     * @return bool
+     */
+    public function canTransform($class, $type = '*')
+    {
+        try {
+            $this->getTransformation($class, $type);
+        } catch (UnregisteredTransformationException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -80,7 +98,7 @@ class TypeBasedCompiler implements Compiler
      */
     public function compile(Expression $expression)
     {
-        $transformation = $this->getTransformation($expression->getType());
+        $transformation = $this->getTransformation(get_class($expression), $expression->getType());
 
         return $transformation($expression, $this);
     }
