@@ -14,6 +14,7 @@ namespace DSQ\Compiler\StringCompiler;
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
 
 /**
@@ -25,6 +26,8 @@ use DSQ\Expression\TreeExpression;
  */
 class StringCompiler extends TypeBasedCompiler
 {
+    private $opsWeights = array();
+
     public function __construct()
     {
         $this
@@ -32,6 +35,22 @@ class StringCompiler extends TypeBasedCompiler
             ->registerTransformation(array($this, 'binaryExpression'), 'DSQ\Expression\BinaryExpression')
             ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
             ->registerTransformation(array($this, 'binaryExpressionWithNoSpaces'), 'DSQ\Expression\BinaryExpression', '^')
+
+            ->setOpWeight('^', 1100)
+            ->setOpWeight('*', 1000)
+            ->setOpWeight('/', 1000)
+            ->setOpWeight('%', 1000)
+            ->setOpWeight('+', 900)
+            ->setOpWeight('-', 900)
+            ->setOpWeight('=', 800)
+            ->setOpWeight('!=', 800)
+            ->setOpWeight('<=', 800)
+            ->setOpWeight('>=', 800)
+            ->setOpWeight('<', 800)
+            ->setOpWeight('>', 800)
+            ->setOpWeight('and', 700)
+            ->setOpWeight('or', 700)
+            ->setOpWeight('xor', 700)
         ;
     }
 
@@ -46,7 +65,7 @@ class StringCompiler extends TypeBasedCompiler
         $pieces = array();
 
         foreach ($expression->getChildren() as $child) {
-            $piece = $this->wrapCompositeExpression($child, $compiler->compile($child));
+            $piece = $this->precedenceParenthesis($expression, $child, $compiler->compile($child));
 
             $pieces[] = $piece;
         }
@@ -89,16 +108,50 @@ class StringCompiler extends TypeBasedCompiler
     }
 
     /**
+     * Set operator weight for managing precedences
+     *
+     * @param string $op
+     * @param int $weight
+     *
+     * @return $this The current instance
+     */
+    public function setOpWeight($op, $weight)
+    {
+        $this->opsWeights[$op] = (int) $weight;
+
+        return $this;
+    }
+
+    /**
+     * Get operator weight
+     *
+     * @param $op
+     * @return int
+     */
+    public function getOpWeight($op)
+    {
+        if (isset($this->opsWeights[$op]))
+            return $this->opsWeights[$op];
+
+        return 0;
+    }
+
+    /**
      * @param $expression
      * @param $string
      * @return string
      */
-    private function wrapCompositeExpression($expression, $string)
+    private function precedenceParenthesis(Expression $parent, Expression $child, $string)
     {
-        if ($expression instanceof TreeExpression)
+        if (!$this->isAtomic($child) && $this->getOpWeight($parent->getValue()) >= $this->getOpWeight($child->getValue()))
             $string = "($string)";
 
         return $string;
+    }
+
+    private function isAtomic(Expression $expression)
+    {
+        return $expression instanceof BasicExpression && $expression->getType() == 'basic';
     }
 
     /**
