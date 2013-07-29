@@ -13,6 +13,14 @@ namespace DSQ\Compiler;
 
 use DSQ\Expression\Expression;
 
+/**
+ * Class TypeBasedCompiler
+ *
+ * This compiler uses Expression types to match Expressions against the registered
+ * set of transformations.
+ *
+ * @package DSQ\Compiler
+ */
 class TypeBasedCompiler implements Compiler
 {
     /**

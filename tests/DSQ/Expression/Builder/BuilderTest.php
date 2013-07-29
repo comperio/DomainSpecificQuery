@@ -10,6 +10,7 @@
 namespace DSQ\Test\Expression\Builder;
 
 use DSQ\Expression\Builder\Builder;
+use DSQ\Expression\Builder\ExpressionTypeException;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BasicExpression;
 
@@ -52,6 +53,39 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $exp = $builder->field('foo', 'bar', '>=')->getExpression();
 
         $this->assertEquals('>=', $exp->getValue());
+    }
+
+    /**
+     * @expectedException \DSQ\Expression\Builder\ExpressionTypeException
+     */
+    public function testWhenANonTreeNodeIsAtRootNoOtherExpressionsCanBeAdded()
+    {
+        $builder = $this->builder;
+
+        $exp = $builder
+                ->field('foo', 'bar')
+                ->field('doo', 'dah');
+    }
+
+    /**
+     * @expectedException \DSQ\Expression\Builder\EmptyStackException
+     */
+    public function testEndWhenStackIsEmpty()
+    {
+        $builder = $this->builder;
+
+        $builder
+            ->field('foo', 'bar')->end()->end();
+    }
+
+    /**
+     * @expectedException \DSQ\Expression\Builder\EmptyStackException
+     */
+    public function testGetExpressionWhenStackIsEmpty()
+    {
+        $builder = $this->builder;
+
+        $builder->getExpression();
     }
 
     public function testTreeBuilding()
