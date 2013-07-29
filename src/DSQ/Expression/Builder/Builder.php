@@ -36,7 +36,8 @@ class Builder
     {
         $field = new BinaryExpression($operator, $name, $value);
 
-        $this->addExpression($field);
+        if (!$this->isStackEmpty())
+            $this->addChild($field);
 
         return $this;
     }
@@ -52,7 +53,10 @@ class Builder
     {
         $tree = new TreeExpression($value);
 
-        $this->addExpression($tree);
+        if (!$this->isStackEmpty())
+            $this->addChild($tree);
+
+        $this->push($tree);
 
         return $this;
     }
@@ -128,9 +132,7 @@ class Builder
     }
 
     /**
-     * Add to the stack if the stack is empty,
-     * or add as a child node of the current expression if the current expression is a Tree expression.
-     * Throws an excpetion otherwise.
+     * Add an expression as a child of the current expression
      *
      * @param Expression $expression
      *
@@ -138,18 +140,14 @@ class Builder
      *
      * @return $this The current instance
      */
-    private function addExpression(Expression $expression)
+    private function addChild(Expression $expression)
     {
-        if (!$this->isStackEmpty()) {
-            $currentExp = $this->currentExpression();
+        $currentExp = $this->currentExpression();
 
-            if (!$currentExp instanceof TreeExpression)
-                throw new ExpressionTypeException('Could not add expressions to a non-tree expression');
+        if (!$currentExp instanceof TreeExpression)
+            throw new ExpressionTypeException('Could not add expressions to a non-tree expression');
 
-            $currentExp->addChild($expression);
-        } else {
-            $this->push($expression);
-        }
+        $currentExp->addChild($expression);
 
         return $this;
     }

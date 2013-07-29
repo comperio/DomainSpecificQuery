@@ -13,4 +13,5 @@ namespace DSQ\Expression\Builder;
 
 class ExpressionTypeException extends \DomainException
 {
+
 } 
