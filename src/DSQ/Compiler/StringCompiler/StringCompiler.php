@@ -13,6 +13,7 @@ namespace DSQ\Compiler\StringCompiler;
 
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
+use DSQ\Expression\UnaryExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
@@ -32,6 +33,7 @@ class StringCompiler extends TypeBasedCompiler
     {
         $this
             ->registerTransformation(array($this, 'basicExpression'), '*', '*')
+            ->registerTransformation(array($this, 'unaryExpression'), 'DSQ\Expression\UnaryExpression')
             ->registerTransformation(array($this, 'binaryExpression'), 'DSQ\Expression\BinaryExpression')
             ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
             ->registerTransformation(array($this, 'binaryExpressionWithNoSpaces'), 'DSQ\Expression\BinaryExpression', '^')
@@ -103,6 +105,21 @@ class StringCompiler extends TypeBasedCompiler
             $this->precedenceParenthesis($expression, $expression->getLeft(), $compiler->compile($expression->getLeft())),
             $op,
             $this->precedenceParenthesis($expression, $expression->getRight(), $compiler->compile($expression->getRight()))
+        );
+    }
+
+    /**
+     * @param UnaryExpression $expression
+     * @param StringCompiler $compiler
+     * @return string
+     */
+    public function unaryExpression(UnaryExpression $expression, StringCompiler $compiler)
+    {
+        $op = strtoupper($expression->getValue());
+
+        return sprintf("%s%s",
+            $op,
+            $this->precedenceParenthesis($expression, $expression->getChild(), $compiler->compile($expression->getChild()))
         );
     }
 
