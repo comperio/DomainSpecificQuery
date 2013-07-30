@@ -82,7 +82,12 @@ class StringCompiler extends TypeBasedCompiler
     public function binaryExpression(BinaryExpression $expression, StringCompiler $compiler)
     {
         $op = strtoupper($expression->getValue());
-        return "{$compiler->compile($expression->getLeft(), $compiler)} $op {$compiler->compile($expression->getRight(), $compiler)}";
+
+        return sprintf("%s %s %s",
+            $this->precedenceParenthesis($expression, $expression->getLeft(), $compiler->compile($expression->getLeft())),
+            $op,
+            $this->precedenceParenthesis($expression, $expression->getRight(), $compiler->compile($expression->getRight()))
+        );
     }
 
     /**
@@ -93,7 +98,12 @@ class StringCompiler extends TypeBasedCompiler
     public function binaryExpressionWithNoSpaces(BinaryExpression $expression, StringCompiler $compiler)
     {
         $op = strtoupper($expression->getValue());
-        return "{$compiler->compile($expression->getLeft(), $compiler)}$op{$compiler->compile($expression->getRight(), $compiler)}";
+
+        return sprintf("%s%s%s",
+            $this->precedenceParenthesis($expression, $expression->getLeft(), $compiler->compile($expression->getLeft())),
+            $op,
+            $this->precedenceParenthesis($expression, $expression->getRight(), $compiler->compile($expression->getRight()))
+        );
     }
 
     /**
