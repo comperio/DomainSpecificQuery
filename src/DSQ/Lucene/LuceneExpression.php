@@ -15,7 +15,9 @@ use DSQ\Expression\Expression;
 interface LuceneExpression extends Expression
 {
     /**
-     * @return LuceneQuery
+     * This converts the expression to a lucene statement
+     *
+     * @return string
      */
-    public function getQuery();
+    public function __toString();
 } 
