@@ -54,12 +54,25 @@ class Builder
      */
     public function field($name, $value, $operator = '=')
     {
-        $field = new BinaryExpression($operator, $name, $value);
+        return $this->binary($operator, $name, $value);
+    }
+
+    /**
+     * @param $operator
+     * @param null $left
+     * @param null $right
+     * @return $this
+     */
+    public function binary($operator, $left = null, $right = null)
+    {
+        $binary = new BinaryExpression($operator, $left, $right);
 
         if (!$this->isStackEmpty()) {
-            $this->addChild($field);
+            $this->addChild($binary);
+            if (!isset($right))
+                $this->push($binary);
         } else {
-            $this->push($field);
+            $this->push($binary);
         }
 
         return $this;
@@ -97,11 +110,22 @@ class Builder
     }
 
     /**
+     * Return the current expression and empty the stack
+     *
+     * @throws EmptyStackException
+     *
      * @return Expression
      */
     public function getExpression()
     {
-        return $this->currentExpression();
+        if ($this->isStackEmpty())
+            throw new EmptyStackException('The stack of the builder is empty');
+
+        $expression =  $this->stack[0];
+
+        $this->stack = array();
+
+        return $expression;
     }
 
     /**
@@ -167,10 +191,16 @@ class Builder
     {
         $currentExp = $this->currentExpression();
 
-        if (!$currentExp instanceof TreeExpression)
-            throw new ExpressionTypeException('Could not add expressions to a non-tree expression');
-
-        $currentExp->addChild($expression);
+        if ($currentExp instanceof TreeExpression) {
+            $currentExp->addChild($expression);
+        } elseif ($currentExp instanceof BinaryExpression) {
+            if ($currentExp->getLeft()->getValue() === null)
+                $currentExp->setLeft($expression);
+            else
+                $currentExp->setRight($expression);
+        } else {
+            throw new ExpressionTypeException('Could not add child expression to the current expression');
+        }
 
         return $this;
     }

@@ -63,7 +63,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->builder;
 
         $exp = $builder
-                ->field('foo', 'bar')
+                ->value('foo')
                 ->field('doo', 'dah');
     }
 
@@ -86,6 +86,31 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder = $this->builder;
 
         $builder->getExpression();
+    }
+
+    public function testBinaryBuilding()
+    {
+        $builder = $this->builder;
+
+        $exp = $builder
+            ->binary('+', 1, 2)
+            ->getExpression()
+        ;
+
+        $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $exp);
+        $this->assertEquals(1, $exp->getLeft()->getValue());
+        $this->assertEquals(2, $exp->getRight()->getValue());
+
+        $exp = $builder
+            ->binary('+')
+                ->value(1)
+                ->value(2)
+            ->getExpression()
+        ;
+
+        $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $exp);
+        $this->assertEquals(1, $exp->getLeft()->getValue());
+        $this->assertEquals(2, $exp->getRight()->getValue());
     }
 
     public function testTreeBuilding()
