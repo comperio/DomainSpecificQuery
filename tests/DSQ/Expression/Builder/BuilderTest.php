@@ -88,6 +88,30 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $builder->getExpression();
     }
 
+    public function testUnaryBuilding()
+    {
+        $builder = $this->builder;
+
+        $exp = $builder
+            ->unary('-', 256)
+            ->getExpression()
+        ;
+
+        $this->assertInstanceOf('DSQ\Expression\UnaryExpression', $exp);
+        $this->assertEquals('-', $exp->getValue());
+        $this->assertEquals(256, $exp->getChild()->getValue());
+
+        $exp = $builder
+            ->unary('-')
+                ->value(256)
+            ->getExpression()
+        ;
+
+        $this->assertInstanceOf('DSQ\Expression\UnaryExpression', $exp);
+        $this->assertEquals('-', $exp->getValue());
+        $this->assertEquals(256, $exp->getChild()->getValue());
+    }
+
     public function testBinaryBuilding()
     {
         $builder = $this->builder;

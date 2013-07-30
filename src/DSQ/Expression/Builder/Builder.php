@@ -14,6 +14,7 @@ use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
+use DSQ\Expression\UnaryExpression;
 
 class Builder
 {
@@ -73,6 +74,28 @@ class Builder
                 $this->push($binary);
         } else {
             $this->push($binary);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $operator
+     *
+     * @param null $child
+     *
+     * @return $this The current instance
+     */
+    public function unary($operator, $child = null)
+    {
+        $unary = new UnaryExpression($operator, $child);
+
+        if (!$this->isStackEmpty()) {
+            $this->addChild($unary);
+            if (!isset($child))
+                $this->push($unary);
+        } else {
+            $this->push($unary);
         }
 
         return $this;
@@ -198,6 +221,8 @@ class Builder
                 $currentExp->setLeft($expression);
             else
                 $currentExp->setRight($expression);
+        } elseif ($currentExp instanceof UnaryExpression) {
+            $currentExp->setChild($expression);
         } else {
             throw new ExpressionTypeException('Could not add child expression to the current expression');
         }
