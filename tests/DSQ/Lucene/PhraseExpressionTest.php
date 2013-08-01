@@ -21,5 +21,16 @@ class PhraseExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('"foo \" bar"', (string) $expression);
     }
+
+    public function testSlope()
+    {
+        $expression = new PhraseExpression('my phrase', 12);
+
+        $this->assertEquals('"my phrase"~12', (string) $expression);
+
+        $expression = new PhraseExpression('my phrase', 12.54);
+
+        $this->assertEquals('"my phrase"~12.54', (string) $expression);
+    }
 }
  

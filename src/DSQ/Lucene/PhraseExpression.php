@@ -12,11 +12,28 @@ namespace DSQ\Lucene;
 
 class PhraseExpression extends BasicLuceneExpression
 {
+    private $slope = 0;
+
+    /**
+     * @param string $value
+     * @param int $slope
+     * @param string $type
+     */
+    public function __construct($value, $slope = 0, $type = 'phrase')
+    {
+        parent::__construct($value, $type);
+
+        $this->slope = $slope;
+    }
+
+
     /**
      * {@inheritdoc}
      */
     public function __toString()
     {
-        return '"' . $this->escape_phrase($this->getValue()) . '"';
+        $slopeSuffix = $this->slope != 0 ? '~' . $this->slope : '';
+        
+        return '"' . $this->escape_phrase($this->getValue()) . '"' . $slopeSuffix;
     }
 } 
