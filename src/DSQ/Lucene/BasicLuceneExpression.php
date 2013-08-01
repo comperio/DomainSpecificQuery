@@ -16,6 +16,11 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
 {
     private $boost = 1.0;
 
+    /**
+     * @param mixed|LuceneExpression $value      The value of the expression
+     * @param float $boost                       The boost factor
+     * @param string $type                       The type of the expression
+     */
     public function __construct($value, $boost = 1.0, $type = 'basic')
     {
         parent::__construct($value, $type);
@@ -24,11 +29,22 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     }
 
     /**
-     * Set Boost
-     *
-     * @param float $boost
-     *
-     * @return $this The current instance
+     * {@inheritdoc}
+     */
+    public function setDeepValue($value)
+    {
+        $curVal = $this->getValue();
+        if ($curVal instanceof LuceneExpression) {
+            $curVal->setDeepValue($value);
+        } else {
+            $this->setValue($value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function setBoost($boost)
     {
@@ -38,9 +54,7 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     }
 
     /**
-     * Get Boost
-     *
-     * @return float
+     * {@inheritdoc}
      */
     public function getBoost()
     {

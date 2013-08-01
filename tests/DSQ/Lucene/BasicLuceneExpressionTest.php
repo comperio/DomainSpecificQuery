@@ -28,6 +28,15 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('\:"\(\)\[\]', (string) $expression);
     }
 
+    public function testSetDeepValue()
+    {
+        $expr = new BasicLuceneExpression(new BasicLuceneExpression(new BasicLuceneExpression($last = new BasicLuceneExpression('value'))));
+
+        $expr->setDeepValue('foo');
+
+        $this->assertEquals('foo', $last->getValue());
+    }
+
     public function testSetAndGetBoost()
     {
         $expression = new BasicLuceneExpression('expr');
