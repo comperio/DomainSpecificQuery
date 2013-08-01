@@ -22,7 +22,7 @@ class BooleanExpression extends BasicLuceneExpression
      */
     private $expressions = array();
 
-    public function __construct($operator, array $expressions, $boost = 1.0)
+    public function __construct($operator = self::SHOULD, array $expressions = array(), $boost = 1.0)
     {
         parent::__construct($operator, $boost, $operator);
 
@@ -32,11 +32,14 @@ class BooleanExpression extends BasicLuceneExpression
     /**
      * Add subexpression to the expression
      *
-     * @param LuceneExpression $expression  The sub-expression
-     * @return $this                        The current instance
+     * @param LuceneExpression|string $expression   The sub-expression
+     * @return $this                                The current instance
      */
-    public function addExpression(LuceneExpression $expression)
+    public function addExpression($expression)
     {
+        if (!$expression instanceof LuceneExpression)
+            $expression = new BasicLuceneExpression($expression);
+
         $this->expressions[] = $expression;
 
         return $this;
