@@ -17,25 +17,31 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     /**
      * Escape a string to be a suitable lucene value
      *
-     * @param string $string
+     * @param string $expression
      * @return mixed
      */
-    public static function escape($string)
+    public static function escape($expression)
     {
+        if ($expression instanceof LuceneExpression)
+            return $expression;
+
         //list taken from http://lucene.apache.org/java/docs/queryparsersyntax.html#Escaping%20Special%20Characters
         //Removed *, ? and ^.
-        return preg_replace('/(\+|-|&&|\|\||!|\(|\)|\{|}|\[|]|~|:|\\\)/', '\\\$1', $string);
+        return preg_replace('/(\+|-|&&|\|\||!|\(|\)|\{|}|\[|]|~|:|\\\)/', '\\\$1', $expression);
     }
 
     /**
-     * Escape a string for quoted values
+     * Escape an expression for quoted values
      *
-     * @param string $string
-     * @return mixed
+     * @param string|LuceneExpression $expression
+     * @return string|LuceneExpression
      */
-    public static function escape_phrase($string)
+    public static function escape_phrase($expression)
     {
-        return preg_replace('/("|\\\)/', '\\\$1', $string);
+        if ($expression instanceof LuceneExpression)
+            return $expression;
+
+        return preg_replace('/("|\\\)/', '\\\$1', $expression);
     }
 
     /**
