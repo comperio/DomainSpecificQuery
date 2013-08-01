@@ -33,10 +33,10 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
         $expression = new BasicLuceneExpression('expr');
         $expression->setBoost(12.4);
 
-        $this->assertEquals(12.4, $expression->getBoost());
+        $this->assertSame(12.4, $expression->getBoost());
 
         $expression->setBoost(54);
-        $this->assertEquals(54.0, $expression->getBoost());
+        $this->assertSame(54.0, $expression->getBoost());
     }
 
     public function testBoosting()
