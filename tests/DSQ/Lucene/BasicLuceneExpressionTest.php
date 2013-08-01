@@ -30,11 +30,12 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDeepValue()
     {
-        $expr = new BasicLuceneExpression(new BasicLuceneExpression(new BasicLuceneExpression($last = new BasicLuceneExpression('value'))));
+        $expr = new BasicLuceneExpression($first = new BasicLuceneExpression(new BasicLuceneExpression($last = new BasicLuceneExpression('value'))));
 
         $expr->setDeepValue('foo');
 
         $this->assertEquals('foo', $last->getValue());
+        $this->assertEquals($first, $expr->getValue());
     }
 
     public function testSetAndGetBoost()
