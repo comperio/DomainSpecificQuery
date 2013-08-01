@@ -88,12 +88,17 @@ class BooleanExpression extends BasicLuceneExpression
         $expressionsStrings = array_map(function($expression) use ($that, $operator) {
             $expressionStr = (string) $that->escape($expression);
 
-            if ($expression instanceof BooleanExpression && $expression->numOfExpressions() > 1)
+            if ($expression instanceof BooleanExpression && $expression->numOfExpressions() > 1 && $expression->getBoost() == 1.0)
                 $expressionStr = "($expressionStr)";
 
             return $operator . $expressionStr;
         }, $this->getExpressions());
 
-        return implode(' ', $expressionsStrings) . $this->boostSuffix();
+        $result = implode(' ', $expressionsStrings);
+
+        if ($this->getBoost() != 1.0)
+            $result = "($result)";
+
+        return $result . $this->boostSuffix();
     }
 }

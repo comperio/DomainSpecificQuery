@@ -77,5 +77,19 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('+foo +(-leghisti -"stupidi") +(povera italia)', $expr);
     }
+
+    public function testParenthesisWhenThereIsABoost()
+    {
+        $expr = new BooleanExpression('+', array('foo', 'bar', 'baz'), 2);
+
+        $this->assertEquals('(+foo +bar +baz)^2', (string) $expr);
+    }
+
+    public function testParenthesisWithNestedBooleanExpressionsWithBoosts()
+    {
+        $expr = new BooleanExpression('+', array('foo', new BooleanExpression('', array('bar', 'bah'), 3.1), 'baz'));
+
+        $this->assertEquals('+foo +(bar bah)^3.1 +baz', (string) $expr);
+    }
 }
  
