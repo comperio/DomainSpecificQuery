@@ -49,6 +49,6 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
      */
     public function __toString()
     {
-        return (string) $this->getValue();
+        return (string) $this->escape($this->getValue());
     }
 }

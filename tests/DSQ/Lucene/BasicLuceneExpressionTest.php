@@ -20,5 +20,26 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('foo', (string) $expression);
     }
+
+    public function testToStringEscapesValue()
+    {
+        $expression = new BasicLuceneExpression(':"()[]');
+
+        $this->assertEquals('\:"\(\)\[\]', (string) $expression);
+    }
+
+    public function testEscapeDoNothingOnLuceneExpressions()
+    {
+        $expr = new BasicLuceneExpression('foo');
+
+        $this->assertEquals($expr, BasicLuceneExpression::escape($expr));
+    }
+
+    public function testEscapePhraseDoNothingOnLuceneExpressions()
+    {
+        $expr = new BasicLuceneExpression('foo');
+
+        $this->assertEquals($expr, BasicLuceneExpression::escape_phrase($expr));
+    }
 }
  

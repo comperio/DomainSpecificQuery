@@ -10,7 +10,6 @@
 namespace DSQ\Test\Expression;
 
 use DSQ\Expression\BasicExpression;
-use DSQ\Lucene\BasicLuceneExpression;
 
 /**
  * Unit tests for class FirstClass
@@ -43,19 +42,5 @@ class BasicExpressionTest extends \PHPUnit_Framework_TestCase
         $this->expression->setType('bad-type');
 
         $this->assertEquals('bad-type', $this->expression->getType());
-    }
-
-    public function testEscapeDoNothingOnLuceneExpressions()
-    {
-        $expr = new BasicLuceneExpression('foo');
-
-        $this->assertEquals($expr, BasicLuceneExpression::escape($expr));
-    }
-
-    public function testEscapePhraseDoNothingOnLuceneExpressions()
-    {
-        $expr = new BasicLuceneExpression('foo');
-
-        $this->assertEquals($expr, BasicLuceneExpression::escape_phrase($expr));
     }
 }
