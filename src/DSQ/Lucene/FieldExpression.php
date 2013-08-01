@@ -15,10 +15,11 @@ class FieldExpression extends BasicLuceneExpression
     /**
      * @param string $fieldname
      * @param string|LuceneExpression $value
+     * @param float $boost
      */
-    public function __construct($fieldname, $value)
+    public function __construct($fieldname, $value, $boost = 1.0)
     {
-        parent::__construct($value, $fieldname);
+        parent::__construct($value, $boost, $fieldname);
     }
 
     /**
@@ -26,6 +27,6 @@ class FieldExpression extends BasicLuceneExpression
      */
     public function __toString()
     {
-        return $this->escape($this->getType()) . ':' . $this->escape($this->getValue());
+        return $this->escape($this->getType()) . ':' . $this->escape($this->getValue()) . $this->boostSuffix();
     }
 } 

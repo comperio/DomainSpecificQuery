@@ -21,5 +21,12 @@ class FieldExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('field:value\:\[', (string) $field);
     }
+
+    public function testBoosting()
+    {
+        $field = new FieldExpression('field', 'value', 83.1);
+
+        $this->assertEquals('field:value^83.1', (string) $field);
+    }
 }
  

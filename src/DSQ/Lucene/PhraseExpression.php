@@ -19,9 +19,9 @@ class PhraseExpression extends BasicLuceneExpression
      * @param int $slope
      * @param string $type
      */
-    public function __construct($value, $slope = 0, $type = 'phrase')
+    public function __construct($value, $slope = 0, $boost = 1.0, $type = 'phrase')
     {
-        parent::__construct($value, $type);
+        parent::__construct($value, $boost, $type);
 
         $this->slope = $slope;
     }
@@ -32,8 +32,18 @@ class PhraseExpression extends BasicLuceneExpression
      */
     public function __toString()
     {
-        $slopeSuffix = $this->slope != 0 ? '~' . $this->slope : '';
-        
-        return '"' . $this->escape_phrase($this->getValue()) . '"' . $slopeSuffix;
+        return '"' . $this->escape_phrase($this->getValue()) . '"'
+            . $this->slopeSuffix()
+            . $this->boostSuffix()
+        ;
+    }
+
+    /**
+     * Returns the slope suffix if slope is != 0
+     * @return string
+     */
+    protected function slopeSuffix()
+    {
+        return $this->slope != 0 ? '~' . $this->slope : '';
     }
 } 

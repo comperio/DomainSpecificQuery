@@ -28,6 +28,24 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('\:"\(\)\[\]', (string) $expression);
     }
 
+    public function testSetAndGetBoost()
+    {
+        $expression = new BasicLuceneExpression('expr');
+        $expression->setBoost(12.4);
+
+        $this->assertEquals(12.4, $expression->getBoost());
+
+        $expression->setBoost(54);
+        $this->assertEquals(54.0, $expression->getBoost());
+    }
+
+    public function testBoosting()
+    {
+        $expression = new BasicLuceneExpression('expr', 12.2);
+
+        $this->assertEquals('expr^12.2', (string) $expression);
+    }
+
     public function testEscapeDoNothingOnLuceneExpressions()
     {
         $expr = new BasicLuceneExpression('foo');
