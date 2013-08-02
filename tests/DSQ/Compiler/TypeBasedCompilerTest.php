@@ -81,12 +81,22 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
         $this->compiler->registerTransformation('foo', 'alksdjhalksdjh', 'asdasdasd');
     }
 
-    public function testCanTransform()
+    public function testCanCompile()
     {
-        $this->assertTrue($this->compiler->canTransform('MyClass', 'foo'));
-        $this->assertTrue($this->compiler->canTransform('DSQ\Expression\BasicExpression'));
-        $this->assertTrue($this->compiler->canTransform('DSQ\Expression\BasicExpression', 'poo'));
-        $this->assertFalse($this->compiler->canTransform('*', 'moo'));
-        $this->assertFalse($this->compiler->canTransform('MyClass', '*'));
+        $this->assertTrue($this->compiler->canCompile('MyClass', 'foo'));
+        $this->assertTrue($this->compiler->canCompile('DSQ\Expression\BasicExpression'));
+        $this->assertTrue($this->compiler->canCompile('DSQ\Expression\BasicExpression', 'poo'));
+        $this->assertFalse($this->compiler->canCompile('*', 'moo'));
+        $this->assertFalse($this->compiler->canCompile('MyClass', '*'));
+    }
+
+    public function testTransform()
+    {
+        $this->assertEquals('foo', $this->compiler->transform('foo'));
+
+        $compiler = $this->compiler;
+        $exp1 = new TreeExpression('ciao', 'foo');
+
+        $this->assertEquals(call_user_func($this->transformationFoo, $exp1, $this->compiler), $compiler->transform($exp1));
     }
 }

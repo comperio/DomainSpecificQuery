@@ -80,7 +80,7 @@ class TypeBasedCompiler implements Compiler
      * @param string $type
      * @return bool
      */
-    public function canTransform($class, $type = '*')
+    public function canCompile($class, $type = '*')
     {
         try {
             $this->getTransformation($class, $type);
@@ -92,14 +92,23 @@ class TypeBasedCompiler implements Compiler
     }
 
     /**
-     * @param Expression $expression
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function compile(Expression $expression)
     {
         $transformation = $this->getTransformation(get_class($expression), $expression->getType());
 
         return $transformation($expression, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transform($expression)
+    {
+        if ($expression instanceof Expression)
+            return $this->compile($expression);
+
+        return $expression;
     }
 }

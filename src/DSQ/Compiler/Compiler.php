@@ -19,4 +19,13 @@ interface Compiler
      * @return mixed
      */
     public function compile(Expression $expression);
+
+    /**
+     * The same as $this->compile, except that it accept arbitrary values
+     * and it acts as identity on non-expression values.
+     *
+     * @param $expression
+     * @return mixed
+     */
+    public function transform($expression);
 } 
