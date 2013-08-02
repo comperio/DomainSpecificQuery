@@ -32,6 +32,10 @@ class RangeExpressionTest extends \PHPUnit_Framework_TestCase
 
         $expr = new RangeExpression(':escapeme:', 100, 1.0, $includeLeft = true, $includeRight = false);
         $this->assertEquals('[\:escapeme\: TO 100}', (string) $expr);
+
+        $expr = new RangeExpression;
+
+        $this->assertEquals('[* TO *]', (string) $expr);
     }
 }
  
