@@ -11,68 +11,20 @@
 namespace DSQ\Lucene;
 
 
-class BooleanExpression extends AbstractLuceneExpression
+class BooleanExpression extends TreeExpression
 {
     const SHOULD = "";
     const MUST = "+";
     const MUST_NOT = "-";
 
     /**
-     * @var LuceneExpression[]
+     * @param string $operator
+     * @param array $expressions
+     * @param float $boost
      */
-    private $expressions = array();
-
     public function __construct($operator = self::SHOULD, array $expressions = array(), $boost = 1.0)
     {
-        parent::__construct($operator, $boost, $operator);
-
-        $this->setExpressions($expressions);
-    }
-
-    /**
-     * Add subexpression to the expression
-     *
-     * @param LuceneExpression|string $expression   The sub-expression
-     * @return $this                                The current instance
-     */
-    public function addExpression($expression)
-    {
-        $this->expressions[] = $this->expr($expression);
-
-        return $this;
-    }
-
-    /**
-     * Set the set of subexpressions
-     *
-     * @param LuceneExpression[] $expressions   The array of expressions
-     * @return $this
-     */
-    public function setExpressions(array $expressions)
-    {
-        foreach ($expressions as $expression) {
-            $this->addExpression($expression);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the array of subexpressions
-     *
-     * @return LuceneExpression[]
-     */
-    public function getExpressions()
-    {
-        return $this->expressions;
-    }
-
-    /**
-     * @return int  The number of subexpressions
-     */
-    public function numOfExpressions()
-    {
-        return count($this->expressions);
+        parent::__construct($operator, $expressions, $boost);
     }
 
     /**
@@ -97,13 +49,5 @@ class BooleanExpression extends AbstractLuceneExpression
             $result = "($result)";
 
         return $result . $this->boostSuffix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasPrecedence($expression)
-    {
-        return $this->numOfExpressions() <= 1 || $this->getBoost() != 1.0;
     }
 }
