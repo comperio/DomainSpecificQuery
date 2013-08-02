@@ -37,10 +37,7 @@ class BooleanExpression extends BasicLuceneExpression
      */
     public function addExpression($expression)
     {
-        if (!$expression instanceof LuceneExpression)
-            $expression = new BasicLuceneExpression($expression);
-
-        $this->expressions[] = $expression;
+        $this->expressions[] = $this->expr($expression);
 
         return $this;
     }
@@ -88,7 +85,7 @@ class BooleanExpression extends BasicLuceneExpression
         $expressionsStrings = array_map(function($expression) use ($that, $operator) {
             $expressionStr = (string) $that->escape($expression);
 
-            if ($expression instanceof BooleanExpression && $expression->numOfExpressions() > 1 && $expression->getBoost() == 1.0)
+            if (!$expression->hasPrecedence($that))
                 $expressionStr = "($expressionStr)";
 
             return $operator . $expressionStr;
@@ -100,5 +97,13 @@ class BooleanExpression extends BasicLuceneExpression
             $result = "($result)";
 
         return $result . $this->boostSuffix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPrecedence($expression)
+    {
+        return $this->numOfExpressions() <= 1 || $this->getBoost() != 1.0;
     }
 }

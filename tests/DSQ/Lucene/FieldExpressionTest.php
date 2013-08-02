@@ -15,6 +15,13 @@ use DSQ\Lucene\FieldExpression;
 
 class FieldExpressionTest extends \PHPUnit_Framework_TestCase
 {
+    public function testValueIsConvertedToBasicExpressionIfANonExpressionValueIsGiven()
+    {
+        $field = new FieldExpression('field', 'value');
+
+        $this->assertInstanceOf('DSQ\Lucene\BasicLuceneExpression', $field->getValue());
+    }
+
     public function testToString()
     {
         $field = new FieldExpression('field', 'value:[');
@@ -22,11 +29,18 @@ class FieldExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('field:value\:\[', (string) $field);
     }
 
+    public function testToStringPutParenthesisWhenNecessary()
+    {
+        $field = new FieldExpression('field', 'foo bar');
+
+        $this->assertEquals('field:(foo bar)', (string) $field);
+    }
+
     public function testBoosting()
     {
-        $field = new FieldExpression('field', 'value', 83.1);
+        $field = new FieldExpression('field', 'value1 value2', 83.1);
 
-        $this->assertEquals('field:value^83.1', (string) $field);
+        $this->assertEquals('field:(value1 value2)^83.1', (string) $field);
     }
 }
  

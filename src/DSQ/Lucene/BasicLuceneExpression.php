@@ -100,6 +100,15 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function hasPrecedence($expression)
+    {
+        return strstr($this->getValue(), ' ') === false;
+    }
+
+
+    /**
      * @return string
      */
     protected function boostSuffix()
@@ -108,5 +117,18 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
             ? "^{$this->boost}"
             : ''
         ;
+    }
+
+    /**
+     * Wrap the value around a BasicLuceneExpression if $value is not already a lucene expression
+     * @param mixed $value
+     * @return LuceneExpression
+     */
+    protected function expr($value)
+    {
+        if ($value instanceof LuceneExpression)
+            return $value;
+
+        return new self($value);
     }
 }

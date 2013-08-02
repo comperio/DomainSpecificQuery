@@ -15,9 +15,10 @@ class PhraseExpression extends BasicLuceneExpression
     private $slope = 0;
 
     /**
-     * @param string $value
-     * @param int $slope
-     * @param string $type
+     * @param string $value     The value of the expression
+     * @param int $slope        The proximity factor
+     * @param float $boost      The boost factor of the expression
+     * @param string $type      The type of the expression
      */
     public function __construct($value, $slope = 0, $boost = 1.0, $type = 'phrase')
     {
@@ -36,6 +37,14 @@ class PhraseExpression extends BasicLuceneExpression
             . $this->slopeSuffix()
             . $this->boostSuffix()
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasPrecedence($expression)
+    {
+        return true;
     }
 
     /**

@@ -69,5 +69,16 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expr, BasicLuceneExpression::escape_phrase($expr));
     }
+
+    public function testHasPrecedenceReturnsFalseOnlyIfThereAreSpaces()
+    {
+        $expr = new BasicLuceneExpression('foo');
+
+        $this->assertTrue($expr->hasPrecedence(null));
+
+        $expr->setValue('foo bar baz');
+
+        $this->assertFalse($expr->hasPrecedence(null));
+    }
 }
  

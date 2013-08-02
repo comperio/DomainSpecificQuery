@@ -59,10 +59,10 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
     public function testToStringWithSimpleValues()
     {
         $expr = new BooleanExpression('+', array('foo', 'bar', 'baz'));
-        $this->assertEquals('+foo +bar +baz', $expr);
+        $this->assertEquals('+foo +bar +baz', (string) $expr);
 
         $expr->setValue('-', $expr);
-        $this->assertEquals('-foo -bar -baz', $expr);
+        $this->assertEquals('-foo -bar -baz', (string) $expr);
     }
 
     public function testToStringWithNestedValues()
@@ -90,6 +90,18 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
         $expr = new BooleanExpression('+', array('foo', new BooleanExpression('', array('bar', 'bah'), 3.1), 'baz'));
 
         $this->assertEquals('+foo +(bar bah)^3.1 +baz', (string) $expr);
+    }
+
+    public function testHasPrecedence()
+    {
+        $expr = new BooleanExpression('+', array('foo'));
+        $this->assertTrue($expr->hasPrecedence(null));
+
+        $expr->setExpressions(array('foo', 'bar'));
+        $this->assertFalse($expr->hasPrecedence(null));
+
+        $expr->setBoost(2);
+        $this->assertTrue($expr->hasPrecedence(null));
     }
 }
  

@@ -38,11 +38,21 @@ interface LuceneExpression extends Expression
     public function getBoost();
 
     /**
-     * Set the given value to the deepest node in the expressio chain
+     * Set the given value to the deepest node in the expression chain
      *
      * @param mixed|LuceneExpression $value  The value to be set
      *
      * @return $this                         The current instance
      */
     public function setDeepValue($value);
+
+    /**
+     * Tell if the current expression has precedence over the given one.
+     * This is used to decide if the expression has to be wrapped with parenthesis.
+     *
+     * @param mixed $expression  The expression to test the precedence against
+     *
+     * @return bool              Has the current expression the precedence over the given one?
+     */
+    public function hasPrecedence($expression);
 } 
