@@ -15,6 +15,7 @@ use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
+use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\FieldExpression;
@@ -28,11 +29,8 @@ class LuceneCompiler extends TypeBasedCompiler
             ->registerTransformation(array($this, 'basicExpression'), '*', '*')
             ->registerTransformation(array($this, 'fieldExpression'), 'DSQ\Expression\BinaryExpression')
             ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '>')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '>=')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '<')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '<=')
-
+            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', array('>', '>=', '<', '<='))
+            ->registerTransformation(array($this, 'rangeExpression'), 'DSQ\Expression\BinaryExpression', 'range')
         ;
     }
 
@@ -43,32 +41,40 @@ class LuceneCompiler extends TypeBasedCompiler
 
     public function fieldExpression(BinaryExpression $expr, self $compiler)
     {
-        $value = $compiler->transform($expr->getRight()->getValue());
+        $value = $compiler->transform($expr->getRight());
 
         return new FieldExpression((string) $expr->getLeft()->getValue(), $value);
     }
 
+    public function rangeExpression(BinaryExpression $expr, self $compiler)
+    {
+        $from = $compiler->transform($expr->getLeft());
+        $to = $compiler->transform($expr->getRight());
+
+        return new RangeExpression($from, $to);
+    }
+
     public function treeExpression(TreeExpression $expr, self $compiler)
     {
-        switch ($expr->getValue()) {
+        switch (strtolower($expr->getValue())) {
             case 'and':
-                $operator = BooleanExpression::MUST;
+                $operator = SpanExpression::OP_AND;
                 break;
             case 'not':
-                $operator = BooleanExpression::MUST_NOT;
+                $operator = SpanExpression::OP_NOT;
                 break;
             default:
-                $operator = BooleanExpression::SHOULD;
+                $operator = SpanExpression::OP_OR;
         }
 
-        $booleanExpr = new BooleanExpression($operator);
+        $spanExpr = new SpanExpression($operator);
 
         foreach ($expr->getChildren() as $child)
         {
-            $booleanExpr->addExpression($compiler->compile($child));
+            $spanExpr->addExpression($compiler->compile($child));
         }
 
-        return $booleanExpr;
+        return $spanExpr;
     }
 
     public function comparisonExpression(BinaryExpression $expr, self $compiler)

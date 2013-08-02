@@ -54,7 +54,7 @@ class Builder
      *
      * @throws ExpressionTypeException
      */
-    public function field($name, $value, $operator = '=')
+    public function field($name, $value = null, $operator = '=')
     {
         return $this->binary($operator, $name, $value, $name);
     }

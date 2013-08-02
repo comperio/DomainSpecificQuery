@@ -12,7 +12,6 @@ namespace DSQ\Test\Lucene;
 
 
 use DSQ\Lucene\SpanExpression;
-use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\PhraseExpression;
 
