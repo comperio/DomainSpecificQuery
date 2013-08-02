@@ -114,7 +114,7 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     protected function boostSuffix()
     {
         return $this->boost != 1.0
-            ? "^{$this->boost}"
+            ? '^' . str_replace(',', '.', (string) $this->boost)
             : ''
         ;
     }

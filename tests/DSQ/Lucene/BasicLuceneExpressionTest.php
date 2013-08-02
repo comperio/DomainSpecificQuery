@@ -80,5 +80,16 @@ class BasicLuceneExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($expr->hasPrecedence(null));
     }
+
+    public function testBoostSuffixWhenCurrentLocaleHasNotDotAsDecimalSeparator()
+    {
+        $oldLocale = setlocale(LC_ALL, 0);
+        setlocale(LC_ALL, 'it_IT');
+
+        $expr = new BasicLuceneExpression('foo', 2.13);
+        $this->assertEquals('foo^2.13', (string) $expr);
+
+        setlocale(LC_ALL, $oldLocale);
+    }
 }
  

@@ -24,7 +24,7 @@ class PhraseExpression extends BasicLuceneExpression
     {
         parent::__construct($value, $boost, $type);
 
-        $this->slope = $slope;
+        $this->slope = (int) $slope;
     }
 
 

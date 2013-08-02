@@ -30,7 +30,7 @@ class PhraseExpressionTest extends \PHPUnit_Framework_TestCase
 
         $expression = new PhraseExpression('my phrase', 12.54);
 
-        $this->assertEquals('"my phrase"~12.54', (string) $expression);
+        $this->assertEquals('"my phrase"~12', (string) $expression);
     }
 
     public function testBoosting()

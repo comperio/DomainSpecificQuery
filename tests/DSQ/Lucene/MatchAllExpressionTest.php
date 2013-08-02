@@ -31,4 +31,3 @@ class MatchAllExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('*:*^1983.03', (string) $expr);
     }
 }
- 
