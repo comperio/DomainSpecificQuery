@@ -27,12 +27,13 @@ class Builder
      * Build a basic expression
      *
      * @param mixed $value
+     * @param string $type
      *
      * @return $this The current instance
      */
-    public function value($value)
+    public function value($value, $type = 'basic')
     {
-        $expression = new BasicExpression($value);
+        $expression = new BasicExpression($value, $type);
 
         if (!$this->isStackEmpty()) {
             $this->addChild($expression);
@@ -40,7 +41,7 @@ class Builder
             $this->push($expression);
         }
 
-        return $this;;
+        return $this;
     }
     /**
      * Build a field expression (i.e. a binary expression)
