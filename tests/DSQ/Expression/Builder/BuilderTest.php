@@ -55,6 +55,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('>=', $exp->getValue());
     }
 
+    public function testFieldBuildingSetExpressionTypeToLeftSubexpressionValue()
+    {
+        $builder = $this->builder;
+
+        $exp = $builder->field('foo', 'bar')->getExpression();
+
+        $this->assertEquals('foo', $exp->getType());
+    }
+
     /**
      * @expectedException \DSQ\Expression\Builder\ExpressionTypeException
      */

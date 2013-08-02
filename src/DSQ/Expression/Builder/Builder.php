@@ -56,18 +56,19 @@ class Builder
      */
     public function field($name, $value, $operator = '=')
     {
-        return $this->binary($operator, $name, $value);
+        return $this->binary($operator, $name, $value, $name);
     }
 
     /**
      * @param $operator
      * @param null $left
      * @param null $right
+     * @param null $type
      * @return $this
      */
-    public function binary($operator, $left = null, $right = null)
+    public function binary($operator, $left = null, $right = null, $type = null)
     {
-        $binary = new BinaryExpression($operator, $left, $right);
+        $binary = new BinaryExpression($operator, $left, $right, $type);
 
         if (!$this->isStackEmpty()) {
             $this->addChild($binary);
