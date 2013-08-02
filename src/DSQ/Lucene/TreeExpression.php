@@ -18,6 +18,11 @@ abstract class TreeExpression extends AbstractLuceneExpression
      */
     private $expressions = array();
 
+    /**
+     * @param LuceneExpression|mixed $value
+     * @param array $expressions
+     * @param float $boost
+     */
     public function __construct($value, array $expressions = array(), $boost = 1.0)
     {
         parent::__construct($value, $boost, $value);
