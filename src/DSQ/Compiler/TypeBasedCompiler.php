@@ -31,19 +31,23 @@ class TypeBasedCompiler implements Compiler
     /**
      * Register a transformation for the compiler
      *
-     * @param string $class The class of the expression that will be transformed
-     * @param string $type The type of the expression that will be transformed
-     * @param callable $transformation The transformation
-     * @return $this The current instance
+     * @param string|array $classes     The class or classes of the expressions that will be transformed
+     * @param string|array $types       The type/s of the expressions that will be transformed
+     * @param callable $transformation  The transformation
+     * @return $this                    The current instance
      *
      * @throws \InvalidArgumentException
      */
-    public function registerTransformation($transformation, $class = '*', $type = '*')
+    public function registerTransformation($transformation, $classes = '*', $types = '*')
     {
         if (!is_callable($transformation))
             throw new InvalidTransformationException('Transformations must be callable objects');
 
-        $this->transformations[$class][$type] = $transformation;
+        foreach ((array) $classes as $class) {
+            foreach ((array) $types as $type) {
+                $this->transformations[$class][$type] = $transformation;
+            }
+        }
 
         return $this;
     }

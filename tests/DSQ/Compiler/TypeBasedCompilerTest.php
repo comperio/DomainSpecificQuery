@@ -64,6 +64,28 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(call_user_func($this->transformationNic, $exp3, $compiler), $compiler->compile($exp3));
     }
 
+    public function testRegisterTransformationWithArrayClassesAndTypes()
+    {
+        $compiler = new TypeBasedCompiler;
+
+        $compiler->registerTransformation($transf = function() {return 'foo'; }, array('DSQ\Expression\BasicExpression', 'DSQ\Expression\TreeExpression'), 'type');
+
+        $this->assertEquals($transf, $compiler->getTransformation('DSQ\Expression\BasicExpression', 'type'));
+        $this->assertEquals($transf, $compiler->getTransformation('DSQ\Expression\TreeExpression', 'type'));
+
+        $compiler = new TypeBasedCompiler;
+        $compiler->registerTransformation($transf = function() {return 'foo'; }, 'MyClass', array('type1', 'type2'));
+        $this->assertEquals($transf, $compiler->getTransformation('MyClass', 'type1'));
+        $this->assertEquals($transf, $compiler->getTransformation('MyClass', 'type2'));
+
+        $compiler = new TypeBasedCompiler;
+        $compiler->registerTransformation($transf = function() {return 'foo'; }, array('Class1', 'Class2'), array('type1', 'type2'));
+        $this->assertEquals($transf, $compiler->getTransformation('Class1', 'type1'));
+        $this->assertEquals($transf, $compiler->getTransformation('Class1', 'type2'));
+        $this->assertEquals($transf, $compiler->getTransformation('Class2', 'type1'));
+        $this->assertEquals($transf, $compiler->getTransformation('Class2', 'type2'));
+    }
+
     public function testGetTransformationThrowsAnExceptionWhenRequestingAnUnregistedTransformation()
     {
         $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
