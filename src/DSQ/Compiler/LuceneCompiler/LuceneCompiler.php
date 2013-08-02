@@ -15,7 +15,7 @@ use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
-use DSQ\Lucene\BasicLuceneExpression;
+use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\FieldExpression;
 use DSQ\Lucene\RangeExpression;
@@ -26,16 +26,19 @@ class LuceneCompiler extends TypeBasedCompiler
     {
         $this
             ->registerTransformation(array($this, 'basicExpression'), '*', '*')
-            ->registerTransformation(array($this, 'fieldExpression'), '*', '=')
+            ->registerTransformation(array($this, 'fieldExpression'), 'DSQ\Expression\BinaryExpression')
             ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression')
+            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '>')
+            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '>=')
+            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '<')
+            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', '<=')
 
         ;
     }
 
     public function basicExpression(BasicExpression $expr, self $compiler)
     {
-        return new BasicLuceneExpression($expr->getValue());
+        return new TermExpression($expr->getValue());
     }
 
     public function fieldExpression(BinaryExpression $expr, self $compiler)
