@@ -11,7 +11,7 @@
 namespace DSQ\Test\Lucene;
 
 
-use DSQ\Lucene\BasicLuceneExpression;
+use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\PhraseExpression;
 
@@ -22,9 +22,9 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
         $expr = new BooleanExpression;
 
         $expr->setExpressions(array(
-            $e1 = new BasicLuceneExpression('foo'),
-            $e2 = new BasicLuceneExpression('bar'),
-            $e3 = new BasicLuceneExpression('baz'),
+            $e1 = new TermExpression('foo'),
+            $e2 = new TermExpression('bar'),
+            $e3 = new TermExpression('baz'),
         ));
 
         $this->assertEquals(array($e1, $e2, $e3), $expr->getExpressions());
@@ -35,9 +35,9 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
         $expr = new BooleanExpression;
 
         $expr
-            ->addExpression($e1 = new BasicLuceneExpression('foo'))
-            ->addExpression($e2 = new BasicLuceneExpression('bar'))
-            ->addExpression($e3 = new BasicLuceneExpression('baz'))
+            ->addExpression($e1 = new TermExpression('foo'))
+            ->addExpression($e2 = new TermExpression('bar'))
+            ->addExpression($e3 = new TermExpression('baz'))
         ;
 
         $this->assertEquals(array($e1, $e2, $e3), $expr->getExpressions());
@@ -48,9 +48,9 @@ class BooleanExpressionTest extends \PHPUnit_Framework_TestCase
         $expr = new BooleanExpression;
 
         $expr->setExpressions(array(
-            $e1 = new BasicLuceneExpression('foo'),
-            $e2 = new BasicLuceneExpression('bar'),
-            $e3 = new BasicLuceneExpression('baz'),
+            $e1 = new TermExpression('foo'),
+            $e2 = new TermExpression('bar'),
+            $e3 = new TermExpression('baz'),
         ));
 
         $this->assertEquals(3, $expr->numOfExpressions());

@@ -11,7 +11,7 @@
 namespace DSQ\Lucene;
 
 
-class MatchAllExpression extends BasicLuceneExpression
+class MatchAllExpression extends AbstractLuceneExpression
 {
     /**
      * @param float $boost

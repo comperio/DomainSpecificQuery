@@ -11,7 +11,7 @@
 namespace DSQ\Lucene;
 
 
-class BooleanExpression extends BasicLuceneExpression
+class BooleanExpression extends AbstractLuceneExpression
 {
     const SHOULD = "";
     const MUST = "+";

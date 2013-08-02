@@ -10,9 +10,10 @@
 
 namespace DSQ\Lucene;
 
+
 use DSQ\Expression\BasicExpression;
 
-class BasicLuceneExpression extends BasicExpression implements LuceneExpression
+abstract class AbstractLuceneExpression extends BasicExpression implements LuceneExpression
 {
     private $boost = 1.0;
 
@@ -21,7 +22,7 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
      * @param float $boost                       The boost factor
      * @param string $type                       The type of the expression
      */
-    public function __construct($value, $boost = 1.0, $type = 'basic')
+    public function __construct($value, $boost = 1.0, $type)
     {
         parent::__construct($value, $type);
 
@@ -94,18 +95,12 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     /**
      * @return string
      */
-    public function __toString()
-    {
-        return (string) $this->escape($this->getValue()) . $this->boostSuffix();
-    }
+    public abstract function __toString();
 
     /**
      * {@inheritdoc}
      */
-    public function hasPrecedence($expression)
-    {
-        return strstr($this->getValue(), ' ') === false;
-    }
+    public abstract function hasPrecedence($expression);
 
 
     /**
@@ -120,7 +115,7 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
     }
 
     /**
-     * Wrap the value around a BasicLuceneExpression if $value is not already a lucene expression
+     * Wrap the value around a TermExpression if $value is not already a lucene expression
      * @param mixed $value
      * @return LuceneExpression
      */
@@ -129,6 +124,6 @@ class BasicLuceneExpression extends BasicExpression implements LuceneExpression
         if ($value instanceof LuceneExpression)
             return $value;
 
-        return new self($value);
+        return new TermExpression($value);
     }
-}
+} 

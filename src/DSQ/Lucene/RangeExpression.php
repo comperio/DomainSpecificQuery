@@ -11,7 +11,7 @@
 namespace DSQ\Lucene;
 
 
-class RangeExpression extends BasicLuceneExpression
+class RangeExpression extends AbstractLuceneExpression
 {
     private $includeLeft = true;
     private $includeRight = true;

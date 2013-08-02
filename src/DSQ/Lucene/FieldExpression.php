@@ -10,7 +10,7 @@
 
 namespace DSQ\Lucene;
 
-class FieldExpression extends BasicLuceneExpression
+class FieldExpression extends AbstractLuceneExpression
 {
     /**
      * @param string $fieldname

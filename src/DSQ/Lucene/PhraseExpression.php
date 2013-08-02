@@ -10,7 +10,7 @@
 
 namespace DSQ\Lucene;
 
-class PhraseExpression extends BasicLuceneExpression
+class PhraseExpression extends AbstractLuceneExpression
 {
     private $slope = 0;
 

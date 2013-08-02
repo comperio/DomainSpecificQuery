@@ -15,11 +15,11 @@ use DSQ\Lucene\FieldExpression;
 
 class FieldExpressionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testValueIsConvertedToBasicExpressionIfANonExpressionValueIsGiven()
+    public function testValueIsConvertedToTermExpressionIfANonExpressionValueIsGiven()
     {
         $field = new FieldExpression('field', 'value');
 
-        $this->assertInstanceOf('DSQ\Lucene\BasicLuceneExpression', $field->getValue());
+        $this->assertInstanceOf('DSQ\Lucene\TermExpression', $field->getValue());
     }
 
     public function testToString()
