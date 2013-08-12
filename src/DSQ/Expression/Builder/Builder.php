@@ -135,6 +135,19 @@ class Builder
     }
 
     /**
+     * Magic method to create tree nodes
+     *
+     * @param $name
+     * @param array $args
+     *
+     * @return $this
+     */
+    public function __call($name, $args)
+    {
+        return $this->tree($name);
+    }
+
+    /**
      * Return the current expression and empty the stack
      *
      * @throws EmptyStackException

@@ -152,7 +152,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
         /** @var TreeExpression $exp */
         $exp = $builder
-            ->tree('AND')
+            //Magic method calls for
+            ->AND()
                 ->field('foo', 'bar')
                 ->field('hei', 'man')
                 ->tree('OR')
