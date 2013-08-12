@@ -28,13 +28,13 @@ class TreeExpression extends BasicExpression
 
 
     /**
-     * @param Expression $child
+     * @param Expression|mixed $child
      *
      * @return $this The current instance
      */
-    public function addChild(Expression $child)
+    public function addChild($child)
      {
-         $this->children[] = $child;
+         $this->children[] = $this->buildExpression($child);
 
          return $this;
      }
@@ -75,7 +75,7 @@ class TreeExpression extends BasicExpression
     }
 
     /**
-     * @param Expression[] $children
+     * @param Expression|mixed[] $children
      *
      * @return $this The current instance
      */
