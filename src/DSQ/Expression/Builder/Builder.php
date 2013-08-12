@@ -107,17 +107,26 @@ class Builder
      * Build a tree expression
      *
      * @param mixed $value
+     * @param $arg1,... an optional list of values
      *
      * @return $this
      */
-    public function tree($value)
+    public function tree($value /*, $arg1, $arg2..*/)
     {
+        $children = func_get_args();
+        array_shift($children);
+
         $tree = new TreeExpression($value);
 
         if (!$this->isStackEmpty())
             $this->addChild($tree);
 
-        $this->push($tree);
+        foreach ($children as $arg) {
+            $tree->addChild($arg);
+        }
+
+        if (!$children)
+            $this->push($tree);
 
         return $this;
     }
@@ -144,7 +153,9 @@ class Builder
      */
     public function __call($name, $args)
     {
-        return $this->tree($name);
+        array_unshift($args, $name);
+
+        return call_user_func_array(array($this, 'tree'), $args);
     }
 
     /**

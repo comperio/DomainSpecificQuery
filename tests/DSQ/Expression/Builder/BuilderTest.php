@@ -152,10 +152,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
         /** @var TreeExpression $exp */
         $exp = $builder
-            //Magic method calls for
+            //Magic method calls for tree nodes
             ->AND()
                 ->field('foo', 'bar')
-                ->field('hei', 'man')
+                ->not('foo', 'bar')
                 ->tree('OR')
                     ->field('hi', 'all')
                     ->field('my', 'god')
@@ -176,6 +176,12 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $child1);
         $this->assertEquals('AND', $exp->getValue());
         $this->assertEquals('foo', $child1->getLeft()->getValue());
+
+        $this->assertInstanceOf('DSQ\Expression\TreeExpression', $child2);
+        $this->assertEquals('not', $child2->getValue());
+        $subchildren = $child2->getChildren();
+        $this->assertInstanceOf('DSQ\Expression\BasicExpression', $subchildren[0]);
+        $this->assertInstanceOf('DSQ\Expression\BasicExpression', $subchildren[1]);
 
         $this->assertInstanceOf('DSQ\Expression\TreeExpression', $child3);
         $this->assertEquals('OR', $child3->getValue());
