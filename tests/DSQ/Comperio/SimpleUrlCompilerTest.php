@@ -13,14 +13,14 @@ use DSQ\Expression\BinaryExpression;
 
 class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
 {
-    public function testDumpWithEmptyTree()
+    public function testCompileWithEmptyTree()
     {
         $compiler = new SimpleUrlCompiler;
 
         $this->assertEquals(array(), $compiler->compile(new TreeExpression('and')));
     }
 
-    public function testDumpWithOnlyOneConditionPerTypeCondition()
+    public function testCompileWithOnlyOneConditionPerTypeCondition()
     {
         $compiler = new SimpleUrlCompiler;
 
@@ -48,7 +48,7 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testDumpWithMultipleConditions()
+    public function testCompileWithMultipleConditions()
     {
         $compiler = new SimpleUrlCompiler;
 
