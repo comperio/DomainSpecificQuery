@@ -7,7 +7,7 @@
  *
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
-use DSQ\Comperio\AdvancedUrlCompiler;
+use DSQ\Comperio\Compiler\AdvancedUrlCompiler;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BinaryExpression;
 
@@ -64,7 +64,7 @@ class AdvancedUrlCompilerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException DSQ\Comperio\OutOfBoundsExpressionException
+     * @expectedException DSQ\Comperio\Compiler\OutOfBoundsExpressionException
      */
     public function testExceptionIsThrownWhenMainTreeIsNotAnAndTree()
     {

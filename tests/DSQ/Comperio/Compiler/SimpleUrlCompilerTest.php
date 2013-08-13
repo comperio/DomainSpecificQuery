@@ -7,7 +7,7 @@
  *
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
-use DSQ\Comperio\SimpleUrlCompiler;
+use DSQ\Comperio\Compiler\SimpleUrlCompiler;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BinaryExpression;
 
@@ -82,7 +82,7 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException DSQ\Comperio\OutOfBoundsExpressionException
+     * @expectedException DSQ\Comperio\Compiler\OutOfBoundsExpressionException
      */
     public function testExceptionIsThrownWhenMainTreeIsNotAnAndTree()
     {
@@ -93,7 +93,7 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException DSQ\Comperio\OutOfBoundsExpressionException
+     * @expectedException DSQ\Comperio\Compiler\OutOfBoundsExpressionException
      */
     public function testExceptionIsThrownWhenFirstLevelSubtreesAreNotOfTheExpectedOperator()
     {

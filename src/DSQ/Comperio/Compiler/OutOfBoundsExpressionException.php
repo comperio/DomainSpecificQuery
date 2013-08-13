@@ -8,7 +8,7 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-namespace DSQ\Comperio;
+namespace DSQ\Comperio\Compiler;
 
 
 class OutOfBoundsExpressionException extends \OutOfBoundsException
