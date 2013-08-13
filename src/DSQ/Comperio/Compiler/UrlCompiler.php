@@ -83,7 +83,7 @@ abstract class UrlCompiler implements Compiler
 
         foreach ($tree->getChildren() as $child) {
             $ary[] = $this->fieldToAry($child);
-            $this->fieldsCount[$op][(string) $child->getLeft()->getValue()]++;
+            $this->updateFieldsCount($op, (string) $child->getLeft()->getValue());
         }
 
         return $ary;
@@ -104,5 +104,17 @@ abstract class UrlCompiler implements Compiler
             throw new OutOfBoundsExpressionException("Field Expression operand is not \"=\" (it is \"{$field->getValue()}\")");
 
         return array((string) $field->getLeft()->getValue(), (string) $field->getRight()->getValue());
+    }
+
+    /**
+     * @param $op
+     * @param $fieldname
+     */
+    private function updateFieldsCount($op, $fieldname)
+    {
+        if (isset($this->fieldsCount[$op][$fieldname]))
+            $this->fieldsCount[$op][$fieldname]++;
+        else
+            $this->fieldsCount[$op][$fieldname] = 1;
     }
 } 

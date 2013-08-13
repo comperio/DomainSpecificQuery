@@ -65,6 +65,8 @@ class SimpleUrlCompiler extends UrlCompiler
         foreach ($childrenAry as $fieldValuePair) {
             list($field, $value) = $fieldValuePair;
             $count = $this->fieldsCount[$op][$field];
+            if (!isset($localFieldsCount[$op][$field]))
+                $localFieldsCount[$op][$field] = 0;
             $localFieldsCount[$op][$field]++;
             $suffix = $count == 1 ? '' : "_{$localFieldsCount[$op][$field]}";
             $dump["$prefix$field$suffix"] = $value;
