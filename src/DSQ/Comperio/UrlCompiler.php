@@ -10,25 +10,31 @@
 
 namespace DSQ\Comperio;
 
-
+use DSQ\Compiler\Compiler;
+use DSQ\Expression\Expression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
 
-class UrlDumper
+/**
+ * Class UrlCompiler
+ * @package DSQ\Comperio
+ *
+ * This class compile an expression to a querystring-like array.
+ * The format of the array reflects the one used in DiscoveryNG
+ * @link http://www.comperio.it/soluzioni/discoveryng/panoramica/
+ */
+class UrlCompiler implements Compiler
 {
     private $fieldsCount;
 
     /**
-     * Convert a tree expression to a querystring-like array
-     *
-     * @param TreeExpression $tree
-     * @return array
+     * {@inheritdoc}
      */
-    public function dump(TreeExpression $tree)
+    public function compile(Expression $tree)
     {
         if ($tree->getValue() != 'and')
             throw new OutOfBoundsExpressionException("Root expression must be an and expression");
-        
+
         $this->fieldsCount = array();
         $expressionAry = $this->treeToAry($tree);
         $dump = array();
@@ -40,6 +46,17 @@ class UrlDumper
         ;
 
         return $dump;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transform($expression)
+    {
+        if ($expression instanceof Expression)
+            return $this->compile($expression);
+
+        return $expression;
     }
 
     /**

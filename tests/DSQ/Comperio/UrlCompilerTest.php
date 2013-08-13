@@ -7,22 +7,22 @@
  *
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
-use DSQ\Comperio\UrlDumper;
+use DSQ\Comperio\UrlCompiler;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BinaryExpression;
 
-class UrlDumperTest extends PHPUnit_Framework_TestCase
+class UrlCompilerTest extends PHPUnit_Framework_TestCase
 {
     public function testDumpWithEmptyTree()
     {
-        $dumper = new UrlDumper;
+        $compiler = new UrlCompiler;
 
-        $this->assertEquals(array(), $dumper->dump(new TreeExpression('and')));
+        $this->assertEquals(array(), $compiler->compile(new TreeExpression('and')));
     }
 
     public function testDumpWithOnlyOneConditionPerTypeCondition()
     {
-        $dumper = new UrlDumper;
+        $compiler = new UrlCompiler;
 
         //One and condition
         $expr = new TreeExpression('and');
@@ -32,25 +32,25 @@ class UrlDumperTest extends PHPUnit_Framework_TestCase
             ->addChild(new BinaryExpression('=', 'foo', 'bar'))
         ;
 
-        $this->assertEquals(array('foo' => 'bar'), $dumper->dump($expr));
+        $this->assertEquals(array('foo' => 'bar'), $compiler->compile($expr));
 
         //One and condition and one not condition
         $expr->addChild($not = new TreeExpression('not'));
         $not->addChild(new BinaryExpression('=', 'foo', 'baz'));
 
-        $this->assertEquals(array('foo' => 'bar', '-foo' => 'baz'), $dumper->dump($expr));
+        $this->assertEquals(array('foo' => 'bar', '-foo' => 'baz'), $compiler->compile($expr));
 
         //One not condition
         $expr = new TreeExpression('and');
         $expr->addChild($not = new TreeExpression('not'));
         $not->addChild(new BinaryExpression('=', 'foo', 'bar'));
-        $this->assertEquals(array('-foo' => 'bar'), $dumper->dump($expr));
+        $this->assertEquals(array('-foo' => 'bar'), $compiler->compile($expr));
 
     }
 
     public function testDumpWithMultipleConditions()
     {
-        $dumper = new UrlDumper;
+        $compiler = new UrlCompiler;
 
                 $expr = new TreeExpression('and');
                 $expr->addChild($and = new TreeExpression('and'));
@@ -61,7 +61,7 @@ class UrlDumperTest extends PHPUnit_Framework_TestCase
                     ->addChild(new BinaryExpression('=', 'nic', 'mart'))
                 ;
 
-                $this->assertEquals(array('foo_1' => 'bar', 'foo_2' => 'baz', 'nic' => 'mart'), $dumper->dump($expr));
+                $this->assertEquals(array('foo_1' => 'bar', 'foo_2' => 'baz', 'nic' => 'mart'), $compiler->compile($expr));
 
                 $expr->addChild($not = new TreeExpression('not'));
                 $not
@@ -78,7 +78,7 @@ class UrlDumperTest extends PHPUnit_Framework_TestCase
                         '-foo_2' => 'baz',
                         '-nic' => 'mart'
                     ),
-                    $dumper->dump($expr));
+                    $compiler->compile($expr));
     }
 
     /**
@@ -86,10 +86,10 @@ class UrlDumperTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionIsThrownWhenMainTreeIsNotAnAndTree()
     {
-        $dumper = new UrlDumper;
+        $compiler = new UrlCompiler;
         $tree = new TreeExpression('xor');
 
-        $dumper->dump($tree);
+        $compiler->compile($tree);
     }
 
     /**
@@ -97,11 +97,11 @@ class UrlDumperTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionIsThrownWhenFirstLevelSubtreesAreNotOfTheExpectedOperator()
     {
-        $dumper = new UrlDumper;
+        $compiler = new UrlCompiler;
         $tree = new TreeExpression('and');
 
         $tree->addChild(new TreeExpression('xor'));
-        $dumper->dump($tree);
+        $compiler->compile($tree);
     }
 }
  
