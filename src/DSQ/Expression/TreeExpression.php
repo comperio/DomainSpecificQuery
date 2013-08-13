@@ -75,6 +75,20 @@ class TreeExpression extends BasicExpression
     }
 
     /**
+     * @param int $index The index of the child
+     *
+     * @throws \OutOfRangeException
+     * @return Expression
+     */
+    public function getChild($index = 0)
+    {
+        if (isset($this->children[$index]))
+            return $this->children[$index];
+
+        throw new \OutOfRangeException("There is no child at index $index");
+    }
+
+    /**
      * @param Expression|mixed[] $children
      *
      * @return $this The current instance

@@ -38,6 +38,21 @@ class TreeExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($child1, $child2, $child3), $this->tree->getChildren());
     }
 
+    public function testGetChild()
+    {
+        $this->tree
+            ->addChild($child1 = new BasicExpression('child1'))
+            ->addChild($child2 = new BasicExpression('child2'))
+        ;
+
+        $this->assertEquals($child1, $this->tree->getChild());
+        $this->assertEquals($child2, $this->tree->getChild(1));
+
+        $this->setExpectedException('OutOfRangeException');
+
+        $this->tree->getChild(2);
+    }
+
     public function testAddChildrenConvertNonExpressionsToBasicExpressions()
     {
         $this->tree->addChild('foo');
