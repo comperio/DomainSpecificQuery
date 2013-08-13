@@ -23,30 +23,9 @@ use DSQ\Expression\TreeExpression;
  * The format of the array reflects the one used in DiscoveryNG
  * @link http://www.comperio.it/soluzioni/discoveryng/panoramica/
  */
-class UrlCompiler implements Compiler
+abstract class UrlCompiler implements Compiler
 {
-    private $fieldsCount;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function compile(Expression $tree)
-    {
-        if ($tree->getValue() != 'and')
-            throw new OutOfBoundsExpressionException("Root expression must be an and expression");
-
-        $this->fieldsCount = array();
-        $expressionAry = $this->treeToAry($tree);
-        $dump = array();
-
-        $this
-            ->sanitize($expressionAry)
-            ->dumpSubtree('and', $expressionAry[0], $dump)
-            ->dumpSubtree('not', $expressionAry[1], $dump)
-        ;
-
-        return $dump;
-    }
+    protected $fieldsCount;
 
     /**
      * {@inheritdoc}
@@ -57,22 +36,6 @@ class UrlCompiler implements Compiler
             return $this->compile($expression);
 
         return $expression;
-    }
-
-    /**
-     * Returns true if all children of $tree fulfill $condition
-     *
-     * @param TreeExpression $tree
-     * @param callable $condition
-     * @return bool
-     */
-    protected function all(TreeExpression $tree, $condition)
-    {
-        foreach ($tree->getChildren() as $child) {
-            if (!$condition($child))
-                return false;
-        }
-        return true;
     }
 
     /**
@@ -89,6 +52,7 @@ class UrlCompiler implements Compiler
      */
     protected function treeToAry(TreeExpression $tree)
     {
+        $this->fieldsCount = array();
         $ary = array();
 
         foreach ($tree->getChildren() as $child) {
@@ -112,7 +76,7 @@ class UrlCompiler implements Compiler
      * @param TreeExpression $tree
      * @return array
      */
-    protected function subtreeToAry(TreeExpression $tree)
+    private function subtreeToAry(TreeExpression $tree)
     {
         $ary = array();
         $op = $tree->getValue();
@@ -134,64 +98,11 @@ class UrlCompiler implements Compiler
      * @return array
      * @throws OutOfBoundsExpressionException Thrown when the operator is not '='
      */
-    protected function fieldToAry(BinaryExpression $field)
+    private function fieldToAry(BinaryExpression $field)
     {
         if ($field->getValue() != '=')
             throw new OutOfBoundsExpressionException("Field Expression operand is not \"=\" (it is \"{$field->getValue()}\")");
 
         return array((string) $field->getLeft()->getValue(), (string) $field->getRight()->getValue());
-    }
-
-    /**
-     * @param $expectedOp
-     * @param array $expressionAry
-     * @param array $dump The dumped subtree will be added to this array
-     * @return $this The current instance
-     * @throws OutOfBoundsExpressionException
-     */
-    private function dumpSubtree($expectedOp, array $expressionAry, array &$dump)
-    {
-        $localFieldsCount = array();
-        list($op, $childrenAry) = $expressionAry;
-
-        if ($op != $expectedOp)
-            throw new OutOfBoundsExpressionException("First level subtree do not match the expected operator (it is \"$op}\", it should be \"$expectedOp\")");
-
-        $prefix = $expectedOp == 'not' ? '-' : '';
-
-        foreach ($childrenAry as $fieldValuePair) {
-            list($field, $value) = $fieldValuePair;
-            $count = $this->fieldsCount[$op][$field];
-            $localFieldsCount[$op][$field]++;
-            $suffix = $count == 1 ? '' : "_{$localFieldsCount[$op][$field]}";
-            $dump["$prefix$field$suffix"] = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sanitize the expression array putting empty and or not expressions
-     * when necessary
-     *
-     * @param array $expressionAry  An array returned by treeToAry()
-     * @see treeToAry()
-     * @return $this
-     */
-    private function sanitize(array &$expressionAry)
-    {
-        if (count($expressionAry) == 0) {
-            $expressionAry[] = array('and', array());
-        }
-
-        if (count($expressionAry) == 1) {
-            if ('and' == $expressionAry[0][0]) {
-                $expressionAry[] = array('not', array());
-            } else {
-                array_unshift($expressionAry, array('and', array()));
-            }
-        }
-
-        return $this;
     }
 } 

@@ -7,22 +7,22 @@
  *
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
-use DSQ\Comperio\UrlCompiler;
+use DSQ\Comperio\SimpleUrlCompiler;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BinaryExpression;
 
-class UrlCompilerTest extends PHPUnit_Framework_TestCase
+class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
 {
     public function testDumpWithEmptyTree()
     {
-        $compiler = new UrlCompiler;
+        $compiler = new SimpleUrlCompiler;
 
         $this->assertEquals(array(), $compiler->compile(new TreeExpression('and')));
     }
 
     public function testDumpWithOnlyOneConditionPerTypeCondition()
     {
-        $compiler = new UrlCompiler;
+        $compiler = new SimpleUrlCompiler;
 
         //One and condition
         $expr = new TreeExpression('and');
@@ -50,7 +50,7 @@ class UrlCompilerTest extends PHPUnit_Framework_TestCase
 
     public function testDumpWithMultipleConditions()
     {
-        $compiler = new UrlCompiler;
+        $compiler = new SimpleUrlCompiler;
 
                 $expr = new TreeExpression('and');
                 $expr->addChild($and = new TreeExpression('and'));
@@ -86,7 +86,7 @@ class UrlCompilerTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionIsThrownWhenMainTreeIsNotAnAndTree()
     {
-        $compiler = new UrlCompiler;
+        $compiler = new SimpleUrlCompiler;
         $tree = new TreeExpression('xor');
 
         $compiler->compile($tree);
@@ -97,7 +97,7 @@ class UrlCompilerTest extends PHPUnit_Framework_TestCase
      */
     public function testExceptionIsThrownWhenFirstLevelSubtreesAreNotOfTheExpectedOperator()
     {
-        $compiler = new UrlCompiler;
+        $compiler = new SimpleUrlCompiler;
         $tree = new TreeExpression('and');
 
         $tree->addChild(new TreeExpression('xor'));
