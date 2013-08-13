@@ -8,7 +8,7 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-namespace DSQ\ComperioParser;
+namespace DSQ\Comperio\Parser;
 
 
 use DSQ\Expression\Builder\Builder;
