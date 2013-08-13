@@ -12,7 +12,6 @@ namespace DSQ\Comperio;
 
 
 use DSQ\Expression\BinaryExpression;
-use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
 
 class UrlDumper
@@ -27,6 +26,10 @@ class UrlDumper
      */
     public function dump(TreeExpression $tree)
     {
+        if ($tree->getValue() != 'and')
+            throw new OutOfBoundsExpressionException("Root expression must be an and expression");
+        
+        $this->fieldsCount = array();
         $expressionAry = $this->treeToAry($tree);
         $dump = array();
 
@@ -131,17 +134,19 @@ class UrlDumper
      */
     private function dumpSubtree($expectedOp, array $expressionAry, array &$dump)
     {
+        $localFieldsCount = array();
         list($op, $childrenAry) = $expressionAry;
 
         if ($op != $expectedOp)
-            throw new OutOfBoundsExpressionException("First level subtree do not match the expected operator (it is \"{$tree->getValue()}\", it should be \"$expectedOp\")");
+            throw new OutOfBoundsExpressionException("First level subtree do not match the expected operator (it is \"$op}\", it should be \"$expectedOp\")");
 
         $prefix = $expectedOp == 'not' ? '-' : '';
 
         foreach ($childrenAry as $fieldValuePair) {
             list($field, $value) = $fieldValuePair;
             $count = $this->fieldsCount[$op][$field];
-            $suffix = $count == 1 ? '' : "_$count";
+            $localFieldsCount[$op][$field]++;
+            $suffix = $count == 1 ? '' : "_{$localFieldsCount[$op][$field]}";
             $dump["$prefix$field$suffix"] = $value;
         }
 
@@ -158,6 +163,10 @@ class UrlDumper
      */
     private function sanitize(array &$expressionAry)
     {
+        if (count($expressionAry) == 0) {
+            $expressionAry[] = array('and', array());
+        }
+
         if (count($expressionAry) == 1) {
             if ('and' == $expressionAry[0][0]) {
                 $expressionAry[] = array('not', array());
