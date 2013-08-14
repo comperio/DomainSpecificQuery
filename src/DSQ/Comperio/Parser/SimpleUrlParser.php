@@ -15,8 +15,10 @@ class SimpleUrlParser extends UrlParser
 {
     /**
      * {@inheritdoc}
+     * @param array $array
+     * @return array|mixed
      */
-    public function normalize($array)
+    public function normalize(array $array)
     {
         $normalized = array(
             array('and', $and = array()),

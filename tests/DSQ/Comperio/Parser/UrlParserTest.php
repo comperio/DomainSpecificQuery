@@ -32,7 +32,7 @@ class UrlParserTest extends PHPUnit_Framework_TestCase
 
     public function testParse()
     {
-        $expr = $this->parser->parse('');
+        $expr = $this->parser->parse(array());
 
         $this->assertInstanceOf('DSQ\Expression\TreeExpression', $expr);
         $this->assertEquals('and', $expr->getValue());

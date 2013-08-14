@@ -74,10 +74,10 @@ abstract class UrlParser implements Parser
      * Transform the value to an array which form is like the one described in
      * @see UrlCompiler::treeToAry()
      *
-     * @param $array
+     * @param array $array
      * @return mixed
      */
-    abstract public function normalize($array);
+    abstract public function normalize(array $array);
 
     /**
      * Transform a string of the form x_y to the array [x,y]
