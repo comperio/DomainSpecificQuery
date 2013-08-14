@@ -9,7 +9,7 @@
  */
 
 use DSQ\Comperio\Parser\SimpleUrlParser;
-class SimpleParserTest extends PHPUnit_Framework_TestCase
+class SimpleUrlParserTest extends PHPUnit_Framework_TestCase
 {
 
     public function testNormalizeWithOnlyOneValuePerType()
