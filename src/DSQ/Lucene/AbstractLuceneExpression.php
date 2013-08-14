@@ -22,7 +22,7 @@ abstract class AbstractLuceneExpression extends BasicExpression implements Lucen
      * @param float $boost                       The boost factor
      * @param string $type                       The type of the expression
      */
-    public function __construct($value, $boost = 1.0, $type)
+    public function __construct($value, $boost = 1.0, $type = 'basic')
     {
         parent::__construct($value, $type);
 
