@@ -12,33 +12,6 @@ use DSQ\Comperio\Parser\AdvancedUrlParser;
 
 class AdvancedParserTest extends PHPUnit_Framework_TestCase
 {
-    public function malformedUrls()
-    {
-        return array(
-            array(array(
-                'op_1' => 'and',
-                'field_1' => 'foo',
-                'value_1' => 'bar',
-                'lop_1' => '2',
-            )),
-            array(array(
-                'op_1' => 'and',
-                'value_1' => 'bar',
-                'lop_1' => '1',
-            )),
-            array(array(
-                'op_1' => 'and',
-                'field_1' => 'foo',
-                'lop_1' => '1',
-            )),
-            array(array(
-                'op_1' => 'and',
-                'field_1' => 'foo',
-                'value_1' => 'bar',
-            ))
-        );
-    }
-
     public function testNormalize()
     {
         $parser = new AdvancedUrlParser();
@@ -89,5 +62,37 @@ class AdvancedParserTest extends PHPUnit_Framework_TestCase
         $parser = new AdvancedUrlParser;
 
         $parser->parse($url);
+    }
+
+    public function malformedUrls()
+    {
+        return array(
+            array(array(
+                'op_1' => 'and',
+                'field_1' => 'foo',
+                'value_1' => 'bar',
+                'lop_1' => '2',
+            )),
+            array(array(
+                'op_1' => 'and',
+                'value_1' => 'bar',
+                'lop_1' => '1',
+            )),
+            array(array(
+                'op_1' => 'and',
+                'field_1' => 'foo',
+                'lop_1' => '1',
+            )),
+            array(array(
+                'op_1' => 'and',
+                'field_1' => 'foo',
+                'value_1' => 'bar',
+            )),
+            array(array(
+                'field_1' => 'foo',
+                'value_1' => 'bar',
+                'lop_1' => '1',
+            )),
+        );
     }
 }
