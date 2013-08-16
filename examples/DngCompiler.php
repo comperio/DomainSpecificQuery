@@ -14,7 +14,7 @@ use DSQ\Compiler\LuceneCompiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
 
 include '../vendor/autoload.php';
-
+$start = microtime(true);
 $compiler = new LuceneCompiler;
 $builder = new Builder;
 
@@ -32,6 +32,11 @@ $compiler
             $compiler->template($seriesTpl, true)
         ), '*', 'series'
     )
+    ->registerTransformation($compiler->field('facets_class'), '*', 'dewey')
+    ->registerTransformation($compiler->field('fldin_txt_fulltextattach'), '*', 'fulltext-atc')
+    ->registerTransformation($compiler->field('fldin_txt_class'), '*', 'classtxt')
+    ->registerTransformation($compiler->field('fldin_txt_class'), '*', 'classtxt')
+    //missing: class field (it's a composite field)
 ;
 
 $expression = $builder
@@ -39,3 +44,5 @@ $expression = $builder
     ->getExpression();
 
 var_dump((string) $compiler->compile($expression));
+
+var_dump(microtime(true) - $start);
