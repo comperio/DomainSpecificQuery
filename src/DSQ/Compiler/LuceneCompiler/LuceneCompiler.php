@@ -12,6 +12,7 @@ namespace DSQ\Compiler\LuceneCompiler;
 
 
 use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\UnregisteredTransformationException;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\Expression;
@@ -76,7 +77,8 @@ class LuceneCompiler extends TypeBasedCompiler
         $transformations = func_get_args();
         array_shift($transformations);
 
-        return function(Expression $expr, $compiler) use ($op, $transformations) {
+        return function(Expression $expr, $compiler) use ($op, $transformations)
+        {
             $tree = new SpanExpression(strtoupper($op));
 
             foreach ($transformations as $transformation) {
@@ -89,6 +91,20 @@ class LuceneCompiler extends TypeBasedCompiler
         return $tree;
     }
 
+    public function regexps(array $regexpsMap)
+    {
+        return function(BinaryExpression $expr, $compiler) use ($regexpsMap)
+        {
+            $value = $expr->getRight()->getValue();
+
+            foreach ($regexpsMap as $regexp => $transformation) {
+                if (preg_match($regexp, $value))
+                    return $transformation($expr, $compiler);
+            }
+
+            throw new UnregisteredTransformationException("There is no transformation matching the value \"$value\"");
+        };
+    }
 
     public function basicExpression(BasicExpression $expr, self $compiler)
     {
