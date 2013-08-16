@@ -41,7 +41,7 @@ class LuceneCompiler extends TypeBasedCompiler
     {
         return function(BinaryExpression $expr, self $compiler) use ($fieldName, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr, $phrase);
+            $value = $compiler->phrasize($expr->getRight(), $phrase);
 
             return new FieldExpression($fieldName, $value, $boost);
         };
@@ -51,9 +51,9 @@ class LuceneCompiler extends TypeBasedCompiler
     {
         return function(BinaryExpression $expr, self $compiler) use ($fieldNames, $op, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr, $phrase);
+            $value = $compiler->phrasize($expr->getRight(), $phrase);
 
-            $tree = new SpanExpression($op, array(), $boost);
+            $tree = new SpanExpression(strtoupper($op), array(), $boost);
 
             foreach ($fieldNames as $fieldName) {
                 $tree->addExpression(new FieldExpression($fieldName, $value));
@@ -63,11 +63,11 @@ class LuceneCompiler extends TypeBasedCompiler
         };
     }
 
-    public function template($template, $phrase = false, $boost = 1.0)
+    public function template($template, $phrase = false, $escape = true, $boost = 1.0)
     {
-        return function (Expression $expr, self $compiler) use ($template, $phrase, $boost)
+        return function (BinaryExpression $expr, self $compiler) use ($template, $phrase, $escape, $boost)
         {
-            return new TemplateExpression($template, $compiler->phrasize($expr), $boost);
+            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight(), $phrase, $escape), $boost);
         };
     }
 
@@ -77,10 +77,10 @@ class LuceneCompiler extends TypeBasedCompiler
         array_shift($transformations);
 
         return function(Expression $expr, $compiler) use ($op, $transformations) {
-            $tree = new SpanExpression($op);
+            $tree = new SpanExpression(strtoupper($op));
 
             foreach ($transformations as $transformation) {
-                $tree->addExpression($transformation($expr));
+                $tree->addExpression($transformation($expr, $compiler));
             }
 
             return $tree;
@@ -164,10 +164,18 @@ class LuceneCompiler extends TypeBasedCompiler
         return new FieldExpression($fieldname, new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight));
     }
 
-    public function phrasize(BinaryExpression $expr, $phrase = true)
+    public function phrasize(Expression $expr, $phrase = true)
     {
         return $phrase
-            ? new PhraseExpression($expr->getRight()->getValue())
-            : $expr->getRight()->getValue();
+            ? new PhraseExpression($expr->getValue())
+            : $expr->getValue();
+    }
+
+    public function phrasizeOrTermize(Expression $expr, $phrase = true, $escape = true)
+    {
+        return $phrase
+            ? new PhraseExpression($expr->getValue())
+            : ($escape ? new TermExpression($expr->getValue()) : $expr->getValue())
+        ;
     }
 } 
