@@ -31,11 +31,11 @@ $expression = $builder
 var_dump($expression, (string) $compiler->compile($expression));
 
 $expression = $builder
-    ->tree('and')
+    ->and()
         ->field('fieldname', 'ciao a a tutti: io sono Nic')
         ->value('mah')
         ->field('title', 'che bel titolo')
-        ->tree('or')
+        ->or()
             ->value('ciao')
             ->field('author')
                 ->value('manzoni alessandro')
