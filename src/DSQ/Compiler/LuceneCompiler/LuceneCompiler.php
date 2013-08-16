@@ -15,6 +15,7 @@ use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
+use DSQ\Lucene\PhraseExpression;
 use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
@@ -32,6 +33,35 @@ class LuceneCompiler extends TypeBasedCompiler
             ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', array('>', '>=', '<', '<='))
             ->registerTransformation(array($this, 'rangeExpression'), 'DSQ\Expression\BinaryExpression', 'range')
         ;
+    }
+
+    public function fieldTransformation($fieldName, $phrase = false, $boost = 1.0)
+    {
+        return function(BinaryExpression $expr, self $compiler) use ($fieldName, $phrase, $boost)
+        {
+            $value = $phrase
+                ? new PhraseExpression($expr->getRight()->getValue())
+                : $expr->getRight()->getValue();
+
+            return new FieldExpression($fieldName, $value, $boost);
+        };
+    }
+
+    public function treeTransformation(array $fieldNames, $op = 'and', $phrase = false, $boost = 1.0)
+    {
+        return function(BinaryExpression $expr, self $compiler) use ($fieldNames, $op, $phrase, $boost)
+        {
+            $value = $phrase
+                ? new PhraseExpression($expr->getRight()->getValue())
+                : $expr->getRight()->getValue();
+
+            $tree = new SpanExpression($op, array(), $boost);
+
+            foreach ($fieldNames as $fieldName) {
+                $tree->addExpression(new FieldExpression($fieldName, $value));
+            }
+            return $tree;
+        };
     }
 
     public function basicExpression(BasicExpression $expr, self $compiler)
