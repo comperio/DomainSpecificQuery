@@ -38,7 +38,10 @@ class TemplateExpression extends AbstractLuceneExpression
      */
     public function __toString()
     {
-        $result = $this->getEngine()->render($this->template, $this->getValue());
+        $value = $this->getValue();
+        $value = is_array($value) ? $value : (string) $value;
+
+        $result = $this->getEngine()->render($this->template, $value);
 
         if ($this->getBoost() != 1.0)
             $result = "($result)" . $this->boostSuffix();

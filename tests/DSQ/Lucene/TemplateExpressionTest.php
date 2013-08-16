@@ -11,6 +11,7 @@
 namespace DSQ\Test\Lucene;
 
 
+use DSQ\Lucene\PhraseExpression;
 use DSQ\Lucene\TemplateExpression;
 use DSQ\Lucene\TermExpression;
 
@@ -45,6 +46,13 @@ class TemplateExpressionTest extends \PHPUnit_Framework_TestCase
 
         $expr->setBoost(3.14);
         $this->assertEquals("(field1:foo OR field3:bar OR field2:apples)^3.14", (string) $expr);
+    }
+
+    public function testToStringWithAnExpressionValue()
+    {
+        $expr = new TemplateExpression("field:{}", new PhraseExpression('foo'));
+
+        $this->assertEquals('field:"foo"', (string) $expr);
     }
 }
  
