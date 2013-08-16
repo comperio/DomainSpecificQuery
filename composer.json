@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "nicmart/string-template": "dev-master"
+        "nicmart/string-template": "dev-master",
+        "pimple/pimple": "~1"
     },
     "autoload": {
         "psr-0": {
