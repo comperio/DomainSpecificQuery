@@ -35,12 +35,17 @@ $compiler
     ->registerTransformation($compiler->field('facets_class'), '*', 'dewey')
     ->registerTransformation($compiler->field('fldin_txt_fulltextattach'), '*', 'fulltext-atc')
     ->registerTransformation($compiler->field('fldin_txt_class'), '*', 'classtxt')
-    ->registerTransformation($compiler->field('fldin_txt_class'), '*', 'classtxt')
-    //missing: class field (it's a composite field)
+    ->registerTransformation($compiler->regexps(array(
+        '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getTransformation('*', 'dewey'),
+        '/.*/' => $compiler->getTransformation('*', 'classtxt'),
+    )), '*', 'class')
 ;
 
 $expression = $builder
-    ->field('series', 'asd"sd:')
+    //->field('series', 'asd"sd:')
+    ->or()
+        ->field('class', 'ciao')
+        ->field('class', '830')
     ->getExpression();
 
 var_dump((string) $compiler->compile($expression));
