@@ -37,97 +37,6 @@ class LuceneCompiler extends TypeBasedCompiler
         ;
     }
 
-    public function field($fieldName, $phrase = false, $boost = 1.0)
-    {
-        return function(BinaryExpression $expr, self $compiler) use ($fieldName, $phrase, $boost)
-        {
-            $value = $compiler->phrasize($expr->getRight(), $phrase);
-
-            return new FieldExpression($fieldName, $value, $boost);
-        };
-    }
-
-    public function term($phrase = false, $boost = 1.0)
-    {
-        return function(BinaryExpression $expr, self $compiler) use ($phrase, $boost)
-        {
-            return new TermExpression($compiler->phrasizeOrTermize($expr->getRight(), $phrase), $boost);
-        };
-    }
-
-    public function tree(array $fieldNames, $op = 'and', $phrase = false, $boost = 1.0)
-    {
-        return function(BinaryExpression $expr, self $compiler) use ($fieldNames, $op, $phrase, $boost)
-        {
-            $value = $compiler->phrasize($expr->getRight(), $phrase);
-
-            $tree = new SpanExpression(strtoupper($op), array(), $boost);
-
-            foreach ($fieldNames as $fieldName) {
-                $tree->addExpression(new FieldExpression($fieldName, $value));
-            }
-
-            return $tree;
-        };
-    }
-
-    public function range($fieldName, $boost = 1.0)
-    {
-        $fieldTransf = $this->field($fieldName, false, $boost);
-
-        return function(BinaryExpression $expr, self $compiler) use ($fieldName, $boost, $fieldTransf)
-        {
-            $val = $expr->getRight()->getValue();
-
-            if (!is_array($val))
-                return $fieldTransf($expr, $compiler);
-
-            return new RangeExpression($val['from'], $val['to']);
-        };
-    }
-
-    public function template($template, $phrase = false, $escape = true, $boost = 1.0)
-    {
-        return function(BinaryExpression $expr, self $compiler) use ($template, $phrase, $escape, $boost)
-        {
-            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight(), $phrase, $escape), $boost);
-        };
-    }
-
-    public function combine($op, $transf1/**, $transf2,... */)
-    {
-        $transformations = func_get_args();
-        array_shift($transformations);
-
-        return function(Expression $expr, $compiler) use ($op, $transformations)
-        {
-            $tree = new SpanExpression(strtoupper($op));
-
-            foreach ($transformations as $transformation) {
-                $tree->addExpression($transformation($expr, $compiler));
-            }
-
-            return $tree;
-        };
-
-        return $tree;
-    }
-
-    public function regexps(array $regexpsMap)
-    {
-        return function(BinaryExpression $expr, $compiler) use ($regexpsMap)
-        {
-            $value = $expr->getRight()->getValue();
-
-            foreach ($regexpsMap as $regexp => $transformation) {
-                if (preg_match($regexp, $value))
-                    return $transformation($expr, $compiler);
-            }
-
-            throw new UnregisteredTransformationException("There is no transformation matching the value \"$value\"");
-        };
-    }
-
     public function basicExpression(BasicExpression $expr, self $compiler)
     {
         return new TermExpression($expr->getValue());
@@ -202,6 +111,13 @@ class LuceneCompiler extends TypeBasedCompiler
         return new FieldExpression($fieldname, new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight));
     }
 
+    /**
+     * Helper function that wraps an expression value with a phrase expression if $phrase = true.
+     *
+     * @param Expression $expr
+     * @param bool $phrase
+     * @return PhraseExpression|string
+     */
     public function phrasize(Expression $expr, $phrase = true)
     {
         return $phrase
@@ -209,6 +125,14 @@ class LuceneCompiler extends TypeBasedCompiler
             : $expr->getValue();
     }
 
+    /**
+     * Helper function that wraps an expression value with a phrase expression or a term expression
+     *
+     * @param Expression $expr
+     * @param bool $phrase
+     * @param bool $escape
+     * @return PhraseExpression|TermExpression|string
+     */
     public function phrasizeOrTermize(Expression $expr, $phrase = true, $escape = true)
     {
         return $phrase
