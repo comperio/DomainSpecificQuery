@@ -104,11 +104,11 @@ TPL
             )
         )
     ->map(
-            'place', $m->combine(
-                'or', $m->field('mrc_d620_sa'), $m->field('mrc_d620_sb'), $m->field('mrc_d620_sc'),
-                $m->field('mrc_d620_sd')
-            )
+        'place', $m->combine(
+            'or', $m->field('mrc_d620_sa'), $m->field('mrc_d620_sb'), $m->field('mrc_d620_sc'),
+            $m->field('mrc_d620_sd')
         )
+    )
     ->map('year', $m->range('sorti_date'))
     ->map('segnatura', $m->field('fldis_str_collocation'))
     ->map('tid', $m->field('id'))
@@ -119,11 +119,11 @@ TPL
     //Missing: Facets eta...
     //Missing: loanable
     ->map(
-            'ean', $m->combine(
-                'or', $m->field('mrc_d073_sa'), $m->field('mrc_d010_sa'), $m->field('mrc_d011_sa'),
-                $m->field('mrc_d012_sa'), $m->field('mrc_d013_sa'), $m->field('mrc_d014_sa'),
-                $m->field('mrc_d015_sa'), $m->field('mrc_d016_sa'), $m->field('mrc_d017_sa')
-            )
+        'ean', $m->combine(
+            'or', $m->field('mrc_d073_sa'), $m->field('mrc_d010_sa'), $m->field('mrc_d011_sa'),
+            $m->field('mrc_d012_sa'), $m->field('mrc_d013_sa'), $m->field('mrc_d014_sa'),
+            $m->field('mrc_d015_sa'), $m->field('mrc_d016_sa'), $m->field('mrc_d017_sa')
+        )
     )
     //Missing: standard-number: multiplesolrsearchfield
     ->map('num-ean', $m->field('mrc_d073_sa'))

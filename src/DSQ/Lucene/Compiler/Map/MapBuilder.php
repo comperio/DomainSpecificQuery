@@ -23,6 +23,12 @@ use DSQ\Lucene\RangeExpression;
 
 use DSQ\Lucene\Compiler\LuceneCompiler;
 
+/**
+ * Class MapBuilder
+ * This class offers some helper methods that build compiler maps for you.
+ *
+ * @package DSQ\Lucene\Compiler\Map
+ */
 class MapBuilder
 {
     /**
@@ -31,6 +37,7 @@ class MapBuilder
      * @param string $fieldName The name of the solr field
      * @param bool $phrase      is the value a phrase?
      * @param float $boost      Lucene boost
+     *
      * @return callable
      */
     public function field($fieldName, $phrase = false, $boost = 1.0)
