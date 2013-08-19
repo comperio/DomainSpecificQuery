@@ -157,8 +157,11 @@ $expression = $builder
     ->or()
         ->field('class', 'ciao')
         ->field('class', '830')
+        ->field('publisher', 'mondadori')
+        ->field('solr', 'sorti_date:["2000" TO "2010"]')
     ->getExpression();
 
-var_dump((string) $compiler->compile($expression));
+echo '<pre>';
+echo $compiler->compile($expression);;
 
 var_dump(microtime(true) - $start);
