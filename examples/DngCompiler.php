@@ -10,7 +10,7 @@
 
 namespace DSQ;
 
-use DSQ\Compiler\LuceneCompiler\LuceneCompiler;
+use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
 
 include '../vendor/autoload.php';

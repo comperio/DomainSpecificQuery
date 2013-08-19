@@ -11,12 +11,12 @@
 $start = microtime(true);
 include '../vendor/autoload.php';
 
-$compiler = new DSQ\Compiler\LuceneCompiler\LuceneCompiler();
+$compiler = new \DSQ\Lucene\Compiler\LuceneCompiler();
 
 $compiler
     ->map(
             'title',
-            function (\DSQ\Expression\Expression $expr, \DSQ\Compiler\LuceneCompiler\LuceneCompiler $compiler) {
+            function (\DSQ\Expression\Expression $expr, \DSQ\Lucene\Compiler\LuceneCompiler $compiler) {
                 return new \DSQ\Lucene\FieldExpression('fldin_txt_title',
                     $phrase = new \DSQ\Lucene\PhraseExpression($expr->getRight()->getValue(), 12, 23.5));
             }
