@@ -48,6 +48,14 @@ class LuceneCompiler extends TypeBasedCompiler
         };
     }
 
+    public function term($phrase = false, $boost = 1.0)
+    {
+        return function(BinaryExpression $expr, self $compiler) use ($phrase, $boost)
+        {
+            return new TermExpression($compiler->phrasizeOrTermize($expr->getRight(), $phrase), $boost);
+        };
+    }
+
     public function tree(array $fieldNames, $op = 'and', $phrase = false, $boost = 1.0)
     {
         return function(BinaryExpression $expr, self $compiler) use ($fieldNames, $op, $phrase, $boost)
@@ -66,7 +74,7 @@ class LuceneCompiler extends TypeBasedCompiler
 
     public function template($template, $phrase = false, $escape = true, $boost = 1.0)
     {
-        return function (BinaryExpression $expr, self $compiler) use ($template, $phrase, $escape, $boost)
+        return function(BinaryExpression $expr, self $compiler) use ($template, $phrase, $escape, $boost)
         {
             return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight(), $phrase, $escape), $boost);
         };
