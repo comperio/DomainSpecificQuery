@@ -32,11 +32,11 @@ class StringCompiler extends TypeBasedCompiler
     public function __construct()
     {
         $this
-            ->registerTransformation(array($this, 'basicExpression'), '*', '*')
-            ->registerTransformation(array($this, 'unaryExpression'), 'DSQ\Expression\UnaryExpression')
-            ->registerTransformation(array($this, 'binaryExpression'), 'DSQ\Expression\BinaryExpression')
-            ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
-            ->registerTransformation(array($this, 'binaryExpressionWithNoSpaces'), 'DSQ\Expression\BinaryExpression', '^')
+            ->map('*', array($this, 'basicExpression'))
+            ->map('*:DSQ\Expression\UnaryExpression', array($this, 'unaryExpression'))
+            ->map('*:DSQ\Expression\BinaryExpression', array($this, 'binaryExpression'))
+            ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->map('^', array($this, 'binaryExpressionWithNoSpaces'))
 
             ->setOpWeight('^', 1100)
             ->setOpWeight('_', 1100)

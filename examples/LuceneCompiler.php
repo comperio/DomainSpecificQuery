@@ -14,9 +14,13 @@ include '../vendor/autoload.php';
 $compiler = new DSQ\Compiler\LuceneCompiler\LuceneCompiler();
 
 $compiler
-    ->registerTransformation(function(\DSQ\Expression\Expression $expr, \DSQ\Compiler\LuceneCompiler\LuceneCompiler $compiler) {
-        return new \DSQ\Lucene\FieldExpression('fldin_txt_title', $phrase = new \DSQ\Lucene\PhraseExpression($expr->getRight()->getValue(), 12, 23.5));
-    }, '*', 'title')
+    ->map(
+            'title',
+            function (\DSQ\Expression\Expression $expr, \DSQ\Compiler\LuceneCompiler\LuceneCompiler $compiler) {
+                return new \DSQ\Lucene\FieldExpression('fldin_txt_title',
+                    $phrase = new \DSQ\Lucene\PhraseExpression($expr->getRight()->getValue(), 12, 23.5));
+            }
+        )
 ;
 
 $builder = new \DSQ\Expression\Builder\Builder();

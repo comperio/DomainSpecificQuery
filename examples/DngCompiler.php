@@ -19,142 +19,137 @@ $compiler = new LuceneCompiler;
 $builder = new Builder;
 
 $compiler
-    ->registerTransformation($compiler->field('faceti_libvisi'), '*', 'home-lib')
-    ->registerTransformation($compiler->field('facets_biblevel_full'), '*', 'facets-biblevel-full')
-    ->registerTransformation($compiler->field('facets_biblevel'), '*', 'facets-biblevel-full')
-    ->registerTransformation($compiler->field('facets_subject'), '*', 'facets-subject')
-    ->registerTransformation($compiler->field('fldin_txt_subject'), '*', 'subject')
-    ->registerTransformation($compiler->field('mrc_d610_s9'), '*', 'subject-type')
+    ->map('home-lib', $compiler->field('faceti_libvisi'))
+    ->map('facets-biblevel-full', $compiler->field('facets_biblevel_full'))
+    ->map('facets-biblevel-full', $compiler->field('facets_biblevel'))
+    ->map('facets-subject', $compiler->field('facets_subject'))
+    ->map('subject', $compiler->field('fldin_txt_subject'))
+    ->map('subject-type', $compiler->field('mrc_d610_s9'))
     //missing: subj-and-type
-    ->registerTransformation(
-        $compiler->combine('or',
-            $compiler->template($seriesTpl = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'),
-            $compiler->template($seriesTpl, true)
-        ), '*', 'series'
+    ->map(
+            'series', $compiler->combine(
+                'or', $compiler->template(
+                    $seriesTpl
+                            = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'
+                ), $compiler->template($seriesTpl, true)
+            )
     )
-    ->registerTransformation($compiler->field('facets_class'), '*', 'dewey')
-    ->registerTransformation($compiler->field('fldin_txt_fulltextattach'), '*', 'fulltext-atc')
-    ->registerTransformation($compiler->field('fldin_txt_class'), '*', 'classtxt')
-    ->registerTransformation($compiler->regexps(array(
-        '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getTransformation('*', 'dewey'),
-        '/.*/' => $compiler->getTransformation('*', 'classtxt'),
-    )), '*', 'class')
-    ->registerTransformation($compiler->field('facets_class_desc'), '*', 'facets-class-desc')
-    ->registerTransformation($compiler->field('facets_publisher'), '*', 'facets-editore')
-    ->registerTransformation(
-        $compiler->combine('or',
-            $compiler->field('mrc_d210_sa'),
-            $compiler->field('mrc_d210_sb'),
-            $compiler->field('mrc_d210_sc'),
-            $compiler->field('fldint_txt_publisher')
-        ), '*', 'publisher'
+    ->map('dewey', $compiler->field('facets_class'))
+    ->map('fulltext-atc', $compiler->field('fldin_txt_fulltextattach'))
+    ->map('classtxt', $compiler->field('fldin_txt_class'))
+    ->map(
+            'class', $compiler->regexps(
+                array(
+                    '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getMap('*', 'dewey'),
+                    '/.*/' => $compiler->getMap('*', 'classtxt'),
+                )
+            )
+        )
+    ->map('facets-class-desc', $compiler->field('facets_class_desc'))
+    ->map('facets-editore', $compiler->field('facets_publisher'))
+    ->map(
+            'publisher', $compiler->combine(
+                'or', $compiler->field('mrc_d210_sa'), $compiler->field('mrc_d210_sb'), $compiler->field('mrc_d210_sc'),
+                $compiler->field('fldint_txt_publisher')
+            )
     )
     // Missing: materiale, facets-materiale (BibtypeSolrSearchField
-    ->registerTransformation(
-        $compiler->combine('or',
-            $compiler->field('mrc_d700_sa'),
-            $compiler->field('mrc_d701_sa'),
-            $compiler->field('mrc_d702_sa'),
-            $compiler->field('mrc_d710_sa'),
-            $compiler->field('mrc_d711_sa'),
-            $compiler->field('mrc_d712_sa'),
-            $compiler->field('mrc_d720_sa'),
-            $compiler->field('mrc_d790_sa')
-        ), '*', 'aut'
+    ->map(
+            'aut', $compiler->combine(
+                'or', $compiler->field('mrc_d700_sa'), $compiler->field('mrc_d701_sa'), $compiler->field('mrc_d702_sa'),
+                $compiler->field('mrc_d710_sa'), $compiler->field('mrc_d711_sa'), $compiler->field('mrc_d712_sa'),
+                $compiler->field('mrc_d720_sa'), $compiler->field('mrc_d790_sa')
+            )
     )
-    ->registerTransformation(
-        $compiler->combine('or',
-            $compiler->field('mrc_d700_s4'),
-            $compiler->field('mrc_d701_s4'),
-            $compiler->field('mrc_d702_s4'),
-            $compiler->field('mrc_d710_s4'),
-            $compiler->field('mrc_d711_s4'),
-            $compiler->field('mrc_d712_s4'),
-            $compiler->field('mrc_d720_s4')
-        ), '*', 'aut-role'
+    ->map(
+            'aut-role', $compiler->combine(
+                'or', $compiler->field('mrc_d700_s4'), $compiler->field('mrc_d701_s4'), $compiler->field('mrc_d702_s4'),
+                $compiler->field('mrc_d710_s4'), $compiler->field('mrc_d711_s4'), $compiler->field('mrc_d712_s4'),
+                $compiler->field('mrc_d720_s4')
+            )
     )
-    ->registerTransformation($compiler->field('facets_lang'), '*', 'facets-lang')
-    ->registerTransformation($compiler->field('sorti_date'), '*', 'facets-date')
-    ->registerTransformation($compiler->field('facets_place'), '*', 'facets-place')
-    ->registerTransformation($compiler->field('facets_country'), '*', 'facets-country')
-    ->registerTransformation($compiler->field('facets_owner'), '*', 'facets-owner')
-    ->registerTransformation($compiler->field('facets_printer'), '*', 'facets-printer')
-    ->registerTransformation($compiler->field('facets_author'), '*', 'facets-author')
-    ->registerTransformation($compiler->field('facets_author_main'), '*', 'facets-author-main')
-    ->registerTransformation($compiler->field('fldin_str_authid'), '*', 'id-auth') //Custom...
-    ->registerTransformation($compiler->field('fldin_str_subj'), '*', 'id-subj')   //Custom...
-    ->registerTransformation($compiler->field('mrc_d901_sb'), '*', 'biblevel')
-    ->registerTransformation($compiler->field('mrc_d901_sa'), '*', 'bibtype')
-    ->registerTransformation($compiler->field('mrc_cdf'), '*', 'target')
+    ->map('facets-lang', $compiler->field('facets_lang'))
+    ->map('facets-date', $compiler->field('sorti_date'))
+    ->map('facets-place', $compiler->field('facets_place'))
+    ->map('facets-country', $compiler->field('facets_country'))
+    ->map('facets-owner', $compiler->field('facets_owner'))
+    ->map('facets-printer', $compiler->field('facets_printer'))
+    ->map('facets-author', $compiler->field('facets_author'))
+    ->map('facets-author-main', $compiler->field('facets_author_main'))
+    ->map('id-auth', $compiler->field('fldin_str_authid')) //Custom...
+    ->map('id-subj', $compiler->field('fldin_str_subj'))   //Custom...
+    ->map('biblevel', $compiler->field('mrc_d901_sb'))
+    ->map('bibtype', $compiler->field('mrc_d901_sa'))
+    ->map('target', $compiler->field('mrc_cdf'))
     //missing: facets-target search field
-    ->registerTransformation($compiler->field('mrc_d210_sc'), '*', 'pub-name')
-    ->registerTransformation($compiler->field('mrc_d210_sa'), '*', 'pub-place')
-    ->registerTransformation($compiler->field('mrc_d950_sf'), '*', 'collocation')
-    ->registerTransformation($compiler->field('mrc_d921_s3'), '*', 'id-marca') //Custom...
-    ->registerTransformation($compiler->field('facets_lang'), '*', 'language')
-    ->registerTransformation($compiler->template('fldin_txt_author_main:{}^1000 OR fldin_txt_author:{}^10'), '*', 'autha')
-    ->registerTransformation($compiler->field('fldin_txt_owner'), '*', 'owner')
-    ->registerTransformation($compiler->field('fldin_txt_printer'), '*', 'printer')
-    ->registerTransformation(
-        $compiler->template(<<<TPL
-            mrc_d200_sa:{}^10000 OR mrc_d200_sc:{}^10000 OR
+    ->map('pub-name', $compiler->field('mrc_d210_sc'))
+    ->map('pub-place', $compiler->field('mrc_d210_sa'))
+    ->map('collocation', $compiler->field('mrc_d950_sf'))
+    ->map('id-marca', $compiler->field('mrc_d921_s3')) //Custom...
+    ->map('language', $compiler->field('facets_lang'))
+    ->map('autha', $compiler->template('fldin_txt_author_main:{}^1000 OR fldin_txt_author:{}^10'))
+    ->map('owner', $compiler->field('fldin_txt_owner'))
+    ->map('printer', $compiler->field('fldin_txt_printer'))
+    ->map(
+            'title', $compiler->template(
+                <<<TPL
+                            mrc_d200_sa:{}^10000 OR mrc_d200_sc:{}^10000 OR
             mrc_d500_sa:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{}^1000 OR
             mrc_d200_sh:{}^1000 OR mrc_d200_si:{}^1000 OR
             mrc_d423_st:{}^100 OR mrc_d454_st:{}^100 OR mrc_d461_st:{}^100 OR
             mrc_d327_sa:{}^100 OR mrc_d410_st:{}^100 OR
             fldin_txt_title:{}^10
 TPL
-        ),  '*', 'title')
-    ->registerTransformation(
-        $compiler->combine('or', $compiler->field('mrc_d620_sa'), $compiler->field('mrc_d620_sb'), $compiler->field('mrc_d620_sc'), $compiler->field('mrc_d620_sd')),
-        '*', 'place')
-    ->registerTransformation($compiler->field('sorti_date'), '*', 'year') //Range
-    ->registerTransformation($compiler->field('fldis_str_collocation'), '*', 'segnatura')
-    ->registerTransformation($compiler->field('id'), '*', 'tid')
-    ->registerTransformation($compiler->field('mrc_d500_s3'), '*', 'id-work') // Curstom...
-    ->registerTransformation($compiler->term(), '*', 'q')
+            )
+        )
+    ->map(
+            'place', $compiler->combine(
+                'or', $compiler->field('mrc_d620_sa'), $compiler->field('mrc_d620_sb'), $compiler->field('mrc_d620_sc'),
+                $compiler->field('mrc_d620_sd')
+            )
+        )
+    ->map('year', $compiler->range('sorti_date'))
+    ->map('segnatura', $compiler->field('fldis_str_collocation'))
+    ->map('tid', $compiler->field('id'))
+    ->map('id-work', $compiler->field('mrc_d500_s3')) // Curstom...
+    ->map('q', $compiler->term())
     //Missing: libarea (LibraryAreaSearchField
-    ->registerTransformation($compiler->field('collection', '*', 'collection'))
+    ->map('collection', $compiler->field('collection', '*', 'collection'))
     //Missing: Facets eta...
     //Missing: loanable
-    ->registerTransformation(
-        $compiler->combine('or',
-            $compiler->field('mrc_d073_sa'),
-            $compiler->field('mrc_d010_sa'),
-            $compiler->field('mrc_d011_sa'),
-            $compiler->field('mrc_d012_sa'),
-            $compiler->field('mrc_d013_sa'),
-            $compiler->field('mrc_d014_sa'),
-            $compiler->field('mrc_d015_sa'),
-            $compiler->field('mrc_d016_sa'),
-            $compiler->field('mrc_d017_sa')
-        ), '*', 'ean'
+    ->map(
+            'ean', $compiler->combine(
+                'or', $compiler->field('mrc_d073_sa'), $compiler->field('mrc_d010_sa'), $compiler->field('mrc_d011_sa'),
+                $compiler->field('mrc_d012_sa'), $compiler->field('mrc_d013_sa'), $compiler->field('mrc_d014_sa'),
+                $compiler->field('mrc_d015_sa'), $compiler->field('mrc_d016_sa'), $compiler->field('mrc_d017_sa')
+            )
     )
     //Missing: standard-number: multiplesolrsearchfield
-    ->registerTransformation($compiler->field('mrc_d073_sa'), '*', 'num-ean')
-    ->registerTransformation($compiler->field('mrc_d010_sa'), '*', 'num-isbn')
-    ->registerTransformation($compiler->field('mrc_d011_sa'), '*', 'num-issn')
-    ->registerTransformation($compiler->field('mrc_d012_sa'), '*', 'num-fingerprint')
-    ->registerTransformation($compiler->field('mrc_d013_sa'), '*', 'num-ismn')
-    ->registerTransformation($compiler->field('mrc_d014_sa'), '*', 'num-article')
-    ->registerTransformation($compiler->field('mrc_d015_sa'), '*', 'num-isrn')
-    ->registerTransformation($compiler->field('mrc_d016_sa'), '*', 'num-isrc')
-    ->registerTransformation($compiler->field('mrc_d017_sa'), '*', 'num-other')
-    ->registerTransformation($compiler->field('mrc_d020_sa'), '*', 'num-natbib')
-    ->registerTransformation($compiler->field('mrc_d021_sa'), '*', 'num-depleg')
-    ->registerTransformation($compiler->field('mrc_d022_sa'), '*', 'num-gov')
-    ->registerTransformation($compiler->field('mrc_d040_sa'), '*', 'num-coden')
-    ->registerTransformation($compiler->field('mrc_d071_sa'), '*', 'num-pub')
-    ->registerTransformation($compiler->field('mrc_d072_sa'), '*', 'num-upc')
+    ->map('num-ean', $compiler->field('mrc_d073_sa'))
+    ->map('num-isbn', $compiler->field('mrc_d010_sa'))
+    ->map('num-issn', $compiler->field('mrc_d011_sa'))
+    ->map('num-fingerprint', $compiler->field('mrc_d012_sa'))
+    ->map('num-ismn', $compiler->field('mrc_d013_sa'))
+    ->map('num-article', $compiler->field('mrc_d014_sa'))
+    ->map('num-isrn', $compiler->field('mrc_d015_sa'))
+    ->map('num-isrc', $compiler->field('mrc_d016_sa'))
+    ->map('num-other', $compiler->field('mrc_d017_sa'))
+    ->map('num-natbib', $compiler->field('mrc_d020_sa'))
+    ->map('num-depleg', $compiler->field('mrc_d021_sa'))
+    ->map('num-gov', $compiler->field('mrc_d022_sa'))
+    ->map('num-coden', $compiler->field('mrc_d040_sa'))
+    ->map('num-pub', $compiler->field('mrc_d071_sa'))
+    ->map('num-upc', $compiler->field('mrc_d072_sa'))
 
-    ->registerTransformation($compiler->field('bid'), '*', 'fldin_str_bid')
-    ->registerTransformation($compiler->template('{}', false, false), '*', 'solr')
+    ->map('fldin_str_bid', $compiler->field('bid'))
+    ->map('solr', $compiler->template('{}', false, false))
     //Missing: cdf
 ;
 
 $expression = $builder
     //->field('series', 'asd"sd:')
     ->or()
+        ->field('date', array('from' => 2000, 'to' => 3000))
         ->field('class', 'ciao')
         ->field('class', '830')
         ->field('publisher', 'mondadori')

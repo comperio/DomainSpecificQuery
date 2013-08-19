@@ -30,11 +30,10 @@ class LuceneCompiler extends TypeBasedCompiler
     public function __construct()
     {
         $this
-            ->registerTransformation(array($this, 'basicExpression'), '*', '*')
-            ->registerTransformation(array($this, 'fieldExpression'), 'DSQ\Expression\BinaryExpression')
-            ->registerTransformation(array($this, 'treeExpression'), 'DSQ\Expression\TreeExpression')
-            ->registerTransformation(array($this, 'comparisonExpression'), 'DSQ\Expression\BinaryExpression', array('>', '>=', '<', '<='))
-            ->registerTransformation(array($this, 'rangeExpression'), 'DSQ\Expression\BinaryExpression', 'range')
+            ->map('*', array($this, 'basicExpression'))
+            ->map('*:DSQ\Expression\BinaryExpression', array($this, 'fieldExpression'))
+            ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
         ;
     }
 
@@ -69,6 +68,21 @@ class LuceneCompiler extends TypeBasedCompiler
             }
 
             return $tree;
+        };
+    }
+
+    public function range($fieldName, $boost = 1.0)
+    {
+        $fieldTransf = $this->field($fieldName, false, $boost);
+
+        return function(BinaryExpression $expr, self $compiler) use ($fieldName, $boost, $fieldTransf)
+        {
+            $val = $expr->getRight()->getValue();
+
+            if (!is_array($val))
+                return $fieldTransf($expr, $compiler);
+
+            return new RangeExpression($val['from'], $val['to']);
         };
     }
 

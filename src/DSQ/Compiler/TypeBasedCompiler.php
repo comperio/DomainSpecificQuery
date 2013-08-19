@@ -26,34 +26,38 @@ class TypeBasedCompiler implements Compiler
     /**
      * @var callable[]
      */
-    private $transformations = array();
+    private $maps = array();
 
     /**
-     * Register a transformation for the compiler
+     * Register a map for the compiler
      *
-     * @param string|array $classes     The class or classes of the expressions that will be transformed
-     * @param string|array $types       The type/s of the expressions that will be transformed
+     * $types can be
+     *  - a string. In this case the type selector is $types and the class selector is *
+     *  - an array of two scalars. The selector will be $types[0], $types[1]
+     *  - an array of arrays of scalars. The map will be added to all selector couples.
+     *
+     * @param string|array $selectors  The type/s of the expressions that will be transformed
      * @param callable $transformation  The transformation
+     * @throws InvalidTransformationException
+     * @internal param array|string $classes The class or classes of the expressions that will be transformed
      * @return $this                    The current instance
      *
-     * @throws \InvalidArgumentException
      */
-    public function registerTransformation($transformation, $classes = '*', $types = '*')
+    public function map($selectors, $transformation)
     {
         if (!is_callable($transformation))
             throw new InvalidTransformationException('Transformations must be callable objects');
 
-        foreach ((array) $classes as $class) {
-            foreach ((array) $types as $type) {
-                $this->transformations[$class][$type] = $transformation;
-            }
+        foreach ((array) $selectors as $selector) {
+            list($type, $class) = $this->parseSelector($selector);
+            $this->maps[$class][$type] = $transformation;
         }
 
         return $this;
     }
 
     /**
-     * Get the transformation for the given expression type
+     * Get the map for the given expression type
      *
      * @param string $class
      * @param string $type
@@ -62,19 +66,19 @@ class TypeBasedCompiler implements Compiler
      *
      * @throws UnregisteredTransformationException
      */
-    public function getTransformation($class, $type)
+    public function getMap($class, $type)
     {
-        if (isset($this->transformations[$class][$type]))
-            return $this->transformations[$class][$type];
+        if (isset($this->maps[$class][$type]))
+            return $this->maps[$class][$type];
 
-        if (isset($this->transformations['*'][$type]))
-            return $this->transformations['*'][$type];
+        if (isset($this->maps['*'][$type]))
+            return $this->maps['*'][$type];
 
-        if (isset($this->transformations[$class]['*']))
-            return $this->transformations[$class]['*'];
+        if (isset($this->maps[$class]['*']))
+            return $this->maps[$class]['*'];
 
-        if (isset($this->transformations['*']['*']))
-            return $this->transformations['*']['*'];
+        if (isset($this->maps['*']['*']))
+            return $this->maps['*']['*'];
 
         throw new UnregisteredTransformationException("There is no transformation that match the selector \"$class:$type\"");
     }
@@ -87,7 +91,7 @@ class TypeBasedCompiler implements Compiler
     public function canCompile($class, $type = '*')
     {
         try {
-            $this->getTransformation($class, $type);
+            $this->getMap($class, $type);
         } catch (UnregisteredTransformationException $e) {
             return false;
         }
@@ -100,7 +104,7 @@ class TypeBasedCompiler implements Compiler
      */
     public function compile(Expression $expression)
     {
-        $transformation = $this->getTransformation(get_class($expression), $expression->getType());
+        $transformation = $this->getMap(get_class($expression), $expression->getType());
 
         return $transformation($expression, $this);
     }
@@ -114,5 +118,23 @@ class TypeBasedCompiler implements Compiler
             return $this->compile($expression);
 
         return $expression;
+    }
+
+    /**
+     * Selector can be of the forms:
+     * "type" or "type:class".
+     * Both arguments can be "*", with the meaning of "any value"
+     *
+     * @param $selector
+     * @return array
+     */
+    private function parseSelector($selector)
+    {
+        $pieces = explode(":", $selector);
+
+        if (!isset($pieces[1]))
+            $pieces[1] = '*';
+
+        return $pieces;
     }
 }
