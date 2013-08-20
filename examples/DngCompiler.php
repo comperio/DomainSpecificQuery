@@ -10,6 +10,7 @@
 
 namespace DSQ;
 
+use DSQ\Comperio\Compiler\Map\SubjTypeMap;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
@@ -28,47 +29,48 @@ $compiler
     ->map('subject', $m->field('fldin_txt_subject'))
     ->map('subject-type', $m->field('mrc_d610_s9'))
     //missing: subj-and-type
+    ->map('subj-and-type', new SubjTypeMap)
     ->map(
-            'series', $m->combine(
-                'or', $m->template(
-                    $seriesTpl
-                            = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'
-                ), $m->template($seriesTpl, true)
-            )
+        'series', $m->combine(
+            'or', $m->template(
+                $seriesTpl
+                        = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'
+            ), $m->template($seriesTpl, true)
+        )
     )
     ->map('dewey', $m->field('facets_class'))
     ->map('fulltext-atc', $m->field('fldin_txt_fulltextattach'))
     ->map('classtxt', $m->field('fldin_txt_class'))
     ->map(
-            'class', $m->regexps(
-                array(
-                    '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getMap('*', 'dewey'),
-                    '/.*/' => $compiler->getMap('*', 'classtxt'),
-                )
+        'class', $m->regexps(
+            array(
+                '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getMap('*', 'dewey'),
+                '/.*/' => $compiler->getMap('*', 'classtxt'),
             )
         )
+    )
     ->map('facets-class-desc', $m->field('facets_class_desc'))
     ->map('facets-editore', $m->field('facets_publisher'))
     ->map(
-            'publisher', $m->combine(
-                'or', $m->field('mrc_d210_sa'), $m->field('mrc_d210_sb'), $m->field('mrc_d210_sc'),
-                $m->field('fldint_txt_publisher')
-            )
+        'publisher', $m->combine(
+            'or', $m->field('mrc_d210_sa'), $m->field('mrc_d210_sb'), $m->field('mrc_d210_sc'),
+            $m->field('fldint_txt_publisher')
+        )
     )
     // Missing: materiale, facets-materiale (BibtypeSolrSearchField
     ->map(
-            'aut', $m->combine(
-                'or', $m->field('mrc_d700_sa'), $m->field('mrc_d701_sa'), $m->field('mrc_d702_sa'),
-                $m->field('mrc_d710_sa'), $m->field('mrc_d711_sa'), $m->field('mrc_d712_sa'),
-                $m->field('mrc_d720_sa'), $m->field('mrc_d790_sa')
-            )
+        'aut', $m->combine(
+            'or', $m->field('mrc_d700_sa'), $m->field('mrc_d701_sa'), $m->field('mrc_d702_sa'),
+            $m->field('mrc_d710_sa'), $m->field('mrc_d711_sa'), $m->field('mrc_d712_sa'),
+            $m->field('mrc_d720_sa'), $m->field('mrc_d790_sa')
+        )
     )
     ->map(
-            'aut-role', $m->combine(
-                'or', $m->field('mrc_d700_s4'), $m->field('mrc_d701_s4'), $m->field('mrc_d702_s4'),
-                $m->field('mrc_d710_s4'), $m->field('mrc_d711_s4'), $m->field('mrc_d712_s4'),
-                $m->field('mrc_d720_s4')
-            )
+        'aut-role', $m->combine(
+            'or', $m->field('mrc_d700_s4'), $m->field('mrc_d701_s4'), $m->field('mrc_d702_s4'),
+            $m->field('mrc_d710_s4'), $m->field('mrc_d711_s4'), $m->field('mrc_d712_s4'),
+            $m->field('mrc_d720_s4')
+        )
     )
     ->map('facets-lang', $m->field('facets_lang'))
     ->map(array('facets-date', 'year'), $m->field('sorti_date'))
@@ -93,16 +95,16 @@ $compiler
     ->map('owner', $m->field('fldin_txt_owner'))
     ->map('printer', $m->field('fldin_txt_printer'))
     ->map(
-            'title', $m->template(<<<TPL
-            mrc_d200_sa:{}^10000 OR mrc_d200_sc:{}^10000 OR
-            mrc_d500_sa:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{}^1000 OR
-            mrc_d200_sh:{}^1000 OR mrc_d200_si:{}^1000 OR
-            mrc_d423_st:{}^100 OR mrc_d454_st:{}^100 OR mrc_d461_st:{}^100 OR
-            mrc_d327_sa:{}^100 OR mrc_d410_st:{}^100 OR
-            fldin_txt_title:{}^10
+        'title', $m->template(<<<TPL
+        mrc_d200_sa:{}^10000 OR mrc_d200_sc:{}^10000 OR
+        mrc_d500_sa:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{}^1000 OR
+        mrc_d200_sh:{}^1000 OR mrc_d200_si:{}^1000 OR
+        mrc_d423_st:{}^100 OR mrc_d454_st:{}^100 OR mrc_d461_st:{}^100 OR
+        mrc_d327_sa:{}^100 OR mrc_d410_st:{}^100 OR
+        fldin_txt_title:{}^10
 TPL
-            )
         )
+    )
     ->map(
         'place', $m->combine(
             'or', $m->field('mrc_d620_sa'), $m->field('mrc_d620_sb'), $m->field('mrc_d620_sc'),
@@ -155,6 +157,7 @@ $expression = $builder
         ->field('class', '830')
         ->field('publisher', 'mondadori')
         ->field('solr', 'sorti_date:["2000" TO "2010"]')
+        ->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
     ->getExpression();
 
 echo '<pre>';
