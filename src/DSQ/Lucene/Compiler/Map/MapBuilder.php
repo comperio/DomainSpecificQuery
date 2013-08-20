@@ -25,7 +25,7 @@ use DSQ\Lucene\Compiler\LuceneCompiler;
 
 /**
  * Class MapBuilder
- * This class offers some helper methods that build compiler maps for you.
+ * Functional goodness that helps you to build maps for the Lucene compiler
  *
  * @package DSQ\Lucene\Compiler\Map
  */
@@ -173,6 +173,26 @@ class MapBuilder
             }
 
             throw new UnregisteredTransformationException("There is no transformation matching the value \"$value\"");
+        };
+    }
+
+    /**
+     * Build a map from a collection of condition and map couples.
+     * It will be used the map of the first matched condition.
+     *
+     * @param array[] $conditionsMap
+     * @return callable
+     */
+    public function conditional(array $conditionsMap)
+    {
+        return function(Expression $expr, $compiler) use ($conditionsMap)
+        {
+            foreach ($conditionsMap as $conditionAndMap) {
+                list($condition, $map) = $conditionAndMap;
+                if ($condition($expr))
+                    return $map($expr, $compiler);
+            }
+            throw new UnregisteredTransformationException("No condition matched with the given expression");
         };
     }
 } 
