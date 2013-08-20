@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "f9dc8859d3f4f5e10c3b5619ca01d7d5",
+    "hash": "dd925c9668fd4b233a0d60884408b4a2",
     "packages": [
         {
             "name": "nicmart/string-template",
@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nicmart/StringTemplate.git",
-                "reference": "37914a29fc7a1dfd393dcaafeb98a5de2303366a"
+                "reference": "b7c52dbb542b66cea7560812bb429f4a43c653c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nicmart/StringTemplate/zipball/37914a29fc7a1dfd393dcaafeb98a5de2303366a",
-                "reference": "37914a29fc7a1dfd393dcaafeb98a5de2303366a",
+                "url": "https://api.github.com/repos/nicmart/StringTemplate/zipball/b7c52dbb542b66cea7560812bb429f4a43c653c5",
+                "reference": "b7c52dbb542b66cea7560812bb429f4a43c653c5",
                 "shasum": ""
             },
             "require": {
@@ -40,53 +40,7 @@
                 }
             ],
             "description": "StringTemplate is a very simple string template engine for php. I've written it to have a thing like sprintf, but with named and nested substutions.",
-            "time": "2013-08-16 09:17:02"
-        },
-        {
-            "name": "pimple/pimple",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fabpot/Pimple.git",
-                "reference": "v1.0.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/v1.0.2",
-                "reference": "v1.0.2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Pimple": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "Pimple is a simple Dependency Injection Container for PHP 5.3",
-            "homepage": "http://pimple.sensiolabs.org",
-            "keywords": [
-                "container",
-                "dependency injection"
-            ],
-            "time": "2013-03-08 08:21:40"
+            "time": "2013-08-17 11:54:41"
         }
     ],
     "packages-dev": [
