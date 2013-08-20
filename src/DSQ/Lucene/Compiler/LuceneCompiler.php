@@ -127,7 +127,7 @@ class LuceneCompiler extends TypeBasedCompiler
 
         $ary = array();
         foreach ($value as $key => $v) {
-            $ary[$key] = (string) $this->phrasize($v, $phrase);
+            $ary[$key] = $this->phrasize($v, $phrase);
         }
 
         return $ary;
@@ -151,7 +151,7 @@ class LuceneCompiler extends TypeBasedCompiler
 
         $ary = array();
         foreach ($value as $key => $v) {
-            $ary[$key] = (string) $this->phrasizeOrTermize($v, $phrase, $escape);
+            $ary[$key] = $this->phrasizeOrTermize($v, $phrase, $escape);
         }
 
         return $ary;

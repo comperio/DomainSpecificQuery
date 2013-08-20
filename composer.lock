@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nicmart/StringTemplate.git",
-                "reference": "b7c52dbb542b66cea7560812bb429f4a43c653c5"
+                "reference": "a4766cd69f53ff9e1dbb7194e7a697382e9d0ed2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nicmart/StringTemplate/zipball/b7c52dbb542b66cea7560812bb429f4a43c653c5",
-                "reference": "b7c52dbb542b66cea7560812bb429f4a43c653c5",
+                "url": "https://api.github.com/repos/nicmart/StringTemplate/zipball/a4766cd69f53ff9e1dbb7194e7a697382e9d0ed2",
+                "reference": "a4766cd69f53ff9e1dbb7194e7a697382e9d0ed2",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "StringTemplate is a very simple string template engine for php. I've written it to have a thing like sprintf, but with named and nested substutions.",
-            "time": "2013-08-17 11:54:41"
+            "time": "2013-08-20 15:51:45"
         }
     ],
     "packages-dev": [

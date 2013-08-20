@@ -55,11 +55,11 @@ class TemplateExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('field:"foo"', (string) $expr);
     }
 
-/*    public function testToStringWhenANestedValueIsAnExpression()
+    public function testToStringWhenANestedValueIsAnExpression()
     {
         $expr = new TemplateExpression("field:{subval}", array('subval' => new PhraseExpression('foo')));
 
         $this->assertEquals('field:"foo"', (string) $expr);
-    }*/
+    }
 }
  
