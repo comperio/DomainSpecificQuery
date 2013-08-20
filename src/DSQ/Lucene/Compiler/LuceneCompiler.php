@@ -114,30 +114,46 @@ class LuceneCompiler extends TypeBasedCompiler
     /**
      * Helper function that wraps an expression value with a phrase expression if $phrase = true.
      *
-     * @param Expression $expr
+     * @param mixed $value
      * @param bool $phrase
      * @return PhraseExpression|string
      */
-    public function phrasize(Expression $expr, $phrase = true)
+    public function phrasize($value, $phrase = true)
     {
-        return $phrase
-            ? new PhraseExpression($expr->getValue())
-            : $expr->getValue();
+        if (!is_array($value))
+            return $phrase
+                ? new PhraseExpression($value)
+                : $value;
+
+        $ary = array();
+        foreach ($value as $key => $v) {
+            $ary[$key] = (string) $this->phrasize($v, $phrase);
+        }
+
+        return $ary;
     }
 
     /**
      * Helper function that wraps an expression value with a phrase expression or a term expression
      *
-     * @param Expression $expr
+     * @param mixed $value
      * @param bool $phrase
      * @param bool $escape
      * @return PhraseExpression|TermExpression|string
      */
-    public function phrasizeOrTermize(Expression $expr, $phrase = true, $escape = true)
+    public function phrasizeOrTermize($value, $phrase = true, $escape = true)
     {
-        return $phrase
-            ? new PhraseExpression($expr->getValue())
-            : ($escape ? new TermExpression($expr->getValue()) : $expr->getValue())
-        ;
+        if (!is_array($value))
+            return $phrase
+                ? new PhraseExpression($value)
+                : ($escape ? new TermExpression($value) : $value)
+            ;
+
+        $ary = array();
+        foreach ($value as $key => $v) {
+            $ary[$key] = (string) $this->phrasizeOrTermize($v, $phrase, $escape);
+        }
+
+        return $ary;
     }
 } 

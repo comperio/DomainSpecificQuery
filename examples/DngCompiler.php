@@ -11,6 +11,7 @@
 namespace DSQ;
 
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
+use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
@@ -28,7 +29,6 @@ $compiler
     ->map('facets-subject', $m->field('facets_subject'))
     ->map('subject', $m->field('fldin_txt_subject'))
     ->map('subject-type', $m->field('mrc_d610_s9'))
-    //missing: subj-and-type
     ->map('subj-and-type', new SubjTypeMap)
     ->map(
         'series', $m->combine(
@@ -57,7 +57,19 @@ $compiler
             $m->field('fldint_txt_publisher')
         )
     )
-    // Missing: materiale, facets-materiale (BibtypeSolrSearchField
+    ->map(array('materiale', 'facets-materiale'), $m->conditional(array(
+        array(
+            function (BinaryExpression $expr) {
+                $v = $expr->getRight()->getValue();
+                return isset($v['bibtype']) && $v['bibtype'];
+            },
+            $m->template('mrc_d901_sa:{bibtype}')
+        ),
+        array(
+            function () { return true; },
+            $m->template('mrc_d901_sc:{bibtypefirst}')
+        )
+    )))
     ->map(
         'aut', $m->combine(
             'or', $m->field('mrc_d700_sa'), $m->field('mrc_d701_sa'), $m->field('mrc_d702_sa'),
@@ -157,10 +169,12 @@ $expression = $builder
         ->field('class', '830')
         ->field('publisher', 'mondadori')
         ->field('solr', 'sorti_date:["2000" TO "2010"]')
-        ->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
+        //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
+        ->field('materiale', array('bibtype' => 'ah'))
+        ->field('materiale', array('bibtypefirst' => 'boh'))
     ->getExpression();
 
-echo '<pre>';
+
 echo $compiler->compile($expression);;
 
 var_dump(microtime(true) - $start);
