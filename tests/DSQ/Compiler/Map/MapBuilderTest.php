@@ -107,5 +107,19 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("foo OR bar OR baz", (string) $map($expr, $this->compiler));
     }
+
+    public function testRegexps()
+    {
+        $map = $this->builder->regexps(array(
+            '/bar/' => function ($expr) {return new TermExpression("barbar");},
+            '/.*/' => function ($expr) {return new TermExpression("ohoh");},
+        ));
+
+        $expr = new BinaryExpression('=', 'moo', 'bar');
+        $this->assertEquals("barbar", (string) $map($expr, $this->compiler));
+
+        $expr->setRight("baz");
+        $this->assertEquals("ohoh", (string) $map($expr, $this->compiler));
+    }
 }
  
