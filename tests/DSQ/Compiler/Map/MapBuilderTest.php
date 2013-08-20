@@ -94,6 +94,14 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("(foo:\"a:b:c\")^3", (string) $map($expr, $this->compiler));
     }
 
+    public function testTemplateWithNestedValues()
+    {
+        $map = $this->builder->template('foo:{subvalue}');
+
+        $expr = new BinaryExpression('=', 'moo', array('subvalue' => 'bar'));
+        $this->assertEquals("foo:bar", (string) $map($expr, $this->compiler));
+    }
+
     public function testCombine()
     {
         $map = $this->builder->combine(

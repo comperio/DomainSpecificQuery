@@ -44,7 +44,7 @@ class MapBuilder
     {
         return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($fieldName, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr->getRight(), $phrase);
+            $value = $compiler->phrasize($expr->getRight()->getValue(), $phrase);
 
             return new FieldExpression($fieldName, $value, $boost);
         };
@@ -62,7 +62,7 @@ class MapBuilder
     {
         return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($phrase, $boost)
         {
-            return new TermExpression($compiler->phrasizeOrTermize($expr->getRight(), $phrase), $boost);
+            return new TermExpression($compiler->phrasizeOrTermize($expr->getRight()->getValue(), $phrase), $boost);
         };
     }
 
@@ -80,7 +80,7 @@ class MapBuilder
     {
         return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($fieldNames, $op, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr->getRight(), $phrase);
+            $value = $compiler->phrasize($expr->getRight()->getValue(), $phrase);
 
             $tree = new SpanExpression(strtoupper($op), array(), $boost);
 
@@ -127,7 +127,7 @@ class MapBuilder
     {
         return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($template, $phrase, $escape, $boost)
         {
-            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight(), $phrase, $escape), $boost);
+            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight()->getValue(), $phrase, $escape), $boost);
         };
     }
 
@@ -189,8 +189,9 @@ class MapBuilder
         {
             foreach ($conditionsMap as $conditionAndMap) {
                 list($condition, $map) = $conditionAndMap;
-                if ($condition($expr))
+                if ($condition($expr)) {
                     return $map($expr, $compiler);
+                }
             }
             throw new UnregisteredTransformationException("No condition matched with the given expression");
         };
