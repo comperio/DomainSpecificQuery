@@ -236,7 +236,10 @@ class MapBuilder
         return function (BinaryExpression $expr) use ($key, $notEmpty)
         {
             $val = $expr->getRight()->getValue();
-            return isset($val[$key]) && ($val[$key] || !$notEmpty);
+            return
+                is_array($val)
+                && isset($val[$key])
+                && ($val[$key] || !$notEmpty);
         };
     }
 

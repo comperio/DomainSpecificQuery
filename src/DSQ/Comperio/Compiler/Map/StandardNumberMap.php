@@ -55,7 +55,9 @@ class StandardNumberMap
         if ($this->isSingleNumberValue($rightVal))
             return new FieldExpression($this->numbers[$rightVal['subfield']], $rightVal['value']);
 
-        return $this->allNumbersExpression(isset($rightVal['value']) ? $rightVal['value'] : $rightVal);
+        return $this->allNumbersExpression(
+            is_array($rightVal) && isset($rightVal['value']) ? $rightVal['value'] : $rightVal
+        );
     }
 
     /**
