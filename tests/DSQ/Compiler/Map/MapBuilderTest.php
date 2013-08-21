@@ -11,9 +11,11 @@
 namespace DSQ\Test\Compiler\Map;
 
 
+use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
+use DSQ\Lucene\PureExpression;
 use DSQ\Lucene\TermExpression;
 
 class MapBuilderTest extends \PHPUnit_Framework_TestCase
@@ -145,6 +147,21 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $expr->setRight("mar");
         $this->assertEquals("it does not have a b", (string) $map($expr, $this->compiler));
+    }
+
+    public function testAttr()
+    {
+        $submap = function($expr) { return new PureExpression('foo'); };
+        $map = $this->builder->attr($submap, array('foo' => 'bar', 'moo' => 'bah'));
+        $expr = $map(new BasicExpression('bar'), $this->compiler);
+
+        $this->assertInstanceOf('DSQ\Lucene\PureExpression', $expr);
+        $this->assertEquals('foo', $expr->getValue());
+        $this->assertTrue(isset($expr['foo']));
+        $this->assertTrue(isset($expr['moo']));
+        $this->assertFalse(isset($expr['bar']));
+        $this->assertEquals('bar', $expr['foo']);
+        $this->assertEquals('bah', $expr['moo']);
     }
 
     public function testSubval()

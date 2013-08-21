@@ -224,6 +224,27 @@ class MapBuilder
     }
 
     /**
+     * Set attributes in the resulting expression.
+     *
+     * @param $map
+     * @param array $attributes
+     * @return callable
+     */
+    public function attr($map, array $attributes)
+    {
+        return function(Expression $expr, $compiler) use ($map, $attributes)
+        {
+            $luceneExpr = $map($expr, $compiler);
+
+            foreach ($attributes as $name => $value) {
+                $luceneExpr[$name] = $value;
+            }
+
+            return $luceneExpr;
+        };
+    }
+
+    /**
      * This is a condition map builder (not a lucene map builder), tought to be
      * used with self::conditional()
      *
