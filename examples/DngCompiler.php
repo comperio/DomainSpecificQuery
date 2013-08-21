@@ -10,6 +10,7 @@
 
 namespace DSQ;
 
+use DSQ\Comperio\Compiler\Map\LibraryAreaMap;
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
@@ -128,7 +129,7 @@ TPL
     ->map('segnatura', $m->field('fldis_str_collocation'))
     ->map('tid', $m->field('id'))
     ->map('q', $m->term())
-    //Missing: libarea (LibraryAreaSearchField
+    ->map('libarea', new LibraryAreaMap(array(1 => array(1, 2, 3))))
     ->map('collection', $m->field('collection', '*', 'collection'))
     //Missing: Facets eta...
     //Missing: loanable
@@ -175,6 +176,7 @@ $expression = $builder
         ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
         ->field('id-subj', 'scalar')
         ->field('facets-target', 'm')
+        ->field('libarea', 1)
     ->getExpression();
 
 
