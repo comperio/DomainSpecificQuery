@@ -10,10 +10,10 @@
 
 namespace DSQ\Lucene;
 
-
 class LuceneQuery
 {
     const ALLQUERY = '*:*';
+    const EMPTYQUERY = "*:* NOT *:*";
 
     /**
      * @var string

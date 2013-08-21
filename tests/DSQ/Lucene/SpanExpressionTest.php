@@ -14,6 +14,7 @@ namespace DSQ\Test\Lucene;
 use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\PhraseExpression;
+use DSQ\Lucene\LuceneQuery;
 
 class SpanExpressionTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,6 +52,15 @@ class SpanExpressionTest extends \PHPUnit_Framework_TestCase
         $expr = new SpanExpression('AND', array('foo', new SpanExpression('OR', array('bar', 'bah'), 3.1), 'baz'));
 
         $this->assertEquals('foo AND (bar OR bah)^3.1 AND baz', (string) $expr);
+    }
+
+    public function testToStringWhenThereAreNoChildren()
+    {
+        $expr = new SpanExpression('AND');
+        $this->assertEquals(LuceneQuery::ALLQUERY, (string) $expr);
+
+        $expr = new SpanExpression('OR');
+        $this->assertEquals(LuceneQuery::EMPTYQUERY, (string) $expr);
     }
 }
  
