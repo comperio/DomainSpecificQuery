@@ -54,6 +54,31 @@ class BasicExpressionTest extends \PHPUnit_Framework_TestCase
         $cloned = clone($this->expression);
         $cloned->getValue()->setValue('foofoo');
         $this->assertEquals('foo', $this->expression->getValue()->getValue());
+    }
 
+    public function testOffsetExists()
+    {
+        $expr = $this->expression;
+        $expr['foo'] = 'bar';
+
+        $this->assertFalse(isset($expr['foofoo']));
+        $this->assertTrue(isset($expr['foo']));
+    }
+
+    public function testOffsetSetAndGet()
+    {
+        $expr = $this->expression;
+        $expr['foo'] = 'bar';
+
+        $this->assertEquals('bar', $expr['foo']);
+    }
+
+    public function testUnset()
+    {
+        $expr = $this->expression;
+        $expr['foo'] = 'bar';
+        unset($expr['foo']);
+
+        $this->assertFalse(isset($expr['foo']));
     }
 }

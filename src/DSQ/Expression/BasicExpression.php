@@ -21,6 +21,7 @@ class BasicExpression implements Expression
 {
     private $value;
     private $type;
+    private $attributes = array();
 
     /**
      * @param string $value The name of the expression
@@ -78,6 +79,39 @@ class BasicExpression implements Expression
         if (is_object($this->getValue()))
             $this->setValue(clone($this->getValue()));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->attributes[$offset]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->attributes[$offset];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->attributes[$offset] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->attributes[$offset]);
+    }
+
 
     /**
      * Check if $value is an Expression. If not, wrap it with a BasicExpression

@@ -10,7 +10,7 @@
 
 namespace DSQ\Expression;
 
-interface Expression
+interface Expression extends \ArrayAccess
 {
     /**
      * @param string $type The type of the expression
