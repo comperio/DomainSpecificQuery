@@ -39,7 +39,7 @@ class RangeExpression extends AbstractLuceneExpression
         $value = $this->getValue();
 
         $result = $this->includeLeft ? '[' : '{';
-        $result .= "{$this->escape($value['from'])} TO {$this->escape($value['to'])}";
+        $result .= "{$value['from']} TO {$value['to']}";
         $result .= $this->includeRight ? ']' : '}';
         $result .= $this->boostSuffix();
 

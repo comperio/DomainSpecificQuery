@@ -30,8 +30,8 @@ class RangeExpressionTest extends \PHPUnit_Framework_TestCase
         $expr->setBoost(12.2);
         $this->assertEquals('[10 TO 100]^12.2', (string) $expr);
 
-        $expr = new RangeExpression(':escapeme:', 100, 1.0, $includeLeft = true, $includeRight = false);
-        $this->assertEquals('[\:escapeme\: TO 100}', (string) $expr);
+        $expr = new RangeExpression(':dontescapeme:', 100, 1.0, $includeLeft = true, $includeRight = false);
+        $this->assertEquals('[:dontescapeme: TO 100}', (string) $expr);
 
         $expr = new RangeExpression;
 
