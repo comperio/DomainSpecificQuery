@@ -149,5 +149,22 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
         $expr->setRight("mar");
         $this->assertEquals("it does not have a b", (string) $map($expr, $this->compiler));
     }
+
+    public function testSubval()
+    {
+        $rval = function($expr) { return $expr->getRight()->getValue(); };
+
+        $expr = new BinaryExpression('=', 'moo', 'bar');
+        $map = $this->builder->subval('key', $rval);
+        $this->assertEquals('bar', $map($expr, $this->compiler));
+
+        $expr->setRight(array('key' => 'foo'));
+        $this->assertEquals('foo', $map($expr, $this->compiler));
+
+        $expr->setRight(array('nokey' => 'foo'));
+        $this->assertEquals('', $map($expr, $this->compiler));
+    }
+
+
 }
  

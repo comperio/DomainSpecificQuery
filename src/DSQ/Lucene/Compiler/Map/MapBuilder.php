@@ -196,4 +196,26 @@ class MapBuilder
             throw new UnregisteredTransformationException("No condition matched with the given expression");
         };
     }
+
+    /**
+     * Before performing the $map transformation, transform the right node value
+     * picking a subvalue if it is an array.
+     *
+     * @param string $key   The key of the value array of the right node
+     * @param callable $map
+     *
+     * @return callable
+     */
+    public function subval($key, $map)
+    {
+        return function(BinaryExpression $expr, $compiler) use ($key, $map)
+        {
+            if (is_array($rVal = $expr->getRight()->getValue())) {
+                $val = isset($rVal[$key]) ? $rVal[$key] : '';
+                $expr = clone($expr);
+                $expr->getRight()->setValue($val);
+            }
+            return $map($expr, $compiler);
+        };
+    }
 } 
