@@ -100,6 +100,7 @@ $compiler
     ->map('bibtype', $m->field('mrc_d901_sa'))
     ->map('target', $m->field('mrc_cdf'))
     //missing: facets-target search field
+    ->map('facets-target', $m->template("mrc_cdf:d100_sa_17_{}"))
     ->map('pub-name', $m->field('mrc_d210_sc'))
     ->map('pub-place', $m->field('mrc_d210_sa'))
     ->map('collocation', $m->field('mrc_d950_sf'))
@@ -174,6 +175,7 @@ $expression = $builder
         ->field('materiale', array('bibtypefirst' => 'boh'))
         ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
         ->field('id-subj', 'scalar')
+        ->field('facets-target', 'm')
     ->getExpression();
 
 
