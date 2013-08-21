@@ -135,7 +135,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
         $map = $this->builder->conditional(
                 function($expr) { return strstr($expr->getRight()->getValue(), 'b') !== false; },
                 function ($expr, $c) {return new TermExpression("it has a b");},
-            
+
                 function($expr) { return true; },
                 function ($expr, $c) {return new TermExpression("it does not have a b");}
         );
@@ -160,6 +160,35 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $expr->setRight(array('nokey' => 'foo'));
         $this->assertEquals('', $map($expr, $this->compiler));
+    }
+
+    public function testHasSubval()
+    {
+        $condition = $this->builder->hasSubval('key');
+        $expr = new BinaryExpression('=', 'foo', 'bar');
+        $right = $expr->getRight();
+
+        $this->assertFalse($condition($expr));
+
+        $right->setValue(array('a' => 'b'));
+        $this->assertFalse($condition($expr));
+
+        $right->setValue(array('key' => ''));
+        $this->assertFalse($condition($expr));
+
+        $right->setValue(array('key' => 'b'));
+        $this->assertTrue($condition($expr));
+
+        $condition = $this->builder->hasSubval('key', false);
+        $right->setValue(array('key' => ''));
+        $this->assertTrue($condition($expr));
+    }
+
+    public function testConstant()
+    {
+        $cond = $this->builder->constant("abc");
+
+        $this->assertEquals("abc", $cond());
     }
 
 

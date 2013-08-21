@@ -222,4 +222,32 @@ class MapBuilder
             return $map($expr, $compiler);
         };
     }
+
+    /**
+     * This is a condition map builder (not a lucene map builder), tought to be
+     * used with self::conditional()
+     *
+     * @param string $key
+     * @param bool $notEmpty
+     * @return callable
+     */
+    public function hasSubval($key = 'value', $notEmpty = true)
+    {
+        return function (BinaryExpression $expr) use ($key, $notEmpty)
+        {
+            $val = $expr->getRight()->getValue();
+            return isset($val[$key]) && ($val[$key] || !$notEmpty);
+        };
+    }
+
+    /**
+     * Condition map builder for constant values.
+     *
+     * @param mixed $value
+     * @return callable
+     */
+    public function constant($value)
+    {
+        return function() use ($value) { return $value; };
+    }
 } 
