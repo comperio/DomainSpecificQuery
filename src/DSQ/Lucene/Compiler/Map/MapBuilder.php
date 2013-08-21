@@ -180,18 +180,22 @@ class MapBuilder
      * Build a map from a collection of condition and map couples.
      * It will be used the map of the first matched condition.
      *
-     * @param array[] $conditionsMap
+     * @param callable $condition1
+     * @param callable $map1 , ...
+     *
      * @return callable
      */
-    public function conditional(array $conditionsMap)
+    public function conditional($condition1, $map1/*, $condition2, $map2*/)
     {
-        return function(Expression $expr, $compiler) use ($conditionsMap)
+        $args = func_get_args();
+        return function(Expression $expr, $compiler) use ($args)
         {
-            foreach ($conditionsMap as $conditionAndMap) {
-                list($condition, $map) = $conditionAndMap;
-                if ($condition($expr)) {
+            $numargs = count($args);
+            for ($i = 0; $i + 1 < $numargs; $i += 2) {
+                $condition = $args[$i];
+                $map = $args[$i+1];
+                if ($condition($expr))
                     return $map($expr, $compiler);
-                }
             }
             throw new UnregisteredTransformationException("No condition matched with the given expression");
         };

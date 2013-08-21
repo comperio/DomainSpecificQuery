@@ -132,16 +132,13 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testConditional()
     {
-        $map = $this->builder->conditional(array(
-            array(
+        $map = $this->builder->conditional(
                 function($expr) { return strstr($expr->getRight()->getValue(), 'b') !== false; },
-                function ($expr, $c) {return new TermExpression("it has a b");}
-            ),
-            array(
+                function ($expr, $c) {return new TermExpression("it has a b");},
+            
                 function($expr) { return true; },
                 function ($expr, $c) {return new TermExpression("it does not have a b");}
-            )
-        ));
+        );
 
         $expr = new BinaryExpression('=', 'moo', 'bar');
         $this->assertEquals("it has a b", (string) $map($expr, $this->compiler));
