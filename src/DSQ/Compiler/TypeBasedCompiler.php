@@ -59,14 +59,14 @@ class TypeBasedCompiler implements Compiler
     /**
      * Get the map for the given expression type
      *
-     * @param string $class
      * @param string $type
-     *
-     * @return callable The transformation
+     * @param string $class
      *
      * @throws UnregisteredTransformationException
+     * @return callable The transformation
+     *
      */
-    public function getMap($class, $type)
+    public function getMap($type, $class = '*')
     {
         if (isset($this->maps[$class][$type]))
             return $this->maps[$class][$type];
@@ -91,7 +91,7 @@ class TypeBasedCompiler implements Compiler
     public function canCompile($class, $type = '*')
     {
         try {
-            $this->getMap($class, $type);
+            $this->getMap($type, $class);
         } catch (UnregisteredTransformationException $e) {
             return false;
         }
@@ -104,7 +104,7 @@ class TypeBasedCompiler implements Compiler
      */
     public function compile(Expression $expression)
     {
-        $transformation = $this->getMap(get_class($expression), $expression->getType());
+        $transformation = $this->getMap($expression->getType(), get_class($expression));
 
         return $transformation($expression, $this);
     }

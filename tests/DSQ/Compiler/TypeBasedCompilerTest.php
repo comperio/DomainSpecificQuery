@@ -74,8 +74,8 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertEquals($map, $compiler->getMap('DSQ\Expression\BasicExpression', 'type'));
-        $this->assertEquals($map, $compiler->getMap('DSQ\Expression\TreeExpression', 'type'));
+        $this->assertEquals($map, $compiler->getMap('type', 'DSQ\Expression\BasicExpression'));
+        $this->assertEquals($map, $compiler->getMap('type', 'DSQ\Expression\TreeExpression'));
 
         $compiler = new TypeBasedCompiler;
         $compiler->map(
@@ -83,8 +83,8 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
                 return 'foo';
             }
         );
-        $this->assertEquals($map, $compiler->getMap('MyClass', 'type1'));
-        $this->assertEquals($map, $compiler->getMap('MyClass', 'type2'));
+        $this->assertEquals($map, $compiler->getMap('type1', 'MyClass'));
+        $this->assertEquals($map, $compiler->getMap('type2', 'MyClass'));
 
         $compiler = new TypeBasedCompiler;
         $compiler->map(
@@ -92,19 +92,19 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
                 return 'foo';
             }
         );
-        $this->assertEquals($map, $compiler->getMap('Class1', 'type1'));
-        $this->assertEquals($map, $compiler->getMap('Class1', 'type2'));
-        $this->assertEquals($map, $compiler->getMap('Class2', 'type1'));
-        $this->assertEquals($map, $compiler->getMap('Class2', 'type2'));
+        $this->assertEquals($map, $compiler->getMap('type1', 'Class1'));
+        $this->assertEquals($map, $compiler->getMap('type2', 'Class1'));
+        $this->assertEquals($map, $compiler->getMap('type1', 'Class2'));
+        $this->assertEquals($map, $compiler->getMap('type2', 'Class2'));
     }
 
     public function testGetTransformationThrowsAnExceptionWhenRequestingAnUnregistedTransformation()
     {
         $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
-        $this->compiler->getMap('*', 'baz');
+        $this->compiler->getMap('baz', '*');
 
         $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
-        $this->compiler->getMap('baz', '*');
+        $this->compiler->getMap('*', 'baz');
     }
 
     /**
