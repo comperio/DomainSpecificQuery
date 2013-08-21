@@ -13,6 +13,7 @@ namespace DSQ;
 use DSQ\Comperio\Compiler\Map\LibraryAreaMap;
 use DSQ\Comperio\Compiler\Map\LoanableMap;
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
+use DSQ\Comperio\Compiler\Map\StandardNumberMap;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
@@ -32,52 +33,33 @@ $compiler
     ->map('subject', $m->field('fldin_txt_subject'))
     ->map('subject-type', $m->field('mrc_d610_s9'))
     ->map('subj-and-type', new SubjTypeMap)
-    ->map(
-        'series', $m->combine(
-            'or', $m->template(
-                $seriesTpl
-                        = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'
-            ), $m->template($seriesTpl, true)
-        )
-    )
+    ->map('series', $m->combine('or',
+        $m->template(
+            $seriesTpl
+                    = '(mrc_d901_sb:"c" AND (mrc_d200_sa:{}^100 OR mrc_d200_sc:{}^1000 OR mrc_d200_sd:{}^1000 OR mrc_d200_se:{} OR mrc_d200_sh:{} OR mrc_d200_si:{})) OR (mrc_d225_sa:{} OR mrc_d410_st:{})'
+        ),
+        $m->template($seriesTpl, true)
+    ))
     ->map('dewey', $m->field('facets_class'))
     ->map('fulltext-atc', $m->field('fldin_txt_fulltextattach'))
     ->map('classtxt', $m->field('fldin_txt_class'))
-    ->map(
-        'class', $m->regexps(
-            array(
-                '/^"?\d+(\.\d*)?\*?"?$/' => $compiler->getMap('*', 'dewey'),
-                '/.*/' => $compiler->getMap('*', 'classtxt'),
-            )
-        )
-    )
+    ->map('class', $m->regexps(array(
+        '/^"?\d+(\.\d*)?\*?"?$/'    => $compiler->getMap('dewey'),
+        '/.*/'                      => $compiler->getMap('classtxt')
+    )))
     ->map('facets-class-desc', $m->field('facets_class_desc'))
     ->map('facets-editore', $m->field('facets_publisher'))
-    ->map(
-        'publisher', $m->combine(
-            'or', $m->field('mrc_d210_sa'), $m->field('mrc_d210_sb'), $m->field('mrc_d210_sc'),
-            $m->field('fldint_txt_publisher')
-        )
-    )
-    ->map(array('materiale', 'facets-materiale'), $m->conditional(array(
-        array(
-            function (BinaryExpression $expr) {
-                $v = $expr->getRight()->getValue();
-                return isset($v['bibtype']) && $v['bibtype'];
-            },
-            $m->template('mrc_d901_sa:{bibtype}')
-        ),
-        array(
-            function () { return true; },
-            $m->template('mrc_d901_sc:{bibtypefirst}')
-        )
-    )))
-    ->map(
-        'aut', $m->combine(
-            'or', $m->field('mrc_d700_sa'), $m->field('mrc_d701_sa'), $m->field('mrc_d702_sa'),
-            $m->field('mrc_d710_sa'), $m->field('mrc_d711_sa'), $m->field('mrc_d712_sa'),
-            $m->field('mrc_d720_sa'), $m->field('mrc_d790_sa')
-        )
+    ->map('publisher', $m->combine('or',
+        $m->field('mrc_d210_sa'), $m->field('mrc_d210_sb'), $m->field('mrc_d210_sc'), $m->field('fldint_txt_publisher')
+    ))
+    ->map(array('materiale', 'facets-materiale'), $m->conditional(
+        $m->hasSubval('bibtype'), $m->template('mrc_d901_sa:{bibtype}'),
+        $m->constant(true), $m->template('mrc_d901_sc:{bibtypefirst}')
+    ))
+    ->map('aut', $m->combine('or',
+        $m->field('mrc_d700_sa'), $m->field('mrc_d701_sa'), $m->field('mrc_d702_sa'),
+        $m->field('mrc_d710_sa'), $m->field('mrc_d711_sa'), $m->field('mrc_d712_sa'),
+        $m->field('mrc_d720_sa'), $m->field('mrc_d790_sa'))
     )
     ->map(
         'aut-role', $m->combine(
@@ -120,12 +102,10 @@ $compiler
 TPL
         )
     )
-    ->map(
-        'place', $m->combine(
-            'or', $m->field('mrc_d620_sa'), $m->field('mrc_d620_sb'), $m->field('mrc_d620_sc'),
-            $m->field('mrc_d620_sd')
-        )
-    )
+    ->map('place', $m->combine(
+        'or', $m->field('mrc_d620_sa'), $m->field('mrc_d620_sb'), $m->field('mrc_d620_sc'),
+        $m->field('mrc_d620_sd')
+    ))
     ->map('year', $m->range('sorti_date'))
     ->map('segnatura', $m->field('fldis_str_collocation'))
     ->map('tid', $m->field('id'))
@@ -133,14 +113,11 @@ TPL
     ->map('libarea', new LibraryAreaMap(array(1 => array(1, 2, 3))))
     ->map('collection', $m->field('collection', '*', 'collection'))
     ->map('loanable', new LoanableMap)
-    ->map(
-        'ean', $m->combine(
-            'or', $m->field('mrc_d073_sa'), $m->field('mrc_d010_sa'), $m->field('mrc_d011_sa'),
-            $m->field('mrc_d012_sa'), $m->field('mrc_d013_sa'), $m->field('mrc_d014_sa'),
-            $m->field('mrc_d015_sa'), $m->field('mrc_d016_sa'), $m->field('mrc_d017_sa')
-        )
-    )
-    //Missing: standard-number: multiplesolrsearchfield
+    ->map('ean', $m->combine('or',
+        $m->field('mrc_d073_sa'), $m->field('mrc_d010_sa'), $m->field('mrc_d011_sa'),
+        $m->field('mrc_d012_sa'), $m->field('mrc_d013_sa'), $m->field('mrc_d014_sa'),
+        $m->field('mrc_d015_sa'), $m->field('mrc_d016_sa'), $m->field('mrc_d017_sa')
+    ))
     ->map('num-ean', $m->field('mrc_d073_sa'))
     ->map('num-isbn', $m->field('mrc_d010_sa'))
     ->map('num-issn', $m->field('mrc_d011_sa'))
@@ -154,9 +131,15 @@ TPL
     ->map('num-depleg', $m->field('mrc_d021_sa'))
     ->map('num-gov', $m->field('mrc_d022_sa'))
     ->map('num-coden', $m->field('mrc_d040_sa'))
-    ->map('num-pub', $m->field('mrc_d071_sa'))
+    ->map(array('num-pub', 'num-pn'), $m->field('mrc_d071_sa'))
     ->map('num-upc', $m->field('mrc_d072_sa'))
 
+    ->map('all-std-numbers', $m->span(array(
+        'mrc_d073_sa', 'mrc_d010_sa', 'mrc_d011_sa', 'mrc_d012_sa', 'mrc_d013_sa', 'mrc_d014_sa',
+        'mrc_d015_sa', 'mrc_d016_sa', 'mrc_d017_sa', 'mrc_d020_sa', 'mrc_d021_sa', 'mrc_d022_sa',
+        'mrc_d040_sa', 'mrc_d071_sa', 'mrc_d072_sa'
+    ), 'or'))
+    ->map('standard-number', new StandardNumberMap)
     ->map('fldin_str_bid', $m->field('bid'))
     ->map('solr', $m->template('{}', false, false))
     //Missing: cdf
@@ -178,8 +161,8 @@ $expression = $builder
         ->field('facets-target', 'm')
         ->field('libarea', 1)
         ->field('loanable', 0)
+        ->field('standard-number', array('subfield' => 'EAN', 'value' => 123))
     ->getExpression();
-
 
 echo $compiler->compile($expression);;
 
