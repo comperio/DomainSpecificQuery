@@ -155,7 +155,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
         $rval = function($expr) { return $expr->getRight()->getValue(); };
 
         $expr = new BinaryExpression('=', 'moo', 'bar');
-        $map = $this->builder->subval('key', $rval);
+        $map = $this->builder->subval($rval, 'key');
         $this->assertEquals('bar', $map($expr, $this->compiler));
 
         $expr->setRight(array('key' => 'foo'));

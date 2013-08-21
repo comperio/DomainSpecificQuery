@@ -92,8 +92,10 @@ $compiler
     ->map('facets-printer', $m->field('facets_printer'))
     ->map('facets-author', $m->field('facets_author'))
     ->map('facets-author-main', $m->field('facets_author_main'))
-    ->map('id-auth', $m->field('fldin_str_authid')) //Custom...
-    ->map('id-subj', $m->field('fldin_str_subj'))   //Custom...
+    ->map('id-auth', $m->subval($m->field('fldin_str_authid')))
+    ->map('id-subj', $m->subval($m->field('fldin_str_subj')))
+    ->map('id-work', $m->subval($m->field('mrc_d500_s3')))
+    ->map('id-marca', $m->subval($m->field('mrc_d921_s3')))
     ->map('biblevel', $m->field('mrc_d901_sb'))
     ->map('bibtype', $m->field('mrc_d901_sa'))
     ->map('target', $m->field('mrc_cdf'))
@@ -101,7 +103,6 @@ $compiler
     ->map('pub-name', $m->field('mrc_d210_sc'))
     ->map('pub-place', $m->field('mrc_d210_sa'))
     ->map('collocation', $m->field('mrc_d950_sf'))
-    ->map('id-marca', $m->field('mrc_d921_s3')) //Custom...
     ->map('language', $m->field('facets_lang'))
     ->map('autha', $m->template('fldin_txt_author_main:{}^1000 OR fldin_txt_author:{}^10'))
     ->map('owner', $m->field('fldin_txt_owner'))
@@ -126,7 +127,6 @@ TPL
     ->map('year', $m->range('sorti_date'))
     ->map('segnatura', $m->field('fldis_str_collocation'))
     ->map('tid', $m->field('id'))
-    ->map('id-work', $m->field('mrc_d500_s3')) // Curstom...
     ->map('q', $m->term())
     //Missing: libarea (LibraryAreaSearchField
     ->map('collection', $m->field('collection', '*', 'collection'))
@@ -172,6 +172,8 @@ $expression = $builder
         //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
         ->field('materiale', array('bibtype' => 'ah'))
         ->field('materiale', array('bibtypefirst' => 'boh'))
+        ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
+        ->field('id-subj', 'scalar')
     ->getExpression();
 
 

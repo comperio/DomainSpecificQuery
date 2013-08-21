@@ -201,12 +201,12 @@ class MapBuilder
      * Before performing the $map transformation, transform the right node value
      * picking a subvalue if it is an array.
      *
-     * @param string $key   The key of the value array of the right node
      * @param callable $map
+     * @param string $key The key of the value array of the right node
      *
      * @return callable
      */
-    public function subval($key, $map)
+    public function subval($map, $key = 'value')
     {
         return function(BinaryExpression $expr, $compiler) use ($key, $map)
         {
