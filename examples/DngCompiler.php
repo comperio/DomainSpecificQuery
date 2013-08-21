@@ -11,6 +11,7 @@
 namespace DSQ;
 
 use DSQ\Comperio\Compiler\Map\LibraryAreaMap;
+use DSQ\Comperio\Compiler\Map\LoanableMap;
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
@@ -131,8 +132,7 @@ TPL
     ->map('q', $m->term())
     ->map('libarea', new LibraryAreaMap(array(1 => array(1, 2, 3))))
     ->map('collection', $m->field('collection', '*', 'collection'))
-    //Missing: Facets eta...
-    //Missing: loanable
+    ->map('loanable', new LoanableMap)
     ->map(
         'ean', $m->combine(
             'or', $m->field('mrc_d073_sa'), $m->field('mrc_d010_sa'), $m->field('mrc_d011_sa'),
@@ -177,6 +177,7 @@ $expression = $builder
         ->field('id-subj', 'scalar')
         ->field('facets-target', 'm')
         ->field('libarea', 1)
+        ->field('loanable', 0)
     ->getExpression();
 
 
