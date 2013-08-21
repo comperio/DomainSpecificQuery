@@ -26,7 +26,7 @@ class LuceneQuery
     private $filterQueries = array();
 
     /**
-     * @param string $mainQuery
+     * @param mixed $mainQuery
      */
     public function __construct($mainQuery = self::ALLQUERY)
     {
@@ -36,7 +36,7 @@ class LuceneQuery
     /**
      * Set FilterQueries
      *
-     * @param string[] $filterQueries
+     * @param mixed[] $filterQueries
      *
      * @return $this The current instance
      */
@@ -49,7 +49,7 @@ class LuceneQuery
 
      /* Get FilterQueries
      *
-     * @return string[]
+     * @return mixed[]
      */
     public function getFilterQueries()
     {
@@ -57,7 +57,7 @@ class LuceneQuery
     }
 
     /**
-     * @param string $filterQuery
+     * @param mixed $filterQuery
      * @return $this
      */
     public function addFilterQuery($filterQuery)
@@ -70,7 +70,7 @@ class LuceneQuery
     /**
      * Set MainQuery
      *
-     * @param string $mainQuery
+     * @param mixed $mainQuery
      *
      * @return $this The current instance
      */
@@ -84,7 +84,7 @@ class LuceneQuery
     /**
      * Get MainQuery
      *
-     * @return string
+     * @return mixed
      */
     public function getMainQuery()
     {

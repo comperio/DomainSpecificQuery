@@ -17,6 +17,7 @@ use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
+use DSQ\Expression\UnaryExpression;
 use DSQ\Lucene\PhraseExpression;
 use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TemplateExpression;
@@ -33,6 +34,7 @@ class LuceneCompiler extends TypeBasedCompiler
             ->map('*', array($this, 'basicExpression'))
             ->map('*:DSQ\Expression\BinaryExpression', array($this, 'fieldExpression'))
             ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->map('not:DSQ\Expression\UnaryExpression', array($this, 'notExpression'))
             ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
         ;
     }
@@ -78,6 +80,13 @@ class LuceneCompiler extends TypeBasedCompiler
         }
 
         return $spanExpr;
+    }
+
+    public function notExpression(UnaryExpression $expr, self $compiler)
+    {
+        $childExpr = $compiler->compile($expr->getChild());
+
+        return new BooleanExpression(BooleanExpression::MUST_NOT, array($childExpr));
     }
 
     public function comparisonExpression(BinaryExpression $expr, self $compiler)
