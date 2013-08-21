@@ -71,6 +71,15 @@ class BasicExpression implements Expression
     }
 
     /**
+     * After-cloning the object
+     */
+    public function __clone()
+    {
+        if (is_object($this->getValue()))
+            $this->setValue(clone($this->getValue()));
+    }
+
+    /**
      * Check if $value is an Expression. If not, wrap it with a BasicExpression
      *
      * @param mixed $value

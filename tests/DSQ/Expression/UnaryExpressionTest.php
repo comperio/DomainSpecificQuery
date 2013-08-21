@@ -59,4 +59,14 @@ class UnaryExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('DSQ\Expression\BasicExpression', $child);
         $this->assertEquals('plain', $child->getValue());
     }
+
+    public function testClone()
+    {
+        $cloned = clone $this->expression;
+        $cloned->getChild()->setValue(2000);
+        $this->assertEquals(1983, $this->expression->getChild()->getValue());
+
+        $cloned->setChild(new BasicExpression(2000));
+        $this->assertEquals(1983, $this->expression->getChild()->getValue());
+    }
 }

@@ -103,4 +103,19 @@ class TreeExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->tree->isLeaf());
     }
+
+    public function testClone()
+    {
+        $this->tree
+            ->addChild($child1 = new BasicExpression('child1'))
+            ->addChild($child2 = new BasicExpression('child2'))
+        ;
+
+        $cloned = clone($this->tree);
+        $cloned->getChild(0)->setValue('child1child1');
+        $this->assertEquals('child1', $child1->getValue());
+
+        $cloned->removeAllChildren();
+        $this->assertEquals(2, count($this->tree->getChildren()));
+    }
 }

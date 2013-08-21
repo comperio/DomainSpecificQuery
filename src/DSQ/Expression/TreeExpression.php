@@ -111,4 +111,18 @@ class TreeExpression extends BasicExpression
     {
         return count($this->children) == 0;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        $children = $this->getChildren();
+        $this->removeAllChildren();
+
+        foreach ($children as $child) {
+            $this->addChild(clone($child));
+        }
+    }
 } 

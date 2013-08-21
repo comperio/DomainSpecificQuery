@@ -85,4 +85,17 @@ class BinaryExpression extends BasicExpression
     {
         return $this->right;
     }
+
+    /**
+     * @return BinaryExpression
+     */
+    public function __clone()
+    {
+        parent::__clone();
+
+        $this
+            ->setLeft(clone($this->getLeft()))
+            ->setRight(clone($this->getRight()))
+        ;
+    }
 } 

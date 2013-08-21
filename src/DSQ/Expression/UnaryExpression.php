@@ -59,4 +59,13 @@ class UnaryExpression extends BasicExpression
     {
         return $this->child;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        $this->setChild(clone($this->getChild()));
+    }
 } 

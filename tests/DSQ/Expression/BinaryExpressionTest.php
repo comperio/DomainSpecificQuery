@@ -71,4 +71,23 @@ class BinaryExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('DSQ\Expression\BasicExpression', $right);
         $this->assertEquals("I'm right!!", $right->getValue());
     }
+
+    public function testClone()
+    {
+        $this->expression
+            ->setLeft("left")
+            ->setRight("right")
+        ;
+
+        $cloned = clone($this->expression);
+
+        $cloned
+            ->setValue('foofoo')
+            ->setLeft("leftleft")
+            ->getRight()->setValue("rightright");
+
+        $this->assertEquals('foo', $this->expression->getValue());
+        $this->assertEquals('left', $this->expression->getLeft()->getValue());
+        $this->assertEquals('right', $this->expression->getRight()->getValue());
+    }
 }
