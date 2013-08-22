@@ -27,11 +27,8 @@ class LuceneQueryCompiler extends TypeBasedCompiler
     {
         $this
             ->map('*', array($this, 'mapExpression'))
-            ->map('AND:DSQ\Lucene\SpanExpression', array($this, 'mapAnd'))
-            ->map('+:DSQ\Lucene\BooleanExpression', array($this, 'mapAnd'))
-            ->map('OR:DSQ\Lucene\SpanExpression', array($this, 'mapOr'))
-            ->map(':DSQ\Lucene\BooleanExpression', array($this, 'mapOr'))
-            ->map('-:DSQ\Lucene\BooleanExpression', array($this, 'mapNot'))
+            ->map(array('AND', '+'), array($this, 'mapAnd'))
+            ->map('-', array($this, 'mapNot'))
         ;
     }
 
@@ -72,27 +69,6 @@ class LuceneQueryCompiler extends TypeBasedCompiler
 
         if ($and->numOfExpressions())
             $query->setMainQuery($and);
-
-        return $query;
-    }
-
-    /**
-     * @param TreeExpression $expr
-     * @param LuceneQueryCompiler $compiler
-     * @return LuceneQuery
-     */
-    public function mapOr(TreeExpression $expr, LuceneQueryCompiler $compiler)
-    {
-        $query = $this->newQuery();
-        $or = $expr instanceof SpanExpression
-            ? new SpanExpression('OR') : new BooleanExpression(BooleanExpression::SHOULD);
-
-        foreach ($expr->getExpressions() as $child) {
-            $subQuery = $compiler->compile($child);
-            $or->addExpression($this->queryToAndExpression($subQuery));
-        }
-
-        $query->setMainQuery($or);
 
         return $query;
     }

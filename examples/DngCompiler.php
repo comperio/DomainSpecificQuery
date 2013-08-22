@@ -153,7 +153,7 @@ TPL
 $expression = $builder
     //->field('series', 'asd"sd:')
     ->and()
-        ->or()
+        ->and()
             ->field('facets-target', 'm')
             ->field('year', array('from' => 2000, 'to' => 3000))
             ->field('class', 'ciao')
