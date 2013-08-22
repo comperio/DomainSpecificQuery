@@ -33,4 +33,14 @@ interface Expression extends \ArrayAccess
      * @return string
      */
     public function getValue();
+
+    /**
+     * Returns an attribute value, or the passed $defaultValue if
+     * attribute is not set
+     *
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function attr($name, $defaultValue = null);
 } 

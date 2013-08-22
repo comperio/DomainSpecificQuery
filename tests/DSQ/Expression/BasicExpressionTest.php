@@ -81,4 +81,13 @@ class BasicExpressionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse(isset($expr['foo']));
     }
+
+    public function testAttr()
+    {
+        $expr = $this->expression;
+        $expr['foo'] = 'bar';
+
+        $this->assertEquals('bar', $expr->attr('foo', 'mar'));
+        $this->assertEquals('mar', $expr->attr('foofoo', 'mar'));
+    }
 }

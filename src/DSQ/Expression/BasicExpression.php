@@ -112,6 +112,13 @@ class BasicExpression implements Expression
         unset($this->attributes[$offset]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function attr($name, $defaultValue = null)
+    {
+        return isset($this[$name]) ? $this[$name] : $defaultValue;
+    }
 
     /**
      * Check if $value is an Expression. If not, wrap it with a BasicExpression
