@@ -11,6 +11,7 @@ namespace DSQ\Test\Lucene;
 
 use DSQ\Lucene\LuceneQuery;
 use DSQ\Lucene\MatchAllExpression;
+use DSQ\Lucene\PureExpression;
 
 /**
  * Unit tests for class LuceneQuery
@@ -91,5 +92,15 @@ class LuceneQueryTest extends \PHPUnit_Framework_TestCase
 
         $query->setMainQuery('foo');
         $this->assertFalse($query->hasTrivialMainQuery());
+    }
+
+    public function testConvertExpressionsToStrings()
+    {
+        $query = new LuceneQuery(new PureExpression('foo'));
+        $query->setFilterQueries(array(new PureExpression('bar'), new PureExpression('baz')));
+        $query->convertExpressionsToStrings();
+
+        $this->assertSame('foo', $query->getMainQuery());
+        $this->assertSame(array('bar', 'baz'), $query->getFilterQueries());
     }
 }

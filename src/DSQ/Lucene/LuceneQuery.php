@@ -115,4 +115,21 @@ class LuceneQuery
             || $main == self::ALLQUERY
         ;
     }
+
+    /**
+     * Convert all expressions to strings.
+     *
+     * @return $this
+     */
+    public function convertExpressionsToStrings()
+    {
+        $this->setMainQuery((string) $this->getMainQuery());
+
+        $this->setFilterQueries(array_map(
+            function($expr) { return (string) $expr; },
+            $this->getFilterQueries()
+        ));
+
+        return $this;
+    }
 }
