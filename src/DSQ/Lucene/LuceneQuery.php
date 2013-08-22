@@ -90,4 +90,16 @@ class LuceneQuery
     {
         return $this->mainQuery;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasTrivialMainQuery()
+    {
+        $main = $this->getMainQuery();
+        return
+            $main instanceof MatchAllExpression
+            || $main == self::ALLQUERY
+        ;
+    }
 }

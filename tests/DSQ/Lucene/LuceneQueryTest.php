@@ -10,6 +10,7 @@
 namespace DSQ\Test\Lucene;
 
 use DSQ\Lucene\LuceneQuery;
+use DSQ\Lucene\MatchAllExpression;
 
 /**
  * Unit tests for class LuceneQuery
@@ -70,4 +71,18 @@ class LuceneQueryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('foo', 'bar', 'baz'), $query->getFilterQueries());
     }
+
+    public function testHasTrivialMainQuery()
+    {
+        $query = new LuceneQuery(LuceneQuery::ALLQUERY);
+        $this->assertTrue($query->hasTrivialMainQuery());
+
+        $query->setMainQuery(new MatchAllExpression);
+        $this->assertTrue($query->hasTrivialMainQuery());
+
+        $query->setMainQuery('foo');
+        $this->assertFalse($query->hasTrivialMainQuery());
+    }
+
+
 }
