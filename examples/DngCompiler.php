@@ -10,6 +10,7 @@
 
 namespace DSQ;
 
+use DSQ\Comperio\Compiler\AdvancedUrlCompiler;
 use DSQ\Comperio\Compiler\Map\LibraryAreaMap;
 use DSQ\Comperio\Compiler\Map\LoanableMap;
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
@@ -17,19 +18,19 @@ use DSQ\Comperio\Compiler\Map\StandardNumberMap;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
+use DSQ\Lucene\Compiler\LuceneQueryCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
 
 include '../vendor/autoload.php';
 $start = microtime(true);
 $compiler = new LuceneCompiler;
+$queryCompiler = new LuceneQueryCompiler();
+$urlCompiler = new AdvancedUrlCompiler();
 $builder = new Builder;
 $m = new MapBuilder;
 
 $compiler
     ->map('home-lib', $m->field('faceti_libvisi'))
-    ->map('facets-biblevel-full', $m->field('facets_biblevel_full'))
-    ->map('facets-biblevel-full', $m->field('facets_biblevel'))
-    ->map('facets-subject', $m->field('facets_subject'))
     ->map('subject', $m->field('fldin_txt_subject'))
     ->map('subject-type', $m->field('mrc_d610_s9'))
     ->map('subj-and-type', new SubjTypeMap)
@@ -68,7 +69,10 @@ $compiler
             $m->field('mrc_d720_s4')
         )
     )
-    ->map('facets-lang', $m->field('facets_lang'))
+    ->map('facets-biblevel-full', $m->attr($m->field('facets_biblevel_full'), array('filter' => true)))
+    ->map('facets-biblevel-full', $m->attr($m->field('facets_biblevel'), array('filter' => true)))
+    ->map('facets-subject', $m->attr($m->field('facets_subject'), array('filter' => true)))
+    ->map('facets-lang', $m->attr($m->field('facets_lang'), array('filter' => true)))
     ->map(array('facets-date', 'year'), $m->attr($m->field('sorti_date'), array('filter' => true)))
     ->map('facets-place', $m->attr($m->field('facets_place'), array('filter' => true)))
     ->map('facets-country', $m->attr($m->field('facets_country'), array('filter' => true)))
@@ -77,6 +81,7 @@ $compiler
     ->map('facets-author', $m->attr($m->field('facets_author'), array('filter' => true)))
     ->map('facets-author-main', $m->field('facets_author_main'))
     ->map('facets-target', $m->attr($m->template("mrc_cdf:d100_sa_17_{}"), array('filter' => true)))
+
     ->map('id-auth', $m->subval($m->field('fldin_str_authid')))
     ->map('id-subj', $m->subval($m->field('fldin_str_subj')))
     ->map('id-work', $m->subval($m->field('mrc_d500_s3')))
@@ -147,26 +152,39 @@ TPL
 
 $expression = $builder
     //->field('series', 'asd"sd:')
-    ->or()
-        ->field('year', array('from' => 2000, 'to' => 3000))
-        ->field('class', 'ciao')
-        ->field('class', '830')
-        ->field('publisher', 'mondadori')
-        ->field('solr', 'sorti_date:["2000" TO "2010"]')
+    ->and()
+        ->or()
+            ->field('facets-target', 'm')
+            ->field('year', array('from' => 2000, 'to' => 3000))
+            ->field('class', 'ciao')
+            ->field('class', '830')
+            ->field('publisher', 'mondadori')
+            ->field('solr', 'sorti_date:["2000" TO "2010"]')
         //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
-        ->field('materiale', array('bibtype' => 'ah'))
-        ->field('materiale', array('bibtypefirst' => 'boh'))
-        ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
-        ->field('id-subj', 'scalar')
-        ->field('facets-target', 'm')
-        ->field('libarea', 1)
-        ->field('loanable', 0)
-        ->field('standard-number', array('subfield' => 'EAN', 'value' => 123))
-        ->unary('not')
+            ->field('materiale', array('bibtype' => 'ah'))
+        ->end()
+        ->and()
+            ->field('materiale', array('bibtypefirst' => 'boh'))
+            ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
+            ->field('id-subj', 'scalar')
+            ->field('facets-target', 'm')
+            ->field('libarea', 1)
+            ->field('loanable', 0)
+            ->field('standard-number', array('subfield' => 'EAN', 'value' => 123))
             ->field('ean', 123)
         ->end()
     ->getExpression();
 
-echo $compiler->compile($expression);;
-
+$expr = $compiler->compile($expression);
+echo $expr;
 var_dump(microtime(true) - $start);
+
+$start = microtime(true);
+var_dump( $urlCompiler->compile($expression));
+var_dump(microtime(true) - $start);
+
+$start = microtime(true);
+var_dump($queryCompiler->compile($expr)->convertExpressionsToStrings());
+var_dump(microtime(true) - $start);
+
+var_dump(memory_get_peak_usage());
