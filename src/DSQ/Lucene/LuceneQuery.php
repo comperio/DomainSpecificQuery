@@ -112,7 +112,7 @@ class LuceneQuery
         $main = $this->getMainQuery();
         return
             $main instanceof MatchAllExpression
-            || $main == self::ALLQUERY
+            || $main === self::ALLQUERY
         ;
     }
 
