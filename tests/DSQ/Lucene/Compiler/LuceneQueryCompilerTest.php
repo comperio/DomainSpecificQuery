@@ -49,6 +49,24 @@ class LuceneQueryCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($subexp2), $query->getFilterQueries());
     }
 
+    public function testAndMapWithBooleanMustExpression()
+    {
+        $compiler = new LuceneQueryCompiler();
+        $expr = new BooleanExpression(BooleanExpression::MUST);
+
+        $expr
+            ->addExpression($subexp1 = new PureExpression('1'))
+            ->addExpression($subexp2 = new PureExpression('2'))
+            ->addExpression($subexp3 = new PureExpression('3'))
+        ;
+
+        $subexp2['filter'] = true;
+
+        $query = $compiler->compile($expr);
+        $this->assertEquals('+(1) +(3)', (string) $query->getMainQuery());
+        $this->assertEquals(array($subexp2), $query->getFilterQueries());
+    }
+
     public function testOrMap()
     {
         $compiler = new LuceneQueryCompiler();
@@ -64,6 +82,26 @@ class LuceneQueryCompilerTest extends \PHPUnit_Framework_TestCase
 
         $query = $compiler->compile($expr);
         $this->assertEquals('(1) OR (2) OR (3)', (string) $query->getMainQuery());
+
+        $query = $compiler->compile($expr);
+        $this->assertEquals(array(), $query->getFilterQueries());
+    }
+
+    public function testOrMapWithShouldBooleanExpression()
+    {
+        $compiler = new LuceneQueryCompiler();
+        $expr = new BooleanExpression(BooleanExpression::SHOULD);
+
+        $expr
+            ->addExpression($subexp1 = new PureExpression('1'))
+            ->addExpression($subexp2 = new PureExpression('2'))
+            ->addExpression($subexp3 = new PureExpression('3'))
+        ;
+
+        $subexp2['filter'] = true;
+
+        $query = $compiler->compile($expr);
+        $this->assertEquals('(1) (2) (3)', (string) $query->getMainQuery());
 
         $query = $compiler->compile($expr);
         $this->assertEquals(array(), $query->getFilterQueries());

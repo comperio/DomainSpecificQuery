@@ -16,6 +16,7 @@ use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\LuceneExpression;
 use DSQ\Lucene\LuceneQuery;
 use DSQ\Lucene\SpanExpression;
+use DSQ\Lucene\TreeExpression;
 
 class LuceneQueryCompiler extends TypeBasedCompiler
 {
@@ -27,7 +28,9 @@ class LuceneQueryCompiler extends TypeBasedCompiler
         $this
             ->map('*', array($this, 'mapExpression'))
             ->map('AND:DSQ\Lucene\SpanExpression', array($this, 'mapAnd'))
+            ->map('+:DSQ\Lucene\BooleanExpression', array($this, 'mapAnd'))
             ->map('OR:DSQ\Lucene\SpanExpression', array($this, 'mapOr'))
+            ->map(':DSQ\Lucene\BooleanExpression', array($this, 'mapOr'))
             ->map('-:DSQ\Lucene\BooleanExpression', array($this, 'mapNot'))
         ;
     }
@@ -50,14 +53,15 @@ class LuceneQueryCompiler extends TypeBasedCompiler
     }
 
     /**
-     * @param SpanExpression $expr
+     * @param TreeExpression $expr
      * @param LuceneQueryCompiler $compiler
      * @return LuceneQuery
      */
-    public function mapAnd(SpanExpression $expr, LuceneQueryCompiler $compiler)
+    public function mapAnd(TreeExpression $expr, LuceneQueryCompiler $compiler)
     {
         $query = $this->newQuery();
-        $and = new SpanExpression('AND');
+        $and = $expr instanceof SpanExpression
+            ? new SpanExpression('AND') : new BooleanExpression(BooleanExpression::MUST);
 
         foreach ($expr->getExpressions() as $child) {
             $subQuery = $compiler->compile($child);
@@ -73,14 +77,15 @@ class LuceneQueryCompiler extends TypeBasedCompiler
     }
 
     /**
-     * @param SpanExpression $expr
+     * @param TreeExpression $expr
      * @param LuceneQueryCompiler $compiler
      * @return LuceneQuery
      */
-    public function mapOr(SpanExpression $expr, LuceneQueryCompiler $compiler)
+    public function mapOr(TreeExpression $expr, LuceneQueryCompiler $compiler)
     {
         $query = $this->newQuery();
-        $or = new SpanExpression('OR');
+        $or = $expr instanceof SpanExpression
+            ? new SpanExpression('OR') : new BooleanExpression(BooleanExpression::SHOULD);
 
         foreach ($expr->getExpressions() as $child) {
             $subQuery = $compiler->compile($child);
