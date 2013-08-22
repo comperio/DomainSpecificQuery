@@ -68,6 +68,19 @@ class LuceneQuery
     }
 
     /**
+     * @param array $filterQueries An array of filter queries
+     * @return $this
+     */
+    public function addFilterQueries(array $filterQueries)
+    {
+        foreach ($filterQueries as $filterQuery) {
+            $this->addFilterQuery($filterQuery);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set MainQuery
      *
      * @param mixed $mainQuery

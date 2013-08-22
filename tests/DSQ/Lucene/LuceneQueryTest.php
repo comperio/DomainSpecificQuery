@@ -72,6 +72,15 @@ class LuceneQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo', 'bar', 'baz'), $query->getFilterQueries());
     }
 
+    public function testAddFilterQueries()
+    {
+        $query = new LuceneQuery();
+
+        $query->addFilterQueries(array('foo', 'bar', 'baz'));
+
+        $this->assertEquals(array('foo', 'bar', 'baz'), $query->getFilterQueries());
+    }
+
     public function testHasTrivialMainQuery()
     {
         $query = new LuceneQuery(LuceneQuery::ALLQUERY);
@@ -83,6 +92,4 @@ class LuceneQueryTest extends \PHPUnit_Framework_TestCase
         $query->setMainQuery('foo');
         $this->assertFalse($query->hasTrivialMainQuery());
     }
-
-
 }
