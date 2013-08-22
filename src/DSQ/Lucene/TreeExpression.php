@@ -44,6 +44,19 @@ abstract class TreeExpression extends AbstractLuceneExpression
     }
 
     /**
+     * @param LuceneExpression[] $expressions
+     *
+     * @return $this
+     */
+    public function addExpressions(array $expressions)
+    {
+        foreach ($expressions as $expression)
+            $this->addExpression($expression);
+
+        return $this;
+    }
+
+    /**
      * Set the set of subexpressions
      *
      * @param LuceneExpression[] $expressions   The array of expressions

@@ -62,6 +62,19 @@ class TreeExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($e1, $e2, $e3), $expr->getExpressions());
     }
 
+    public function testAddExpressions()
+    {
+        $expr = $this->expr;
+
+        $expr
+            ->addExpression($e1 = new TermExpression('foo'))
+        ;
+
+        $expr->addExpressions(array($e2 = new TermExpression('bar'), $e3 = new TermExpression('baz')));
+
+        $this->assertEquals(array($e1, $e2, $e3), $expr->getExpressions());
+    }
+
     public function testNumOfExpressions()
     {
         $expr = $this->expr;
