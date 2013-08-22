@@ -52,33 +52,47 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
     {
         $compiler = new SimpleUrlCompiler;
 
-                $expr = new TreeExpression('and');
-                $expr->addChild($and = new TreeExpression('and'));
+        $expr = new TreeExpression('and');
+        $expr->addChild($and = new TreeExpression('and'));
 
-                $and
-                    ->addChild(new BinaryExpression('=', 'foo', 'bar'))
-                    ->addChild(new BinaryExpression('=', 'foo', 'baz'))
-                    ->addChild(new BinaryExpression('=', 'nic', 'mart'))
-                ;
+        $and
+            ->addChild(new BinaryExpression('=', 'foo', 'bar'))
+            ->addChild(new BinaryExpression('=', 'foo', 'baz'))
+            ->addChild(new BinaryExpression('=', 'nic', 'mart'))
+        ;
 
-                $this->assertEquals(array('foo_1' => 'bar', 'foo_2' => 'baz', 'nic' => 'mart'), $compiler->compile($expr));
+        $this->assertEquals(array('foo_1' => 'bar', 'foo_2' => 'baz', 'nic' => 'mart'), $compiler->compile($expr));
 
-                $expr->addChild($not = new TreeExpression('not'));
-                $not
-                    ->addChild(new BinaryExpression('=', 'foo', 'bar'))
-                    ->addChild(new BinaryExpression('=', 'foo', 'baz'))
-                    ->addChild(new BinaryExpression('=', 'nic', 'mart'));
+        $expr->addChild($not = new TreeExpression('not'));
+        $not
+            ->addChild(new BinaryExpression('=', 'foo', 'bar'))
+            ->addChild(new BinaryExpression('=', 'foo', 'baz'))
+            ->addChild(new BinaryExpression('=', 'nic', 'mart'));
 
-                $this->assertEquals(
-                    array(
-                        'foo_1' => 'bar',
-                        'foo_2' => 'baz',
-                        'nic' => 'mart',
-                        '-foo_1' => 'bar',
-                        '-foo_2' => 'baz',
-                        '-nic' => 'mart'
-                    ),
-                    $compiler->compile($expr));
+        $this->assertEquals(
+            array(
+                'foo_1' => 'bar',
+                'foo_2' => 'baz',
+                'nic' => 'mart',
+                '-foo_1' => 'bar',
+                '-foo_2' => 'baz',
+                '-nic' => 'mart'
+            ),
+            $compiler->compile($expr));
+    }
+
+    public function testCompileWithAnArrayValue()
+    {
+        $compiler = new SimpleUrlCompiler;
+
+        $expr = new TreeExpression('and');
+        $expr->addChild($and = new TreeExpression('and'));
+
+        $and
+            ->addChild(new BinaryExpression('=', 'foo', array('a' => 'b', 'c' => 'd')))
+        ;
+
+        $this->assertEquals(array('foo' => array('a' => 'b', 'c' => 'd')), $compiler->compile($expr));
     }
 
     /**

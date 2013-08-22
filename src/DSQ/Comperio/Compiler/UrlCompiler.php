@@ -103,7 +103,7 @@ abstract class UrlCompiler implements Compiler
         if ($field->getValue() != '=')
             throw new OutOfBoundsExpressionException("Field Expression operand is not \"=\" (it is \"{$field->getValue()}\")");
 
-        return array((string) $field->getLeft()->getValue(), (string) $field->getRight()->getValue());
+        return array($field->getLeft()->getValue(), $field->getRight()->getValue());
     }
 
     /**
