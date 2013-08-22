@@ -46,9 +46,12 @@ class BasicExpressionTest extends \PHPUnit_Framework_TestCase
 
     public function testClone()
     {
+        $this->expression['foo'] = 'bar';
         $cloned = clone($this->expression);
         $cloned->setValue('foofoo');
+
         $this->assertEquals('foo', $this->expression->getValue());
+        $this->assertEquals('bar', $cloned['foo']);
 
         $this->expression->setValue(new BasicExpression('foo'));
         $cloned = clone($this->expression);
