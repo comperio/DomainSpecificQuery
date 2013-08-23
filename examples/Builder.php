@@ -14,6 +14,7 @@ include '../vendor/autoload.php';
 
 use DSQ\Expression\Builder\BinaryBuilder;
 use DSQ\Expression\Builder\FieldBuilder;
+use DSQ\Expression\Builder\TreeBuilder;
 use DSQ\Expression\Builder\ValueBuilder;
 
 $b = new BinaryBuilder();
@@ -22,13 +23,26 @@ $b
     ->registerBuilder('binary', $b)
     ->registerBuilder('value', new ValueBuilder())
     ->registerBuilder('field', new FieldBuilder())
+    ->registerBuilder('tree', new TreeBuilder())
 ;
 
+$start = microtime(true);
 $b
-    ->binary('=')
-        ->value('ah')
-        ->value('boh');
+    ->tree('and')
+        ->binary('=')
+            ->value('ah')
+            ->value('boh')
+        ->end()
+        ->field('foo', 'bar')
+        ->field('baz', 'bug')
+        ->tree('or')
+            ->field('ba', 'ko')
+            ->value('ah')
+        ->end()
+        ->tree('not', 'a', 'b', 'c')
+;
 
 $expr = $b->getExpression();
 
+var_dump(microtime(true) - $start);
 var_dump($expr);

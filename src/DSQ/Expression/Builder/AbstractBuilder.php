@@ -32,7 +32,11 @@ abstract class AbstractBuilder
      */
     public function registerBuilder($name, AbstractBuilder $builder)
     {
-        $builder->setStack($this->stack)->setBuilders($this->builders);
+        $builder
+            ->setStack($this->stack)
+            ->setBuilders($this->builders)
+            ->setBuildersStack($this->buildersStack)
+        ;
         $this->builders[$name] = $builder;
 
         return $this;
@@ -106,6 +110,7 @@ abstract class AbstractBuilder
      */
     public function end()
     {
+        array_pop($this->stack);
         array_pop($this->buildersStack);
 
         return $this->buildersStack[count($this->buildersStack) - 1];

@@ -18,7 +18,7 @@ class BinaryBuilder extends AbstractBuilder
 {
     function createExpression(&$pushOnStack, $operator = '=', $left = null, $right = null, $type = null)
     {
-        $pushOnStack = isset($right);
+        $pushOnStack = !isset($right);
 
         return new BinaryExpression($operator, $left, $right, $type);
     }
