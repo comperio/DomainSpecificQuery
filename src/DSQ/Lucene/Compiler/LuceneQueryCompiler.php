@@ -63,8 +63,9 @@ class LuceneQueryCompiler extends TypeBasedCompiler
         foreach ($expr->getExpressions() as $child) {
             $subQuery = $compiler->compile($child);
             $this->mergeFilterQueries($query, $subQuery);
-            if (!$subQuery->hasTrivialMainQuery())
+            if (!$subQuery->hasTrivialMainQuery()){
                 $and->addExpression($subQuery->getMainQuery());
+            }
         }
 
         if ($and->numOfExpressions())

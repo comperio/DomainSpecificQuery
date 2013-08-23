@@ -22,6 +22,7 @@ use DSQ\Lucene\Compiler\LuceneQueryCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
 
 include '../vendor/autoload.php';
+
 $start = microtime(true);
 $compiler = new LuceneCompiler;
 $queryCompiler = new LuceneQueryCompiler();
