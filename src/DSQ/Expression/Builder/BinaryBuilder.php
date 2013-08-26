@@ -32,4 +32,30 @@ class BinaryBuilder extends AbstractBuilder
         else
             $currentExp->setRight($expr);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    function start($operator = '=', $left = null, $right = null, $type = null)
+    {
+        $this->stack[] = new Context(
+            new BinaryExpression($operator, $left, $right, $type),
+            $this,
+            array($left, $right)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    function manipulate()
+    {
+        list($left, $right) = $this->context()->arguments;
+
+        $this->context()->object
+            ->setLeft($left)
+            ->setRight($right);
+    }
+
+
 }

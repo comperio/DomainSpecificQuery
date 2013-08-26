@@ -16,13 +16,10 @@ use DSQ\Expression\Expression;
 abstract class AbstractBuilder
 {
     /** @var AbstractBuilder[] */
-    private $builders = array();
+    protected $builders = array();
 
-    /** @var array AbstractBuilder[] */
-    private $buildersStack = array();
-
-    /** @var array Expression[] */
-    private $stack = array();
+    /** @var array Context[] */
+    protected $stack = array();
 
     /**
      * @param $name
@@ -35,7 +32,6 @@ abstract class AbstractBuilder
         $builder
             ->setStack($this->stack)
             ->setBuilders($this->builders)
-            ->setBuildersStack($this->buildersStack)
         ;
         $this->builders[$name] = $builder;
 
@@ -65,41 +61,24 @@ abstract class AbstractBuilder
     }
 
     /**
-     * @param array $builders
-     * @return $this
+     * @param string $name
+     * @param array $args
+     * @return AbstractBuilder
      */
-    public function setBuildersStack(array &$builders)
-    {
-        $this->buildersStack = &$builders;
-
-        return $this;
-    }
-
     public function build($name, array $args = array())
     {
         $builder = $this->builders[$name];
-        $pushOnStack = false;;
 
-        array_unshift($args, null);
-        $args[0] = &$pushOnStack;
+        call_user_func_array(array($builder, 'start'), $args);
 
-        $expr = call_user_func_array(array($builder, 'createExpression'), $args);
-
-        $isStackEmpty = $this->isStackEmpty();
-
-        if (!$isStackEmpty)
-            $this->addChild($expr);
-
-        if ($pushOnStack || $isStackEmpty) {
-            $this->buildersStack[] = $builder;
-            $this->stack[] = $expr;
-
-            return $builder;
-        }
-
-        return $this;
+        return $this->context()->builder;
     }
 
+    /**
+     * @param $name
+     * @param $args
+     * @return AbstractBuilder
+     */
     public function __call($name, $args)
     {
         return $this->build($name, $args);
@@ -110,15 +89,25 @@ abstract class AbstractBuilder
      */
     public function end()
     {
+        $this->manipulate();
         array_pop($this->stack);
-        array_pop($this->buildersStack);
 
-        return $this->buildersStack[count($this->buildersStack) - 1];
+        return $this->context()->object;
     }
 
-    abstract function createExpression(&$pushOnStack);
+    /**
+     * Returns the context to push onto the stack.
+     * Null return value means that no context has to be pushed.
+     *
+     */
+    abstract function start();
 
-    abstract function addChild(Expression $expr);
+    /**
+     * Do object manipulation using context args.
+     *
+     * @return mixed
+     */
+    abstract function manipulate();
 
     /**
      * @return bool
@@ -129,40 +118,23 @@ abstract class AbstractBuilder
     }
 
     /**
-     * Push an Expression on the top of the stack
-     *
-     * @param Expression $expression
-     *
-     * @return $this
-     */
-    private function push(Expression $expression)
-    {
-        $this->stack[] = $expression;
-
-        return $this;
-    }
-
-    /**
-     * Pop the last element from the stack
-     *
-     * @return Expression
+     * @return mixed
      *
      * @throws EmptyStackException
      */
-    private function pop()
+    public function get()
     {
         if ($this->isStackEmpty())
-            throw new EmptyStackException('Builder stack is empty, cannot popping');
+            throw new EmptyStackException('Builder stack is empty');
 
-        return array_pop($this->stack);
+        return $this->context()->object;
     }
 
     /**
-     * @return Expression
-     *
+     * @return Context
      * @throws EmptyStackException
      */
-    public function getExpression()
+    public function context()
     {
         if ($this->isStackEmpty())
             throw new EmptyStackException('Builder stack is empty');
