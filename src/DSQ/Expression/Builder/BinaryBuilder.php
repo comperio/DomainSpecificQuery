@@ -12,14 +12,15 @@ namespace DSQ\Expression\Builder;
 
 
 use DSQ\Expression\BinaryExpression;
-use DSQ\Expression\Expression;
+use Building\Context;
+use Building\AbstractBuilder;
 
 class BinaryBuilder extends AbstractBuilder
 {
     /**
      * {@inheritdoc}
      */
-    function start($operator = '=', $left = null, $right = null, $type = null)
+    function processStart($operator = '=', $left = null, $right = null, $type = null)
     {
         $binary = new BinaryExpression($operator, $left, $right, $type);
         $this->addArgument($binary);
@@ -31,7 +32,7 @@ class BinaryBuilder extends AbstractBuilder
         );
 
         if ($right)
-            return $this->end();
+            return $this->processEnd();
 
         return $this;
     }
@@ -39,7 +40,7 @@ class BinaryBuilder extends AbstractBuilder
     /**
      * {@inheritdoc}
      */
-    function manipulate()
+    function processArgs()
     {
         list($left, $right) = $this->context()->arguments;
 

@@ -10,7 +10,8 @@
 
 namespace DSQ\Expression\Builder;
 
-
+use Building\AbstractBuilder;
+use Building\Context;
 use DSQ\Expression\TreeExpression;
 
 class TreeBuilder extends AbstractBuilder
@@ -19,7 +20,7 @@ class TreeBuilder extends AbstractBuilder
      * {@inheritdoc}
      *
      */
-    function start($value = '')
+    function processStart($value = '')
     {
         $tree = new TreeExpression($value);
         $this->addArgument($tree);
@@ -38,7 +39,7 @@ class TreeBuilder extends AbstractBuilder
     /**
      * {@inheritdoc}
      */
-    function manipulate()
+    function processArgs()
     {
         foreach ($this->context()->arguments as $child) {
             $this->context()->object->addChild($child);

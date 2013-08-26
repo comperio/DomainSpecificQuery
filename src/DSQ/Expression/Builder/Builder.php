@@ -8,7 +8,7 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-namespace DSQ\Expression\Builder;
+namespace DSQ\Expression\Builder;;
 
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;

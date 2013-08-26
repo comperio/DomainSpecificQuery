@@ -10,13 +10,13 @@
 
 namespace DSQ\Expression\Builder;
 
-
+use Building\AbstractBuilder;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;
 
 class ValueBuilder extends AbstractBuilder
 {
-    function start($value = '', $type = null)
+    function processStart($value = '', $type = null)
     {
         $this->addArgument(new BasicExpression($value, $type));
 
@@ -28,7 +28,7 @@ class ValueBuilder extends AbstractBuilder
      *
      * @return mixed
      */
-    function manipulate()
+    function processArgs()
     {
         //Do nothing
     }

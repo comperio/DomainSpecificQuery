@@ -10,13 +10,13 @@
 
 namespace DSQ\Expression\Builder;
 
-
+use Building\AbstractBuilder;
 use DSQ\Expression\BinaryExpression;
 
 class FieldBuilder extends BinaryBuilder
 {
-    function start($name = null, $value = null, $operator = '=')
+    function processStart($name = null, $value = null, $operator = '=')
     {
-        return parent::start($operator, $name, $value, $name);
+        return parent::processStart($operator, $name, $value, $name);
     }
 }
