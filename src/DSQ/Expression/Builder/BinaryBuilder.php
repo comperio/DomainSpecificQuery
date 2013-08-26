@@ -16,33 +16,24 @@ use DSQ\Expression\Expression;
 
 class BinaryBuilder extends AbstractBuilder
 {
-    function createExpression(&$pushOnStack, $operator = '=', $left = null, $right = null, $type = null)
-    {
-        $pushOnStack = !isset($right);
-
-        return new BinaryExpression($operator, $left, $right, $type);
-    }
-
-    function addChild(Expression $expr)
-    {
-        $currentExp = $this->getExpression();
-
-        if ($currentExp->getLeft()->getValue() === null)
-            $currentExp->setLeft($expr);
-        else
-            $currentExp->setRight($expr);
-    }
-
     /**
      * {@inheritdoc}
      */
     function start($operator = '=', $left = null, $right = null, $type = null)
     {
+        $binary = new BinaryExpression($operator, $left, $right, $type);
+        $this->addArgument($binary);
+
         $this->stack[] = new Context(
-            new BinaryExpression($operator, $left, $right, $type),
+            $binary,
             $this,
-            array($left, $right)
+            isset($right) ? array($left, $right) : array()
         );
+
+        if ($right)
+            return $this->end();
+
+        return $this;
     }
 
     /**
@@ -56,6 +47,4 @@ class BinaryBuilder extends AbstractBuilder
             ->setLeft($left)
             ->setRight($right);
     }
-
-
 }

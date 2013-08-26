@@ -12,15 +12,17 @@ namespace DSQ;
 
 include '../vendor/autoload.php';
 
+ini_set('xdebug.var_display_max_depth', '10');
+
 use DSQ\Expression\Builder\BinaryBuilder;
 use DSQ\Expression\Builder\FieldBuilder;
 use DSQ\Expression\Builder\TreeBuilder;
 use DSQ\Expression\Builder\ValueBuilder;
 
-$b = new BinaryBuilder();
+$b = new TreeBuilder();
 
 $b
-    ->registerBuilder('binary', $b)
+    ->registerBuilder('binary', new BinaryBuilder)
     ->registerBuilder('value', new ValueBuilder())
     ->registerBuilder('field', new FieldBuilder())
     ->registerBuilder('tree', new TreeBuilder())
@@ -29,6 +31,7 @@ $b
 $start = microtime(true);
 $b
     ->tree('and')
+        //->value('ah')
         ->binary('=')
             ->value('ah')
             ->value('boh')
@@ -42,7 +45,7 @@ $b
         ->tree('not', 'a', 'b', 'c')
 ;
 
-$expr = $b->getExpression();
+$expr = $b->get();
 
 var_dump(microtime(true) - $start);
 var_dump($expr);

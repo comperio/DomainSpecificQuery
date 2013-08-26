@@ -69,9 +69,7 @@ abstract class AbstractBuilder
     {
         $builder = $this->builders[$name];
 
-        call_user_func_array(array($builder, 'start'), $args);
-
-        return $this->context()->builder;
+        return call_user_func_array(array($builder, 'start'), $args);
     }
 
     /**
@@ -92,7 +90,13 @@ abstract class AbstractBuilder
         $this->manipulate();
         array_pop($this->stack);
 
-        return $this->context()->object;
+        return $this->context()->builder;
+    }
+
+    protected function addArgument($arg)
+    {
+        if (!$this->isStackEmpty())
+            $this->context()->arguments[] = $arg;
     }
 
     /**
@@ -112,7 +116,7 @@ abstract class AbstractBuilder
     /**
      * @return bool
      */
-    private function isStackEmpty()
+    protected function isStackEmpty()
     {
         return !(bool) $this->stack;
     }
@@ -126,6 +130,8 @@ abstract class AbstractBuilder
     {
         if ($this->isStackEmpty())
             throw new EmptyStackException('Builder stack is empty');
+
+        $this->manipulate();
 
         return $this->context()->object;
     }

@@ -15,8 +15,8 @@ use DSQ\Expression\BinaryExpression;
 
 class FieldBuilder extends BinaryBuilder
 {
-    function createExpression(&$pushOnStack, $name = null, $value = null, $operator = '=')
+    function start($name = null, $value = null, $operator = '=')
     {
-        return parent::createExpression($pushOnStack, $operator, $name, $value, $name);
+        return parent::start($operator, $name, $value, $name);
     }
 }

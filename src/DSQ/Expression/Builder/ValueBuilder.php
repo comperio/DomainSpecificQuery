@@ -16,14 +16,20 @@ use DSQ\Expression\Expression;
 
 class ValueBuilder extends AbstractBuilder
 {
-    public function createExpression(&$pushOnStack, $value = '', $type = null)
+    function start($value = '', $type = null)
     {
-        $pushOnStack = false;
-        return new BasicExpression($value, $type);
+        $this->addArgument(new BasicExpression($value, $type));
+
+        return $this->context()->builder;
     }
 
-    public function addChild(Expression $expr)
+    /**
+     * Do object manipulation using context args.
+     *
+     * @return mixed
+     */
+    function manipulate()
     {
-        throw new ExpressionTypeException('Cannot add child to Value Expressions');
+        //Do nothing
     }
 }

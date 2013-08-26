@@ -11,32 +11,39 @@
 namespace DSQ\Expression\Builder;
 
 
-use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
 
 class TreeBuilder extends AbstractBuilder
 {
-    function createExpression(&$pushOnStack, $value = '')
+    /**
+     * {@inheritdoc}
+     *
+     */
+    function start($value = '')
     {
+        $tree = new TreeExpression($value);
+        $this->addArgument($tree);
+
         $children = func_get_args();
         array_shift($children);
-        array_shift($children);
 
-        $tree = new TreeExpression($value);
+        $this->stack[] = new Context($tree, $this, $children);
 
-        foreach ($children as $child) {
-            $tree->addChild($child);
-        }
+        if ($children)
+            return $this->end();
 
-        $pushOnStack = !(bool) $children;
-
-        return $tree;
-    }
-
-    function addChild(Expression $expr)
-    {
-        $this->getExpression()->addChild($expr);
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    function manipulate()
+    {
+        foreach ($this->context()->arguments as $child) {
+            $this->context()->object->addChild($child);
+        }
+    }
+
 
 } 
