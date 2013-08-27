@@ -11,12 +11,39 @@
 namespace DSQ\Expression\Builder;
 
 
-use DSQ\Expression\BinaryExpression;
 use Building\Context;
-use Building\AbstractBuilder;
+use Building\BuildProcess;
+use DSQ\Expression\BinaryExpression;
 
-class BinaryBuilder extends AbstractBuilder
+class BinaryProcess implements BuildProcess
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(Context $context, $operator = '=', $left = null, $right = null, $type = null)
+    {
+        $binary = new BinaryExpression($operator, $left, $right, $type);
+        $context->process->subvalueBuilded($context, $binary);
+
+        if (!isset($right))
+            return new Context($binary, $this);
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function subvalueBuilded(Context $context, $expression)
+    {
+        /** @var BinaryExpression $currExpr */
+        $currExpr = $context->object;
+        if ($currExpr->getLeft()->getValue() === null)
+            $currExpr->setLeft($expression);
+        else
+            $currExpr->setRight($expression);
+    }
+
     /**
      * {@inheritdoc}
      */

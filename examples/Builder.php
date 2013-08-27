@@ -15,34 +15,27 @@ include '../vendor/autoload.php';
 ini_set('xdebug.var_display_max_depth', '10');
 
 use DSQ\Expression\Builder\BinaryBuilder;
-use DSQ\Expression\Builder\FieldBuilder;
-use DSQ\Expression\Builder\TreeBuilder;
-use DSQ\Expression\Builder\ValueBuilder;
+use DSQ\Expression\Builder\ExpressionBuilder;
+use DSQ\Expression\Builder\FieldProcess;
+use DSQ\Expression\Builder\TreeProcess;
+use DSQ\Expression\Builder\ValueProcess;
 
-$b = new TreeBuilder();
-
-$b
-    ->registerBuilder('binary', new BinaryBuilder)
-    ->registerBuilder('value', new ValueBuilder())
-    ->registerBuilder('field', new FieldBuilder())
-    ->registerBuilder('tree', new TreeBuilder())
-;
+$b = new ExpressionBuilder('and');
 
 $start = microtime(true);
 $b
-    ->tree('and')
-        //->value('ah')
-        ->binary('=')
-            ->value('ah')
-            ->value('boh')
-        ->end()
-        ->field('foo', 'bar')
-        ->field('baz', 'bug')
-        ->tree('or')
-            ->field('ba', 'ko')
-            ->value('ah')
-        ->end()
-        ->tree('not', 'a', 'b', 'c')
+    ->value('ah')
+    ->binary('=')
+        ->value('ah')
+        ->value('boh')
+    ->end()
+    ->field('foo', 'bar')
+    ->field('baz', 'bug')
+    ->tree('or')
+        ->field('ba', 'ko')
+        ->value('ah')
+    ->end()
+    ->tree('not', 'a', 'b', 'c')
 ;
 
 $expr = $b->get();
