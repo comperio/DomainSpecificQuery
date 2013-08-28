@@ -24,9 +24,12 @@ class ExpressionBuilder extends Builder
     {
         $this
             ->registerProcess('tree', $treeProcess = new TreeProcess)
+            ->registerProcess('and', $treeProcess)
+            ->registerProcess('or', $treeProcess)
             ->registerProcess('binary', new BinaryProcess)
             ->registerProcess('field', new FieldProcess)
             ->registerProcess('value', new ValueProcess)
+            ->registerProcess('not', new UnaryProcess)
         ;
 
         parent::__construct(new Context(new TreeExpression($op), $treeProcess));

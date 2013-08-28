@@ -10,22 +10,22 @@
 
 namespace DSQ\Expression\Builder;
 
-use Building\BuildProcess;
+use Building\AbstractProcess;
 use Building\Context;
 use DSQ\Expression\TreeExpression;
 
-class TreeProcess implements BuildProcess
+class TreeProcess extends AbstractProcess
 {
     /**
      * {@inheritdoc}
      */
-    public function build(Context $context, $value = '')
+    public function build(Context $context, $value = null)
     {
         $children = func_get_args();
         array_shift($children);
         array_shift($children);
 
-        $tree = new TreeExpression($value);
+        $tree = new TreeExpression(isset($value) ? $value : $context->name);
         $context->process->subvalueBuilded($context, $tree);
 
         if ($children) {

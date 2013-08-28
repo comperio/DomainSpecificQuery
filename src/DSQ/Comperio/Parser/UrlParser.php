@@ -12,12 +12,13 @@ namespace DSQ\Comperio\Parser;
 
 
 use DSQ\Expression\Builder\Builder;
+use DSQ\Expression\Builder\ExpressionBuilder;
 use DSQ\Parser\Parser;
 
 abstract class UrlParser implements Parser
 {
     /**
-     * @var Builder
+     * @var ExpressionBuilder
      */
     private $builder;
 
@@ -27,8 +28,6 @@ abstract class UrlParser implements Parser
     public function parse($value)
     {
         $builder = $this->getBuilder();
-
-        $builder->tree('and');
 
         foreach ($this->normalize($value) as $subtreeAry) {
             list($op, $childrenAry) = $subtreeAry;
@@ -40,17 +39,17 @@ abstract class UrlParser implements Parser
             $builder->end();
         }
 
-        return $builder->getExpression();
+        return $builder->get();
     }
 
     /**
      * Set Builder
      *
-     * @param \DSQ\Expression\Builder\Builder $builder
+     * @param ExpressionBuilder $builder
      *
      * @return $this The current instance
      */
-    public function setBuilder(Builder $builder)
+    public function setBuilder(ExpressionBuilder $builder)
     {
         $this->builder = $builder;
 
@@ -60,12 +59,12 @@ abstract class UrlParser implements Parser
     /**
      * Get Builder
      *
-     * @return Builder
+     * @return ExpressionBuilder
      */
     public function getBuilder()
     {
         if (!isset($this->builder))
-            $this->builder = new Builder;
+            $this->builder = new ExpressionBuilder('and');
 
         return $this->builder;
     }

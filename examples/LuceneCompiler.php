@@ -23,36 +23,36 @@ $compiler
         )
 ;
 
-$builder = new \DSQ\Expression\Builder\Builder();
+$builder = new \DSQ\Expression\Builder\ExpressionBuilder('and');
 
 $expression = $builder
             ->field('date')
                 ->binary('range')
                     ->value(1000)->value(2000)
                 ->end()
-    ->getExpression();
+            ->end()
+    ->get();
 
 var_dump($expression, (string) $compiler->compile($expression));
 
 $expression = $builder
-    ->and()
-        ->field('fieldname', 'ciao a a tutti: io sono Nic')
-        ->value('mah')
-        ->field('title', 'che bel titolo')
-        ->or()
-            ->value('ciao')
-            ->field('author')
-                ->value('manzoni alessandro')
-            ->end()
-            ->binary('>=', 'date', 2012)
-            ->binary('<', 'date', 2030)
-            ->field('date')
-                ->binary('range')
-                    ->value(1000)->value(2000)
-                ->end()
+    ->field('fieldname', 'ciao a a tutti: io sono Nic')
+    ->value('mah')
+    ->field('title', 'che bel titolo')
+    ->or()
+        ->value('ciao')
+        ->field('author')
+            ->value('manzoni alessandro')
+        ->end()
+        ->binary('>=', 'date', 2012)
+        ->binary('<', 'date', 2030)
+        ->field('date')
+            ->binary('range')
+                ->value(1000)->value(2000)
             ->end()
         ->end()
-    ->getExpression();
+    ->end()
+    ->get();
 
 var_dump((string) $compiler->compile($expression));
 

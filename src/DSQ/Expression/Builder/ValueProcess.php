@@ -10,27 +10,19 @@
 
 namespace DSQ\Expression\Builder;
 
-use Building\BuildProcess;
+use Building\AbstractProcess;
 use Building\Context;
 use DSQ\Expression\BasicExpression;
 
-class ValueProcess implements BuildProcess
+class ValueProcess extends AbstractProcess
 {
     /**
      * {@inheritdoc}
      */
-    public function build(Context $context, $value = '', $type = null)
+    public function build(Context $context, $value = '', $type = 'basic')
     {
         $context->process->subvalueBuilded($context, new BasicExpression($value, $type));
 
         return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function subvalueBuilded(Context $context, $expression)
-    {
-        // Do nothing
     }
 }

@@ -11,11 +11,11 @@
 namespace DSQ\Expression\Builder;
 
 
+use Building\AbstractProcess;
 use Building\Context;
-use Building\BuildProcess;
 use DSQ\Expression\BinaryExpression;
 
-class BinaryProcess implements BuildProcess
+class BinaryProcess extends AbstractProcess
 {
     /**
      * {@inheritdoc}
@@ -42,37 +42,5 @@ class BinaryProcess implements BuildProcess
             $currExpr->setLeft($expression);
         else
             $currExpr->setRight($expression);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    function processStart($operator = '=', $left = null, $right = null, $type = null)
-    {
-        $binary = new BinaryExpression($operator, $left, $right, $type);
-        $this->addArgument($binary);
-
-        $this->stack[] = new Context(
-            $binary,
-            $this,
-            isset($right) ? array($left, $right) : array()
-        );
-
-        if ($right)
-            return $this->processEnd();
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    function processArgs()
-    {
-        list($left, $right) = $this->context()->arguments;
-
-        $this->context()->object
-            ->setLeft($left)
-            ->setRight($right);
     }
 }

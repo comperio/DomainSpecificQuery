@@ -16,6 +16,7 @@ use DSQ\Comperio\Compiler\Map\LoanableMap;
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
 use DSQ\Comperio\Compiler\Map\StandardNumberMap;
 use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\Builder\ExpressionBuilder;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Expression\Builder\Builder;
 use DSQ\Lucene\Compiler\LuceneQueryCompiler;
@@ -27,7 +28,7 @@ $start = microtime(true);
 $compiler = new LuceneCompiler;
 $queryCompiler = new LuceneQueryCompiler();
 $urlCompiler = new AdvancedUrlCompiler();
-$builder = new Builder;
+$builder = new ExpressionBuilder('and');
 $m = new MapBuilder;
 
 $compiler
@@ -154,28 +155,28 @@ TPL
 $expression = $builder
     //->field('series', 'asd"sd:')
     ->and()
-        ->and()
-            ->field('facets-target', 'm')
-            ->field('year', array('from' => 2000, 'to' => 3000))
-            ->field('class', 'ciao')
-            ->field('class', '830')
-            ->field('publisher', 'mondadori')
-            ->field('solr', 'sorti_date:["2000" TO "2010"]')
-        //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
-            ->field('materiale', array('bibtype' => 'ah'))
-        ->end()
-        ->and()
-            ->field('materiale', array('bibtypefirst' => 'boh'))
-            ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
-            ->field('id-subj', 'scalar')
-            ->field('facets-target', 'm')
-            ->field('libarea', 1)
-            ->field('loanable', 0)
-            ->field('standard-number', array('subfield' => 'EAN', 'value' => 123))
-            ->field('ean', 123)
-        ->end()
-    ->getExpression();
+        ->field('facets-target', 'm')
+        ->field('year', array('from' => 2000, 'to' => 3000))
+        ->field('class', 'ciao')
+        ->field('class', '830')
+        ->field('publisher', 'mondadori')
+        ->field('solr', 'sorti_date:["2000" TO "2010"]')
+    //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
+        ->field('materiale', array('bibtype' => 'ah'))
+    ->end()
+    ->and()
+        ->field('materiale', array('bibtypefirst' => 'boh'))
+        ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
+        ->field('id-subj', 'scalar')
+        ->field('facets-target', 'm')
+        ->field('libarea', 1)
+        ->field('loanable', 0)
+        ->field('standard-number', array('subfield' => 'EAN', 'value' => 123))
+        ->field('ean', 123)
+    ->end()
+    ->get();
 
+var_dump($expression);
 $expr = $compiler->compile($expression);
 echo $expr;
 var_dump(microtime(true) - $start);
