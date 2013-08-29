@@ -10,12 +10,44 @@
 
 namespace DSQ\Expression\Builder;
 
-use Building\Context;
 
-class FieldProcess extends BinaryProcess
+use Building\AbstractProcess;
+use Building\Context;
+use DSQ\Expression\FieldExpression;
+use DSQ\Expression\UnaryExpression;
+
+class FieldProcess extends AbstractProcess
 {
-    function build(Context $context, $name = null, $value = null, $operator = '=')
+    /**
+     * {@inheritdoc}
+     */
+    public function build(Context $context, $field = '', $value = null, $type = null)
     {
-        return parent::build($context, $operator, $name, $value, $name);
+        $expr = new FieldExpression($field, $value, $type);
+        $newContext = new Context($context, $expr, $this);
+
+        if (!isset($value))
+            return $newContext;
+
+        $this->finalize($newContext);
+
+        return null;
     }
-}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function subvalueBuilded(Context $context, $expression)
+    {
+        /** @var UnaryExpression $currExpr */
+        $context->object->setValue($expression);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finalize(Context $context)
+    {
+        $context->notifyParent();
+    }
+} 

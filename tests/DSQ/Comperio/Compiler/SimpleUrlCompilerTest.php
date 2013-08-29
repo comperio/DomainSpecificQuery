@@ -9,7 +9,7 @@
  */
 use DSQ\Comperio\Compiler\SimpleUrlCompiler;
 use DSQ\Expression\TreeExpression;
-use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 
 class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
 {
@@ -29,21 +29,21 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
         $expr->addChild($and = new TreeExpression('and'));
 
         $and
-            ->addChild(new BinaryExpression('=', 'foo', 'bar'))
+            ->addChild(new FieldExpression('foo', 'bar'))
         ;
 
         $this->assertEquals(array('foo' => 'bar'), $compiler->compile($expr));
 
         //One and condition and one not condition
         $expr->addChild($not = new TreeExpression('not'));
-        $not->addChild(new BinaryExpression('=', 'foo', 'baz'));
+        $not->addChild(new FieldExpression('foo', 'baz'));
 
         $this->assertEquals(array('foo' => 'bar', '-foo' => 'baz'), $compiler->compile($expr));
 
         //One not condition
         $expr = new TreeExpression('and');
         $expr->addChild($not = new TreeExpression('not'));
-        $not->addChild(new BinaryExpression('=', 'foo', 'bar'));
+        $not->addChild(new FieldExpression('foo', 'bar'));
         $this->assertEquals(array('-foo' => 'bar'), $compiler->compile($expr));
 
     }
@@ -56,18 +56,18 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
         $expr->addChild($and = new TreeExpression('and'));
 
         $and
-            ->addChild(new BinaryExpression('=', 'foo', 'bar'))
-            ->addChild(new BinaryExpression('=', 'foo', 'baz'))
-            ->addChild(new BinaryExpression('=', 'nic', 'mart'))
+            ->addChild(new FieldExpression('foo', 'bar'))
+            ->addChild(new FieldExpression('foo', 'baz'))
+            ->addChild(new FieldExpression('nic', 'mart'))
         ;
 
         $this->assertEquals(array('foo_1' => 'bar', 'foo_2' => 'baz', 'nic' => 'mart'), $compiler->compile($expr));
 
         $expr->addChild($not = new TreeExpression('not'));
         $not
-            ->addChild(new BinaryExpression('=', 'foo', 'bar'))
-            ->addChild(new BinaryExpression('=', 'foo', 'baz'))
-            ->addChild(new BinaryExpression('=', 'nic', 'mart'));
+            ->addChild(new FieldExpression('foo', 'bar'))
+            ->addChild(new FieldExpression('foo', 'baz'))
+            ->addChild(new FieldExpression('nic', 'mart'));
 
         $this->assertEquals(
             array(
@@ -89,7 +89,7 @@ class SimpleUrlCompilerTest extends PHPUnit_Framework_TestCase
         $expr->addChild($and = new TreeExpression('and'));
 
         $and
-            ->addChild(new BinaryExpression('=', 'foo', array('a' => 'b', 'c' => 'd')))
+            ->addChild(new FieldExpression('foo', array('a' => 'b', 'c' => 'd')))
         ;
 
         $this->assertEquals(array('foo' => array('a' => 'b', 'c' => 'd')), $compiler->compile($expr));

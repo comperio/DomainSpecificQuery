@@ -23,10 +23,12 @@ class BinaryProcess extends AbstractProcess
     public function build(Context $context, $operator = '=', $left = null, $right = null, $type = null)
     {
         $binary = new BinaryExpression($operator, $left, $right, $type);
-        $context->process->subvalueBuilded($context, $binary);
+        $newContext = new Context($context, $binary, $this);
 
         if (!isset($right))
-            return new Context($binary, $this);
+            return $newContext;
+
+        $this->finalize($newContext);
 
         return null;
     }
@@ -42,5 +44,13 @@ class BinaryProcess extends AbstractProcess
             $currExpr->setLeft($expression);
         else
             $currExpr->setRight($expression);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finalize(Context $context)
+    {
+        $context->notifyParent();
     }
 }

@@ -49,19 +49,16 @@ class UrlParserTest extends PHPUnit_Framework_TestCase
         $fields2 = $children[1]->getChildren();
 
         $this->assertCount(1, $fields1);
-        $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $fields1[0]);
-        $this->assertEquals('=', $fields1[0]->getValue());
-        $this->assertEquals('foo', $fields1[0]->getLeft()->getValue());
-        $this->assertEquals('bar', $fields1[0]->getRight()->getValue());
+        $this->assertInstanceOf('DSQ\Expression\FieldExpression', $fields1[0]);
+        $this->assertEquals('foo', $fields1[0]->getType());
+        $this->assertEquals('bar', $fields1[0]->getValue());
 
         $this->assertCount(2, $fields2);
-        $this->assertInstanceOf('DSQ\Expression\BinaryExpression', $fields2[1]);
-        $this->assertEquals('=', $fields2[0]->getValue());
-        $this->assertEquals('baz', $fields2[0]->getLeft()->getValue());
-        $this->assertEquals('blah', $fields2[0]->getRight()->getValue());
-        $this->assertEquals('=', $fields2[1]->getValue());
-        $this->assertEquals('boh', $fields2[1]->getLeft()->getValue());
-        $this->assertEquals('buh', $fields2[1]->getRight()->getValue());
+        $this->assertInstanceOf('DSQ\Expression\FieldExpression', $fields2[1]);
+        $this->assertEquals('baz', $fields2[0]->getField());
+        $this->assertEquals('blah', $fields2[0]->getValue());
+        $this->assertEquals('boh', $fields2[1]->getField());
+        $this->assertEquals('buh', $fields2[1]->getValue());
     }
 }
  

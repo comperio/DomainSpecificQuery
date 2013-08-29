@@ -13,6 +13,7 @@ namespace DSQ\Comperio\Compiler;
 use DSQ\Compiler\Compiler;
 use DSQ\Expression\Expression;
 use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Expression\TreeExpression;
 
 /**
@@ -81,9 +82,10 @@ abstract class UrlCompiler implements Compiler
         $ary = array();
         $op = $tree->getValue();
 
+        /** @var $child FieldExpression */
         foreach ($tree->getChildren() as $child) {
             $ary[] = $this->fieldToAry($child);
-            $this->updateFieldsCount($op, (string) $child->getLeft()->getValue());
+            $this->updateFieldsCount($op, (string) $child->getField());
         }
 
         return $ary;
@@ -94,16 +96,13 @@ abstract class UrlCompiler implements Compiler
      * <code>
      *      [fieldname, value]
      * </code>
-     * @param BinaryExpression $field
+     * @param FieldExpression $field
      * @return array
      * @throws OutOfBoundsExpressionException Thrown when the operator is not '='
      */
-    private function fieldToAry(BinaryExpression $field)
+    private function fieldToAry(FieldExpression $field)
     {
-        if ($field->getValue() != '=')
-            throw new OutOfBoundsExpressionException("Field Expression operand is not \"=\" (it is \"{$field->getValue()}\")");
-
-        return array($field->getLeft()->getValue(), $field->getRight()->getValue());
+        return array($field->getField(), $field->getValue());
     }
 
     /**

@@ -9,7 +9,7 @@
  */
 
 use DSQ\Comperio\Compiler\Map\SubjTypeMap;
-use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 
 class SubjTypeMapTest extends PHPUnit_Framework_TestCase
@@ -34,13 +34,13 @@ class SubjTypeMapTest extends PHPUnit_Framework_TestCase
     {
         $map = $this->map;
 
-        $expr = new BinaryExpression('=', 'foo', array('s' => 'bar:bar'));
+        $expr = new FieldExpression('foo', array('s' => 'bar:bar'));
         $this->assertEquals('fldin_txt_subject:(bar\:bar)', (string) $map($expr, $this->compiler));
 
-        $expr = new BinaryExpression('=', 'foo', array('s' => 'bar baz'));
+        $expr = new FieldExpression('foo', array('s' => 'bar baz'));
         $this->assertEquals('fldin_txt_subject:(bar baz)', (string) $map($expr, $this->compiler));
 
-        $expr = new BinaryExpression('=', 'foo', array('s' => '"bar baz"'));
+        $expr = new FieldExpression('foo', array('s' => '"bar baz"'));
         $this->assertEquals('facets_subject:"bar baz"', (string) $map($expr, $this->compiler));
     }
 
@@ -48,10 +48,10 @@ class SubjTypeMapTest extends PHPUnit_Framework_TestCase
     {
         $map = $this->map;
 
-        $expr = new BinaryExpression('=', 'foo', array('t' => 'bar:bar'));
+        $expr = new FieldExpression('foo', array('t' => 'bar:bar'));
         $this->assertEquals('mrc_d600_s2:(bar\:bar) OR mrc_d601_s2:(bar\:bar)', (string) $map($expr, $this->compiler));
 
-        $expr = new BinaryExpression('=', 'foo', array('t' => '"bar: baz"'));
+        $expr = new FieldExpression('foo', array('t' => '"bar: baz"'));
         $this->assertEquals('mrc_d600_s2:("bar\: baz") OR mrc_d601_s2:("bar\: baz")', (string) $map($expr, $this->compiler));
     }
 
@@ -59,13 +59,13 @@ class SubjTypeMapTest extends PHPUnit_Framework_TestCase
     {
         $map = $this->map;
 
-        $expr = new BinaryExpression('=', 'foo', array('t' => 'f:oo', 's' => 'b:ar'));
+        $expr = new FieldExpression('foo', array('t' => 'f:oo', 's' => 'b:ar'));
         $this->assertEquals(
             '(sf_d600:"$sa b\:ar $s2 f\:oo"~100 AND mrc_d600_sa:(b\:ar) AND mrc_d600_s2:(f\:oo)) OR (sf_d601:"$sa b\:ar $s2 f\:oo"~100 AND mrc_d601_sa:(b\:ar) AND mrc_d601_s2:(f\:oo))',
             (string) $map($expr, $this->compiler)
         );
 
-        $expr = new BinaryExpression('=', 'foo', array('t' => 'f:oo', 's' => '"b:ar ah"'));
+        $expr = new FieldExpression('foo', array('t' => 'f:oo', 's' => '"b:ar ah"'));
         $this->assertEquals(
             '(sf_d600:"$sa b\:ar ah $s2 f\:oo"~100 AND mrc_d600_sa:("b\:ar ah") AND mrc_d600_s2:(f\:oo)) OR (sf_d601:"$sa b\:ar ah $s2 f\:oo"~100 AND mrc_d601_sa:("b\:ar ah") AND mrc_d601_s2:(f\:oo))',
             (string) $map($expr, $this->compiler)

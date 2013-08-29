@@ -10,6 +10,7 @@
 use DSQ\Comperio\Compiler\AdvancedUrlCompiler;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 
 class AdvancedUrlCompilerTest extends PHPUnit_Framework_TestCase
 {
@@ -32,18 +33,18 @@ class AdvancedUrlCompilerTest extends PHPUnit_Framework_TestCase
                 ;
 
                 $and
-                    ->addChild(new BinaryExpression('=', 'foo', 'bar'))
-                    ->addChild(new BinaryExpression('=', 'foo', 'baz'))
+                    ->addChild(new FieldExpression('foo', 'bar'))
+                    ->addChild(new FieldExpression('foo', 'baz'))
                 ;
 
                 $or1
-                    ->addChild(new BinaryExpression('=', 'bim', 'bum'))
-                    ->addChild(new BinaryExpression('=', 'bam', 'bang'))
+                    ->addChild(new FieldExpression('bim', 'bum'))
+                    ->addChild(new FieldExpression('bam', 'bang'))
                 ;
 
                 $or2
-                    ->addChild(new BinaryExpression('=', 'nothing', 'can'))
-                    ->addChild(new BinaryExpression('=', 'be', 'wrong'))
+                    ->addChild(new FieldExpression('nothing', 'can'))
+                    ->addChild(new FieldExpression('be', 'wrong'))
                 ;
 
                 $this->assertEquals(

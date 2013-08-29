@@ -23,7 +23,7 @@ use DSQ\Lucene\Compiler\LuceneQueryCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
 
 include '../vendor/autoload.php';
-
+ini_set('xdebug.var_display_max_depth', '10');
 $start = microtime(true);
 $compiler = new LuceneCompiler;
 $queryCompiler = new LuceneQueryCompiler();

@@ -32,7 +32,7 @@ class ExpressionBuilder extends Builder
             ->registerProcess('not', new UnaryProcess)
         ;
 
-        parent::__construct(new Context(new TreeExpression($op), $treeProcess));
+        parent::__construct(new Context(null, new TreeExpression($op), $treeProcess));
     }
 
 } 

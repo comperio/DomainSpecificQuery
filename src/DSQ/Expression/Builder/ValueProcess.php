@@ -21,8 +21,16 @@ class ValueProcess extends AbstractProcess
      */
     public function build(Context $context, $value = '', $type = 'basic')
     {
-        $context->process->subvalueBuilded($context, new BasicExpression($value, $type));
+        $this->finalize(new Context($context, new BasicExpression($value, $type), $this));
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finalize(Context $context)
+    {
+        $context->notifyParent();
     }
 }

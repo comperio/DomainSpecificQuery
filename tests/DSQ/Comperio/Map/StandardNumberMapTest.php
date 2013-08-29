@@ -12,7 +12,7 @@ namespace DSQ\Test\Comperio\Map;
 
 
 use DSQ\Comperio\Compiler\Map\StandardNumberMap;
-use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 
 class StandardNumberMapTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,14 +22,14 @@ class StandardNumberMapTest extends \PHPUnit_Framework_TestCase
     protected $map;
 
     /**
-     * @var BinaryExpression
+     * @var FieldExpression
      */
     protected $expr;
 
     public function setUp()
     {
         $this->map = new StandardNumberMap(array('nic' => 'mart', 'gab' => 'med'));
-        $this->expr = new BinaryExpression('=', 'foo', 'bar');
+        $this->expr = new FieldExpression('foo', 'bar');
     }
 
     public function testWithScalarValueShouldReturnsAllNumbers()
@@ -39,19 +39,19 @@ class StandardNumberMapTest extends \PHPUnit_Framework_TestCase
 
     public function testWithArrayValueWithSomethingMissing()
     {
-        $this->expr->getRight()->setValue(array('subfield' => '', 'value' => 'bar'));
+        $this->expr->setValue(array('subfield' => '', 'value' => 'bar'));
         $this->assertEquals('mart:bar OR med:bar', (string) $this->map->__invoke($this->expr));
 
-        $this->expr->getRight()->setValue(array('value' => 'bar'));
+        $this->expr->setValue(array('value' => 'bar'));
         $this->assertEquals('mart:bar OR med:bar', (string) $this->map->__invoke($this->expr));
 
-        $this->expr->getRight()->setValue(array('subfield' => 'none', 'value' => 'bar'));
+        $this->expr->setValue(array('subfield' => 'none', 'value' => 'bar'));
         $this->assertEquals('mart:bar OR med:bar', (string) $this->map->__invoke($this->expr));
     }
 
     public function testSingleNumberValue()
     {
-        $this->expr->getRight()->setValue(array('subfield' => 'nic', 'value' => 'bar'));
+        $this->expr->setValue(array('subfield' => 'nic', 'value' => 'bar'));
         $this->assertEquals('mart:bar', (string) $this->map->__invoke($this->expr));
     }
 }

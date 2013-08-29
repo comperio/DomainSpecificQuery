@@ -12,7 +12,7 @@ namespace DSQ\Test\Comperio\Map;
 
 
 use DSQ\Comperio\Compiler\Map\LoanableMap;
-use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 
 class LoanableMapTest extends \PHPUnit_Framework_TestCase
@@ -20,14 +20,14 @@ class LoanableMapTest extends \PHPUnit_Framework_TestCase
     public function testInvoke()
     {
         $map = new LoanableMap(new \DateTime('2013-07-21'));
-        $expr = new BinaryExpression('=', 'foo', 0);
+        $expr = new FieldExpression('foo', 0);
 
         $this->assertEquals('*:* NOT mrc_d901_sl:[2013-07-22 TO *]', (string) $map($expr, new LuceneCompiler()));
 
-        $expr->setRight(1);
+        $expr->setValue(1);
         $this->assertEquals('*:* NOT mrc_d901_sl:[2013-07-23 TO *]', (string) $map($expr, new LuceneCompiler()));
 
-        $expr->setRight(2);
+        $expr->setValue(2);
         $this->assertEquals('*:* NOT mrc_d901_sl:[2013-07-29 TO *]', (string) $map($expr, new LuceneCompiler()));
     }
 }

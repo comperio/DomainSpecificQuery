@@ -11,11 +11,10 @@
 namespace DSQ\Comperio\Compiler\Map;
 
 
-use DSQ\Expression\BinaryExpression;
-use DSQ\Lucene\FieldExpression;
+use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\LuceneQuery;
 use DSQ\Lucene\MatchAllExpression;
-use DSQ\Lucene\PureExpression;
 use DSQ\Lucene\RangeExpression;
 use DSQ\Lucene\SpanExpression;
 
@@ -38,15 +37,15 @@ class LoanableMap
     }
 
     /**
-     * @param BinaryExpression $expr
+     * @param FieldExpression $expr
      * @param $compiler
      * @return SpanExpression
      */
-    public function __invoke(BinaryExpression $expr, $compiler)
+    public function __invoke(FieldExpression $expr, $compiler)
     {
-        $stringDate = $this->getDateTime($expr->getRight()->getValue())->format('Y-m-d');
+        $stringDate = $this->getDateTime($expr->getValue())->format('Y-m-d');
 
-        $fieldExpr = new FieldExpression('mrc_d901_sl', new RangeExpression($stringDate, '*'));
+        $fieldExpr = new LuceneFieldExpression('mrc_d901_sl', new RangeExpression($stringDate, '*'));
         return new SpanExpression('NOT', array(new MatchAllExpression, $fieldExpr));
     }
 

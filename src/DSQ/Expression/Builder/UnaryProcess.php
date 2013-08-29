@@ -23,10 +23,12 @@ class UnaryProcess extends AbstractProcess
     public function build(Context $context, $operator = 'not', $child = null, $type = null)
     {
         $unary = new UnaryExpression($operator, $child, $type);
-        $context->process->subvalueBuilded($context, $unary);
+        $newContext = new Context($context, $unary, $this);
 
         if (!isset($child))
-            return new Context($unary, $this);
+            return $newContext;
+
+        $this->finalize($newContext);
 
         return null;
     }
@@ -38,5 +40,10 @@ class UnaryProcess extends AbstractProcess
     {
         /** @var UnaryExpression $currExpr */
         $context->object->setChild($expression);
+    }
+
+    public function finalize(Context $context)
+    {
+        $context->notifyParent();
     }
 } 

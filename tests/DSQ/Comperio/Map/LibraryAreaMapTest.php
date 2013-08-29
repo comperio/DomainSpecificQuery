@@ -8,7 +8,7 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-use DSQ\Expression\BinaryExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Comperio\Compiler\Map\LibraryAreaMap;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Lucene\LuceneQuery;
@@ -18,7 +18,7 @@ class LibraryAreaMapTest extends PHPUnit_Framework_TestCase
 
     public function testInvoke()
     {
-        $expr = new BinaryExpression('=', 'foo', 1);
+        $expr = new FieldExpression('foo', 1);
         $areaMap = array(
             1 => array(1, 2, 3)
         );
@@ -26,7 +26,7 @@ class LibraryAreaMapTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('faceti_libvisi:1 OR faceti_libvisi:2 OR faceti_libvisi:3', (string) $map($expr, new LuceneCompiler));
 
-        $expr->setRight(2);
+        $expr->setValue(2);
         $this->assertEquals(LuceneQuery::EMPTYQUERY, (string) $map($expr, new LuceneCompiler));
     }
 }

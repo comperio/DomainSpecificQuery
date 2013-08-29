@@ -13,7 +13,8 @@ namespace DSQ\Comperio\Compiler\Map;
 
 use DSQ\Expression\BinaryExpression;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
-use DSQ\Lucene\FieldExpression;
+use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\SpanExpression;
 
 /**
@@ -33,18 +34,18 @@ class LibraryAreaMap
     }
 
     /**
-     * @param BinaryExpression $expr
+     * @param FieldExpression $expr
      * @param $compiler
      * @return SpanExpression
      */
-    public function __invoke(BinaryExpression $expr, $compiler)
+    public function __invoke(FieldExpression $expr, $compiler)
     {
         $span = new SpanExpression('OR');
-        $areaId = $expr->getRight()->getValue();
+        $areaId = $expr->getValue();
         $libIds = isset($this->libAreas[$areaId]) ? $this->libAreas[$areaId] : array();
 
         foreach ($libIds as $id) {
-            $span->addExpression(new FieldExpression('faceti_libvisi', $id));
+            $span->addExpression(new LuceneFieldExpression('faceti_libvisi', $id));
         }
 
         return $span;

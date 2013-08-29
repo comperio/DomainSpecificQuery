@@ -12,7 +12,7 @@ namespace DSQ\Comperio\Compiler\Map;
 
 
 use DSQ\Expression\BinaryExpression;
-use DSQ\Lucene\AbstractLuceneExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
 use DSQ\Lucene\LuceneQuery;
@@ -51,13 +51,13 @@ class SubjTypeMap
     }
 
     /**
-     * @param BinaryExpression $expr
+     * @param FieldExpression $expr
      * @param LuceneCompiler $compiler
      * @return PureExpression
      */
-    public function __invoke(BinaryExpression $expr, $compiler)
+    public function __invoke(FieldExpression $expr, $compiler)
     {
-        $exprValue = $expr->getRight()->getValue();
+        $exprValue = $expr->getValue();
 
         foreach ($exprValue as &$value) {
             $value = (string) new TermExpression($value); //escape the value

@@ -21,19 +21,17 @@ class TreeProcess extends AbstractProcess
      */
     public function build(Context $context, $value = null)
     {
-        $children = func_get_args();
-        array_shift($children);
-        array_shift($children);
+        $children = array_slice(func_get_args(), 2);
 
         $tree = new TreeExpression(isset($value) ? $value : $context->name);
-        $context->process->subvalueBuilded($context, $tree);
+        $newContext = new Context($context, $tree, $this);
 
-        if ($children) {
-            $tree->setChildren($children);
-            return null;
-        }
+        if (!$children)
+            return $newContext;
 
-        return new Context($tree, $this);
+        $tree->setChildren($children);
+
+        return null;
     }
 
     /**
@@ -42,5 +40,10 @@ class TreeProcess extends AbstractProcess
     public function subvalueBuilded(Context $context, $expression)
     {
         $context->object->addChild($expression);
+    }
+
+    public function finalize(Context $context)
+    {
+        $context->notifyParent();
     }
 } 

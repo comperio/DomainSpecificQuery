@@ -18,7 +18,8 @@ use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TemplateExpression;
 use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
-use DSQ\Lucene\FieldExpression;
+use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\RangeExpression;
 
 use DSQ\Lucene\Compiler\LuceneCompiler;
@@ -42,11 +43,11 @@ class MapBuilder
      */
     public function field($fieldName, $phrase = false, $boost = 1.0)
     {
-        return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($fieldName, $phrase, $boost)
+        return function(FieldExpression $expr, LuceneCompiler $compiler) use ($fieldName, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr->getRight()->getValue(), $phrase);
+            $value = $compiler->phrasize($expr->getValue(), $phrase);
 
-            return new FieldExpression($fieldName, $value, $boost);
+            return new LuceneFieldExpression($fieldName, $value, $boost);
         };
     }
 
@@ -60,9 +61,9 @@ class MapBuilder
      */
     public function term($phrase = false, $boost = 1.0)
     {
-        return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($phrase, $boost)
+        return function(FieldExpression $expr, LuceneCompiler $compiler) use ($phrase, $boost)
         {
-            return new TermExpression($compiler->phrasizeOrTermize($expr->getRight()->getValue(), $phrase), $boost);
+            return new TermExpression($compiler->phrasizeOrTermize($expr->getValue(), $phrase), $boost);
         };
     }
 
@@ -78,14 +79,14 @@ class MapBuilder
      */
     public function span(array $fieldNames, $op = 'and', $phrase = false, $boost = 1.0)
     {
-        return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($fieldNames, $op, $phrase, $boost)
+        return function(FieldExpression $expr, LuceneCompiler $compiler) use ($fieldNames, $op, $phrase, $boost)
         {
-            $value = $compiler->phrasize($expr->getRight()->getValue(), $phrase);
+            $value = $compiler->phrasize($expr->getValue(), $phrase);
 
             $tree = new SpanExpression(strtoupper($op), array(), $boost);
 
             foreach ($fieldNames as $fieldName) {
-                $tree->addExpression(new FieldExpression($fieldName, $value));
+                $tree->addExpression(new LuceneFieldExpression($fieldName, $value));
             }
 
             return $tree;
@@ -102,16 +103,16 @@ class MapBuilder
     {
         $that = $this;
 
-        return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($fieldName, $boost, $that)
+        return function(FieldExpression $expr, LuceneCompiler $compiler) use ($fieldName, $boost, $that)
         {
-            $val = $expr->getRight()->getValue();
+            $val = $expr->getValue();
 
             if (!is_array($val)) {
                 $fieldTransf = $that->field($fieldName, false, $boost);
                 return $fieldTransf($expr, $compiler);
             }
 
-            return new FieldExpression($fieldName, new RangeExpression($val['from'], $val['to']), $boost);
+            return new LuceneFieldExpression($fieldName, new RangeExpression($val['from'], $val['to']), $boost);
         };
     }
 
@@ -125,9 +126,9 @@ class MapBuilder
      */
     public function template($template, $phrase = false, $escape = true, $boost = 1.0)
     {
-        return function(BinaryExpression $expr, LuceneCompiler $compiler) use ($template, $phrase, $escape, $boost)
+        return function(FieldExpression $expr, LuceneCompiler $compiler) use ($template, $phrase, $escape, $boost)
         {
-            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getRight()->getValue(), $phrase, $escape), $boost);
+            return new TemplateExpression($template, $compiler->phrasizeOrTermize($expr->getValue(), $phrase, $escape), $boost);
         };
     }
 
@@ -163,9 +164,9 @@ class MapBuilder
      */
     public function regexps(array $regexpsMap)
     {
-        return function(BinaryExpression $expr, $compiler) use ($regexpsMap)
+        return function(FieldExpression $expr, $compiler) use ($regexpsMap)
         {
-            $value = $expr->getRight()->getValue();
+            $value = $expr->getValue();
 
             foreach ($regexpsMap as $regexp => $transformation) {
                 if (preg_match($regexp, $value))
@@ -212,12 +213,12 @@ class MapBuilder
      */
     public function subval($map, $key = 'value')
     {
-        return function(BinaryExpression $expr, $compiler) use ($key, $map)
+        return function(FieldExpression $expr, $compiler) use ($key, $map)
         {
-            if (is_array($rVal = $expr->getRight()->getValue())) {
+            if (is_array($rVal = $expr->getValue())) {
                 $val = isset($rVal[$key]) ? $rVal[$key] : '';
                 $expr = clone($expr);
-                $expr->getRight()->setValue($val);
+                $expr->setValue($val);
             }
             return $map($expr, $compiler);
         };
@@ -254,9 +255,9 @@ class MapBuilder
      */
     public function hasSubval($key = 'value', $notEmpty = true)
     {
-        return function (BinaryExpression $expr) use ($key, $notEmpty)
+        return function (FieldExpression $expr) use ($key, $notEmpty)
         {
-            $val = $expr->getRight()->getValue();
+            $val = $expr->getValue();
             return
                 is_array($val)
                 && isset($val[$key])

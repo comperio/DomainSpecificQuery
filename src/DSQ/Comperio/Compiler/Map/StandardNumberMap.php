@@ -12,7 +12,8 @@ namespace DSQ\Comperio\Compiler\Map;
 
 
 use DSQ\Expression\BinaryExpression;
-use DSQ\Lucene\FieldExpression;
+use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\SpanExpression;
 
 class StandardNumberMap
@@ -45,18 +46,18 @@ class StandardNumberMap
     }
 
     /**
-     * @param BinaryExpression $expr
-     * @return FieldExpression|SpanExpression
+     * @param FieldExpression $expr
+     * @return LuceneFieldExpression|SpanExpression
      */
-    public function __invoke(BinaryExpression $expr)
+    public function __invoke(FieldExpression $expr)
     {
-        $rightVal = $expr->getRight()->getValue();
+        $val = $expr->getValue();
 
-        if ($this->isSingleNumberValue($rightVal))
-            return new FieldExpression($this->numbers[$rightVal['subfield']], $rightVal['value']);
+        if ($this->isSingleNumberValue($val))
+            return new LuceneFieldExpression($this->numbers[$val['subfield']], $val['value']);
 
         return $this->allNumbersExpression(
-            is_array($rightVal) && isset($rightVal['value']) ? $rightVal['value'] : $rightVal
+            is_array($val) && isset($val['value']) ? $val['value'] : $val
         );
     }
 
@@ -83,7 +84,7 @@ class StandardNumberMap
         $span = new SpanExpression('OR');
 
         foreach ($this->numbers as $field)
-            $span->addExpression(new FieldExpression($field, $value));
+            $span->addExpression(new LuceneFieldExpression($field, $value));
 
         return $span;
     }
