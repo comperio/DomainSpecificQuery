@@ -15,8 +15,8 @@ use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
-use DSQ\Expression\UnaryExpression;
 use DSQ\Expression\FieldExpression;
+
 use DSQ\Lucene\PhraseExpression;
 use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TermExpression;
@@ -38,8 +38,9 @@ class LuceneCompiler extends TypeBasedCompiler
         $this
             ->map('*', array($this, 'basicExpression'))
             ->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
-            ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->map(array('and:DSQ\Expression\TreeExpression', 'or:DSQ\Expression\TreeExpression'), array($this, 'treeExpression'))
             ->map('not:DSQ\Expression\TreeExpression', array($this, 'notExpression'))
+            ->map('range:DSQ\Expression\BinaryExpression', array($this, 'rangeExpression'))
             ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
         ;
     }
@@ -61,7 +62,7 @@ class LuceneCompiler extends TypeBasedCompiler
      */
     public function fieldExpression(FieldExpression $expr, self $compiler)
     {
-        $value = $compiler->transform($expr);
+        $value = $compiler->transform($expr->getValue());
 
         return new LuceneFieldExpression($expr->getField(), $expr->getValue(), $value);
     }
@@ -89,9 +90,6 @@ class LuceneCompiler extends TypeBasedCompiler
         switch (strtolower($expr->getValue())) {
             case 'and':
                 $operator = SpanExpression::OP_AND;
-                break;
-            case 'not':
-                $operator = SpanExpression::OP_NOT;
                 break;
             default:
                 $operator = SpanExpression::OP_OR;
@@ -157,10 +155,11 @@ class LuceneCompiler extends TypeBasedCompiler
      */
     public function phrasize($value, $phrase = true)
     {
+        if (!$phrase)
+            return $value;
+
         if (!is_array($value))
-            return $phrase
-                ? new PhraseExpression($value)
-                : $value;
+            return new PhraseExpression($value);
 
         $ary = array();
         foreach ($value as $key => $v) {
@@ -172,6 +171,7 @@ class LuceneCompiler extends TypeBasedCompiler
 
     /**
      * Helper function that wraps an expression value with a phrase expression or a term expression
+     * Phrasing wins on termizing
      *
      * @param mixed $value
      * @param bool $phrase
@@ -180,10 +180,13 @@ class LuceneCompiler extends TypeBasedCompiler
      */
     public function phrasizeOrTermize($value, $phrase = true, $escape = true)
     {
+        if (!$phrase && !$escape)
+            return $value;
+
         if (!is_array($value))
             return $phrase
                 ? new PhraseExpression($value)
-                : ($escape ? new TermExpression($value) : $value)
+                : new TermExpression($value)
             ;
 
         $ary = array();
