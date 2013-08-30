@@ -37,10 +37,10 @@ class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompiler
     }
 
     /**
-     * @param LuceneCompiler $compiler
+     * @param LuceneCompilerInterface $compiler
      * @return $this
      */
-    public function addCompiler(LuceneCompiler $compiler)
+    public function addCompiler(LuceneCompilerInterface $compiler)
     {
         $this->compilers[] = $compiler;
 
@@ -54,8 +54,7 @@ class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompiler
     {
         $compileds = array();
 
-        foreach ($this->compilers as $compiler)
-        {
+        foreach ($this->compilers as $compiler) {
             try {
                 $compileds[] = $compiler->compile($expression);
             } catch (UncompilableValueException $e) {}
