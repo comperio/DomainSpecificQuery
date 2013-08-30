@@ -30,6 +30,7 @@ class TreeProcess extends ExpressionProcess
             return $newContext;
 
         $tree->setChildren($children);
+        $this->finalize($newContext);
 
         return null;
     }
