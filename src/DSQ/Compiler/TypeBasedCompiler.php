@@ -104,7 +104,11 @@ class TypeBasedCompiler extends AbstractCompiler
      */
     public function compile(Expression $expression)
     {
-        $transformation = $this->getMap($expression->getType(), get_class($expression));
+        try {
+            $transformation = $this->getMap($expression->getType(), get_class($expression));
+        } catch (UnregisteredTransformationException $e) {
+            throw new UncompilableValueException($e->getMessage());
+        }
 
         return $transformation($expression, $this);
     }
