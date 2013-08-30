@@ -14,7 +14,7 @@ use Building\AbstractProcess;
 use Building\Context;
 use DSQ\Expression\TreeExpression;
 
-class TreeProcess extends AbstractProcess
+class TreeProcess extends ExpressionProcess
 {
     /**
      * {@inheritdoc}
@@ -40,10 +40,5 @@ class TreeProcess extends AbstractProcess
     public function subvalueBuilded(Context $context, $expression)
     {
         $context->object->addChild($expression);
-    }
-
-    public function finalize(Context $context)
-    {
-        $context->notifyParent();
     }
 } 

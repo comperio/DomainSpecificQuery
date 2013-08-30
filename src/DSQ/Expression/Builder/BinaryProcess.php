@@ -15,7 +15,7 @@ use Building\AbstractProcess;
 use Building\Context;
 use DSQ\Expression\BinaryExpression;
 
-class BinaryProcess extends AbstractProcess
+class BinaryProcess extends ExpressionProcess
 {
     /**
      * {@inheritdoc}
@@ -44,13 +44,5 @@ class BinaryProcess extends AbstractProcess
             $currExpr->setLeft($expression);
         else
             $currExpr->setRight($expression);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finalize(Context $context)
-    {
-        $context->notifyParent();
     }
 }

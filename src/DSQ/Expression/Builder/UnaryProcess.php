@@ -15,7 +15,7 @@ use Building\AbstractProcess;
 use Building\Context;
 use DSQ\Expression\UnaryExpression;
 
-class UnaryProcess extends AbstractProcess
+class UnaryProcess extends ExpressionProcess
 {
     /**
      * {@inheritdoc}
@@ -40,10 +40,5 @@ class UnaryProcess extends AbstractProcess
     {
         /** @var UnaryExpression $currExpr */
         $context->object->setChild($expression);
-    }
-
-    public function finalize(Context $context)
-    {
-        $context->notifyParent();
     }
 } 

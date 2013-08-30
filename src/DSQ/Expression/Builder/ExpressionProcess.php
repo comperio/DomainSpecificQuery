@@ -10,18 +10,17 @@
 
 namespace DSQ\Expression\Builder;
 
-use Building\Context;
-use DSQ\Expression\BasicExpression;
 
-class ValueProcess extends ExpressionProcess
+use Building\AbstractProcess;
+use Building\Context;
+
+abstract class ExpressionProcess extends AbstractProcess
 {
     /**
      * {@inheritdoc}
      */
-    public function build(Context $context, $value = '', $type = 'basic')
+    public function finalize(Context $context)
     {
-        $this->finalize(new Context($context, new BasicExpression($value, $type), $this));
-
-        return null;
+        $context->notifyParent();
     }
-}
+} 

@@ -16,7 +16,7 @@ use Building\Context;
 use DSQ\Expression\FieldExpression;
 use DSQ\Expression\UnaryExpression;
 
-class FieldProcess extends AbstractProcess
+class FieldProcess extends ExpressionProcess
 {
     /**
      * {@inheritdoc}
@@ -41,13 +41,5 @@ class FieldProcess extends AbstractProcess
     {
         /** @var UnaryExpression $currExpr */
         $context->object->setValue($expression);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finalize(Context $context)
-    {
-        $context->notifyParent();
     }
 } 
