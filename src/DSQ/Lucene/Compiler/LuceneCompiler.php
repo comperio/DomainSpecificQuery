@@ -10,7 +10,6 @@
 
 namespace DSQ\Lucene\Compiler;
 
-
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
@@ -31,7 +30,7 @@ use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
  *
  * @package DSQ\Lucene\Compiler
  */
-class LuceneCompiler extends TypeBasedCompiler
+class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterface
 {
     public function __construct()
     {
