@@ -16,24 +16,35 @@ use DSQ\Compiler\UncompilableValueException;
 use DSQ\Expression\Expression;
 use DSQ\Lucene\SpanExpression;
 
+/**
+ * Class CompositeLuceneCompiler
+ * With this compiler you can compose several compilers into a single one. The compiler will return
+ * a SpanExpression of the expressions compiled by the subcompilers.
+ *
+ * @package DSQ\Lucene\Compiler
+ */
 class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompilerInterface
 {
     /**
      * @var LuceneCompiler[]
      */
     private $compilers = array();
-    private $operator;
 
     /**
-     * @param $operator
-     * @param array $compilers
+     * @var string
      */
-    public function __construct($operator, array $compilers = array())
+    private $glueOperator;
+
+    /**
+     * @param string $glueOperator     The operator of the SpanExpression
+     * @param array $compilers         The array of subcompilers
+     */
+    public function __construct($glueOperator, array $compilers = array())
     {
         foreach ($compilers as $compiler)
             $this->addCompiler($compiler);
 
-        $this->operator = $operator;
+        $this->glueOperator = $glueOperator;
     }
 
     /**
@@ -66,6 +77,6 @@ class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompiler
         if (1 == count($compileds))
             return $compileds[0];
 
-        return new SpanExpression($this->operator, $compileds);
+        return new SpanExpression($this->glueOperator, $compileds);
     }
 } 

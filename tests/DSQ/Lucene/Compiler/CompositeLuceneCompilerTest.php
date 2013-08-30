@@ -42,7 +42,18 @@ class CompositeLuceneCompilerTest extends \PHPUnit_Framework_TestCase
             return new FieldExpression('compiler2', 'bar');
         }));
 
+        $this->comp1 = $comp1;
+        $this->comp2 = $comp2;
+
         $this->composite = new CompositeLuceneCompiler('OR', array($comp1, $comp2));
+    }
+
+    public function testAddCompiler()
+    {
+        $composite = new CompositeLuceneCompiler('AND');
+        $composite->addCompiler($this->comp1)->addCompiler($this->comp2);
+
+        $this->assertAttributeEquals(array($this->comp1, $this->comp2), 'compilers', $composite);
     }
 
     public function testCompile()
