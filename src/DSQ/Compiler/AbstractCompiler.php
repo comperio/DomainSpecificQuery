@@ -16,10 +16,7 @@ use DSQ\Expression\Expression;
 abstract class AbstractCompiler implements Compiler
 {
     /**
-     * Compile an array of expressions. Skip expressions that have been compiled to null
-     *
-     * @param Expression[] $expressions
-     * @return mixed
+     * {@inheritdoc}
      */
     public function compileArray(array $expressions)
     {
@@ -27,9 +24,20 @@ abstract class AbstractCompiler implements Compiler
 
         foreach ($expressions as $expression) {
             if (null !== $compiled = $this->compile($expression))
-                $compileds[] = $this->compile($expression);
+                $compileds[] = $compiled;
         }
 
         return $compileds;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function transform($expression)
+    {
+        if ($expression instanceof Expression)
+            return $this->compile($expression);
+
+        return $expression;
     }
 } 

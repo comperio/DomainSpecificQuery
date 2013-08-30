@@ -123,14 +123,4 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->compiler->canCompile('*', 'moo'));
         $this->assertFalse($this->compiler->canCompile('MyClass', '*'));
     }
-
-    public function testTransform()
-    {
-        $this->assertEquals('foo', $this->compiler->transform('foo'));
-
-        $compiler = $this->compiler;
-        $exp1 = new TreeExpression('ciao', 'foo');
-
-        $this->assertEquals(call_user_func($this->mapFoo, $exp1, $this->compiler), $compiler->transform($exp1));
-    }
 }

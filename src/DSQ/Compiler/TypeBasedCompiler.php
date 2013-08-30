@@ -110,17 +110,6 @@ class TypeBasedCompiler extends AbstractCompiler
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function transform($expression)
-    {
-        if ($expression instanceof Expression)
-            return $this->compile($expression);
-
-        return $expression;
-    }
-
-    /**
      * Selector can be of the forms:
      * "type" or "type:class".
      * Both arguments can be "*", with the meaning of "any value"
