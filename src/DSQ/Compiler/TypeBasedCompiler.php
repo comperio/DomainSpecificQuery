@@ -21,7 +21,7 @@ use DSQ\Expression\Expression;
  *
  * @package DSQ\Compiler
  */
-class TypeBasedCompiler implements Compiler
+class TypeBasedCompiler extends AbstractCompiler
 {
     /**
      * @var callable[]

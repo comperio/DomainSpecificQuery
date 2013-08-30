@@ -164,7 +164,7 @@ $expression = $builder
     //->field('subj-and-type', array('s' => 'ragazzi', 't' => 'firenze'))
         ->field('materiale', array('bibtype' => 'ah'))
     ->end()
-    ->and()
+    ->not()
         ->field('materiale', array('bibtypefirst' => 'boh'))
         ->field('id-subj', array('value' => 'ciao', 'name' => 'boh'))
         ->field('id-subj', 'scalar')

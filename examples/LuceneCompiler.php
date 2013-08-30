@@ -18,7 +18,7 @@ $compiler
             'title',
             function (\DSQ\Expression\Expression $expr, \DSQ\Lucene\Compiler\LuceneCompiler $compiler) {
                 return new \DSQ\Lucene\FieldExpression('fldin_txt_title',
-                    $phrase = new \DSQ\Lucene\PhraseExpression($expr->getRight()->getValue(), 12, 23.5));
+                    $phrase = new \DSQ\Lucene\PhraseExpression($expr->getValue(), 12, 23.5));
             }
         )
 ;

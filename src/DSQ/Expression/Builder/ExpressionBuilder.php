@@ -29,7 +29,7 @@ class ExpressionBuilder extends Builder
             ->registerProcess('binary', new BinaryProcess)
             ->registerProcess('field', new FieldProcess)
             ->registerProcess('value', new ValueProcess)
-            ->registerProcess('not', new UnaryProcess)
+            ->registerProcess('not', new TreeProcess)
         ;
 
         parent::__construct(new Context(null, new TreeExpression($op), $treeProcess));

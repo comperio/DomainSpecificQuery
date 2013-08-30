@@ -12,45 +12,65 @@ namespace DSQ\Lucene\Compiler;
 
 
 use DSQ\Compiler\TypeBasedCompiler;
-use DSQ\Compiler\UnregisteredTransformationException;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
-use DSQ\Expression\Expression;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\UnaryExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Lucene\PhraseExpression;
 use DSQ\Lucene\SpanExpression;
-use DSQ\Lucene\TemplateExpression;
 use DSQ\Lucene\TermExpression;
 use DSQ\Lucene\BooleanExpression;
-use DSQ\Lucene\FieldExpression;
 use DSQ\Lucene\RangeExpression;
+use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
 
+/**
+ * Class LuceneCompiler
+ *
+ * Compile an expression into a Lucene Expression.
+ *
+ * @package DSQ\Lucene\Compiler
+ */
 class LuceneCompiler extends TypeBasedCompiler
 {
     public function __construct()
     {
         $this
             ->map('*', array($this, 'basicExpression'))
-            ->map('*:DSQ\Expression\BinaryExpression', array($this, 'fieldExpression'))
+            ->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
             ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
-            ->map('not:DSQ\Expression\UnaryExpression', array($this, 'notExpression'))
+            ->map('not:DSQ\Expression\TreeExpression', array($this, 'notExpression'))
             ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
         ;
     }
 
+    /**
+     * @param BasicExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return TermExpression
+     */
     public function basicExpression(BasicExpression $expr, self $compiler)
     {
         return new TermExpression($expr->getValue());
     }
 
-    public function fieldExpression(BinaryExpression $expr, self $compiler)
+    /**
+     * @param FieldExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return FieldExpression
+     */
+    public function fieldExpression(FieldExpression $expr, self $compiler)
     {
-        $value = $compiler->transform($expr->getRight());
+        $value = $compiler->transform($expr);
 
-        return new FieldExpression((string) $expr->getLeft()->getValue(), $value);
+        return new LuceneFieldExpression($expr->getField(), $expr->getValue(), $value);
     }
 
+    /**
+     * @param BinaryExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return RangeExpression
+     */
     public function rangeExpression(BinaryExpression $expr, self $compiler)
     {
         $from = $compiler->transform($expr->getLeft());
@@ -59,6 +79,11 @@ class LuceneCompiler extends TypeBasedCompiler
         return new RangeExpression($from, $to);
     }
 
+    /**
+     * @param TreeExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return SpanExpression
+     */
     public function treeExpression(TreeExpression $expr, self $compiler)
     {
         switch (strtolower($expr->getValue())) {
@@ -72,23 +97,26 @@ class LuceneCompiler extends TypeBasedCompiler
                 $operator = SpanExpression::OP_OR;
         }
 
-        $spanExpr = new SpanExpression($operator);
-
-        foreach ($expr->getChildren() as $child)
-        {
-            $spanExpr->addExpression($compiler->compile($child));
-        }
+        $spanExpr = new SpanExpression($operator, $compiler->compileArray($expr->getChildren()));
 
         return $spanExpr;
     }
 
-    public function notExpression(UnaryExpression $expr, self $compiler)
+    /**
+     * @param TreeExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return BooleanExpression
+     */
+    public function notExpression(TreeExpression $expr, self $compiler)
     {
-        $childExpr = $compiler->compile($expr->getChild());
-
-        return new BooleanExpression(BooleanExpression::MUST_NOT, array($childExpr));
+        return new BooleanExpression(BooleanExpression::MUST_NOT, $compiler->compileArray($expr->getChildren()));
     }
 
+    /**
+     * @param BinaryExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return FieldExpression
+     */
     public function comparisonExpression(BinaryExpression $expr, self $compiler)
     {
         $fieldname = $expr->getLeft()->getValue();

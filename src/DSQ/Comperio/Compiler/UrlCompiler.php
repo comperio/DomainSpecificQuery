@@ -10,9 +10,8 @@
 
 namespace DSQ\Comperio\Compiler;
 
-use DSQ\Compiler\Compiler;
+use DSQ\Compiler\AbstractCompiler;
 use DSQ\Expression\Expression;
-use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\FieldExpression;
 use DSQ\Expression\TreeExpression;
 
@@ -24,7 +23,7 @@ use DSQ\Expression\TreeExpression;
  * The format of the array reflects the one used in DiscoveryNG
  * @link http://www.comperio.it/soluzioni/discoveryng/panoramica/
  */
-abstract class UrlCompiler implements Compiler
+abstract class UrlCompiler extends AbstractCompiler
 {
     protected $fieldsCount;
 
