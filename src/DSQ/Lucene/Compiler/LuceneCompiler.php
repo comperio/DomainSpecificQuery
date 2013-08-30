@@ -35,12 +35,12 @@ class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterfac
     public function __construct()
     {
         $this
-            ->map('*', array($this, 'basicExpression'))
-            ->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
             ->map(array('and:DSQ\Expression\TreeExpression', 'or:DSQ\Expression\TreeExpression'), array($this, 'treeExpression'))
             ->map('not:DSQ\Expression\TreeExpression', array($this, 'notExpression'))
             ->map('range:DSQ\Expression\BinaryExpression', array($this, 'rangeExpression'))
             ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
+            ->map('*:DSQ\Expression\BasicExpression', array($this, 'basicExpression'))
+            //->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
         ;
     }
 
@@ -73,10 +73,7 @@ class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterfac
      */
     public function rangeExpression(BinaryExpression $expr, self $compiler)
     {
-        $from = $compiler->transform($expr->getLeft());
-        $to = $compiler->transform($expr->getRight());
-
-        return new RangeExpression($from, $to);
+        return new RangeExpression($expr->getLeft()->getValue(), $expr->getRight()->getValue());
     }
 
     /**

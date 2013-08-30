@@ -58,7 +58,7 @@ class CompositeLuceneCompilerTest extends \PHPUnit_Framework_TestCase
 
     public function testCompile()
     {
-        $expr = new BasicExpression('uninfluent');
+        $expr = new \DSQ\Expression\FieldExpression('foo', 'uninfluent');
         //Only compiler 1.
         $this->assertEquals('compiler1:foo', (string) $this->composite->compile($expr));
         //Only compiler 2

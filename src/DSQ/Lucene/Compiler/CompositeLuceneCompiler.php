@@ -23,7 +23,7 @@ use DSQ\Lucene\SpanExpression;
  *
  * @package DSQ\Lucene\Compiler
  */
-class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompilerInterface
+class CompositeLuceneCompiler extends LuceneCompiler
 {
     /**
      * @var LuceneCompiler[]
@@ -45,6 +45,10 @@ class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompiler
             $this->addCompiler($compiler);
 
         $this->glueOperator = $glueOperator;
+
+        parent::__construct();
+
+        $this->map('*:DSQ\Expression\FieldExpression', array($this, 'terminalExpression'));
     }
 
     /**
@@ -61,7 +65,7 @@ class CompositeLuceneCompiler extends AbstractCompiler implements LuceneCompiler
     /**
      * {@inheritdoc}
      */
-    public function compile(Expression $expression)
+    public function terminalExpression(Expression $expression)
     {
         $compileds = array();
 

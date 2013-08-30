@@ -44,6 +44,7 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
     public function testCompileFieldExpression()
     {
         $expr = new FieldExpression('foo', 'bar');
+        $this->compiler->map('*:DSQ\Expression\FieldExpression', array($this->compiler, 'fieldExpression'));
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(new LuceneFieldExpression('foo', 'bar', 'foo'), $compiled);
