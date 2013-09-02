@@ -11,12 +11,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nicmart/Building.git",
-                "reference": "2eeae8c552bda8179085ecc83701fbed0b004181"
+                "reference": "baff97591c6dccdb871c9e835eb119ba391ff7a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nicmart/Building/zipball/2eeae8c552bda8179085ecc83701fbed0b004181",
-                "reference": "2eeae8c552bda8179085ecc83701fbed0b004181",
+                "url": "https://api.github.com/repos/nicmart/Building/zipball/baff97591c6dccdb871c9e835eb119ba391ff7a6",
+                "reference": "baff97591c6dccdb871c9e835eb119ba391ff7a6",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "A PHP library that abstracts the definition of fluent builders.",
-            "time": "2013-08-29 14:42:46"
+            "time": "2013-09-01 10:37:03"
         },
         {
             "name": "nicmart/string-template",
