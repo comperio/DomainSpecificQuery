@@ -110,7 +110,7 @@ class TypeBasedCompiler extends AbstractCompiler
             throw new UncompilableValueException($e->getMessage());
         }
 
-        return $transformation($expression, $this);
+        return call_user_func($transformation, $expression, $this);
     }
 
     /**
