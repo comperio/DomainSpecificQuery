@@ -24,6 +24,19 @@ $b = new ExpressionBuilder('and');
 
 $start = microtime(true);
 $b
+    ->filter('first', 'firstValue')
+    ->exclude('gabba', 'medas')
+    ->exclude()
+        ->field('nic', 'mart')
+    ->end()
+    ->filter()
+        ->field('ciao', 'mamma')
+        ->field('ciao', 'asdsds')
+        ->or()
+            ->field('title', '[* TO *]')
+            ->field('author', 'boh')
+        ->end()
+    ->end()
     ->value('ah')
     ->binary('=')
         ->value('ah')
@@ -36,6 +49,9 @@ $b
         ->value('ah')
     ->end()
     ->tree('not', 'a', 'b', 'c')
+    ->not()
+        ->field('not me', 'ah')
+    ->end()
 ;
 
 $expr = $b->get();

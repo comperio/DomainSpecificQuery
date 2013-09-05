@@ -61,9 +61,9 @@ class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterfac
      */
     public function fieldExpression(FieldExpression $expr, self $compiler)
     {
-        $value = $compiler->transform($expr->getValue());
+        $value = $compiler->compile(new BasicExpression($expr->getValue()));
 
-        return new LuceneFieldExpression($expr->getField(), $expr->getValue(), $value);
+        return new LuceneFieldExpression($expr->getField(), $value);
     }
 
     /**

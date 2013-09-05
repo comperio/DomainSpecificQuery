@@ -30,6 +30,8 @@ class ExpressionBuilder extends Builder
             ->registerProcess('field', new FieldProcess)
             ->registerProcess('value', new ValueProcess)
             ->registerProcess('not', new TreeProcess)
+            ->registerProcess('filter', new FilterProcess)
+            ->registerProcess('exclude', new FilterProcess('not'))
         ;
 
         parent::__construct(new Context(null, new TreeExpression($op), $treeProcess));

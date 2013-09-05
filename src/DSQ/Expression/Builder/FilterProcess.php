@@ -13,23 +13,34 @@ namespace DSQ\Expression\Builder;
 
 use Building\Context;
 use DSQ\Expression\TreeExpression;
-use DSQ\Lucene\FieldExpression;
+use DSQ\Expression\FieldExpression;
 
+/**
+ * Class FilterProcess
+ * @package DSQ\Expression\Builder
+ */
 class FilterProcess extends ExpressionProcess
 {
+    private $operator;
+
+    /**
+     * @param string $operator
+     */
+    public function __construct($operator = 'and')
+    {
+        $this->operator = $operator;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function build(Context $context, $field = null, $value = null, $type = null)
     {
-        $expr = null;
-        if (isset($field))
-            $expr = new FieldExpression($field, $value, $type);
-
-        $newContext = new Context($context, $expr, $this);
-
-        if (!isset($value))
+        $newContext = new Context($context, null, $this);
+        if (!isset($field) || !isset($value))
             return $newContext;
+
+        $this->subvalueBuilded($newContext, new FieldExpression($field, $value));
 
         return null;
     }
@@ -42,15 +53,20 @@ class FilterProcess extends ExpressionProcess
         $this->getSubtree($context->previous->object)->addChild($expression);
     }
 
+    /**
+     * Retrieve or create the first subtree that matches with the operator
+     * @param TreeExpression $expr
+     * @return \DSQ\Expression\Expression|TreeExpression
+     */
     private function getSubtree(TreeExpression $expr)
     {
         foreach ($expr->getChildren() as $child)
         {
-            if ($child->getType() == 'and')
+            if ($child->getType() == $this->operator)
                 return $child;
         }
 
-        $expr->addChild($subtree = new TreeExpression('and'));
+        $expr->addChild($subtree = new TreeExpression($this->operator));
         return $subtree;
     }
 } 
