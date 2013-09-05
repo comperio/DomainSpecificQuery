@@ -83,6 +83,18 @@ class TreeExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array($child1, $child3), $this->tree->getChildren());
     }
 
+    public function testRemoveChildByIndex()
+    {
+        $this->tree
+            ->addChild($child1 = new BasicExpression('child1'))
+            ->addChild($child2 = new BasicExpression('child2'))
+            ->addChild($child3 = new BasicExpression('child3'))
+            ->removeChild(1)
+        ;
+
+        $this->assertEquals(array($child1, $child3), $this->tree->getChildren());
+    }
+
     public function testRemoveAllChildren()
     {
         $this->tree

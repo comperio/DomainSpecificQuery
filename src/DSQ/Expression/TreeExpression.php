@@ -40,14 +40,18 @@ class TreeExpression extends BasicExpression
      }
 
     /**
-     * @param Expression $child
+     * Remove a child from the expression.
+     * If $child is an integer, remove the child at the $child index.
+     * If is an Expression, remove the child equals to that expression
+     *
+     * @param Expression|int $child
      *
      * @return $this The current instance
      */
-    public function removeChild(Expression $child)
+    public function removeChild($child)
     {
         foreach ($this->children as $key => $myChild) {
-            if ($child == $myChild)
+            if ($child === $myChild || $key === $child)
                 unset($this->children[$key]);
         }
 
