@@ -75,17 +75,4 @@ class BinaryExpression extends TreeExpression
     {
         return $this->getChild(1);
     }
-
-    /**
-     * @return BinaryExpression
-     */
-    public function __clone()
-    {
-        parent::__clone();
-
-        $this
-            ->setLeft(clone($this->getLeft()))
-            ->setRight(clone($this->getRight()))
-        ;
-    }
 } 
