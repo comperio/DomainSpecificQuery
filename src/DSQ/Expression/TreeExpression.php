@@ -18,6 +18,10 @@ class TreeExpression extends BasicExpression
      */
     private $children = array();
 
+    /**
+     * @param string $value
+     * @param null $type
+     */
     public function __construct($value, $type = null)
     {
         if (!isset($type))
@@ -90,6 +94,20 @@ class TreeExpression extends BasicExpression
             return $this->children[$index];
 
         throw new \OutOfRangeException("There is no child at index $index");
+    }
+
+    /**
+     * Set a child at a given index
+     * @param mixed|Expression $expr The index of the child
+     * @param int $index The index of the child
+     *
+     * @return $this
+     */
+    public function setChild($expr, $index = 0)
+    {
+        $this->children[$index] = $this->buildExpression($expr);
+
+        return $this;
     }
 
     /**
