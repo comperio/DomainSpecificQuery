@@ -11,7 +11,7 @@
 namespace DSQ\Expression;
 
 
-class TreeExpression extends BasicExpression implements \Countable
+class TreeExpression extends BasicExpression implements CompositeExpression
 {
     /**
      * @var Expression[]
@@ -32,9 +32,7 @@ class TreeExpression extends BasicExpression implements \Countable
 
 
     /**
-     * @param Expression|mixed $child
-     *
-     * @return $this The current instance
+     * {@inheritdoc}
      */
     public function addChild($child)
      {
@@ -44,13 +42,7 @@ class TreeExpression extends BasicExpression implements \Countable
      }
 
     /**
-     * Remove a child from the expression.
-     * If $child is an integer, remove the child at the $child index.
-     * If is an Expression, remove the child equals to that expression
-     *
-     * @param Expression|int $child
-     *
-     * @return $this The current instance
+     * {@inheritdoc}
      */
     public function removeChild($child)
     {
@@ -65,7 +57,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * @return $this The current instance
+     * {@inheritdoc}
      */
     public function removeAllChildren()
     {
@@ -75,7 +67,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * @return Expression[]
+     * {@inheritdoc}
      */
     public function getChildren()
     {
@@ -83,10 +75,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * @param int $index The index of the child
-     *
-     * @throws \OutOfRangeException
-     * @return Expression
+     * {@inheritdoc}
      */
     public function getChild($index = 0)
     {
@@ -97,11 +86,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * Set a child at a given index
-     * @param mixed|Expression $expr The index of the child
-     * @param int $index The index of the child
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setChild($expr, $index = 0)
     {
@@ -111,9 +96,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * @param Expression|mixed[] $children
-     *
-     * @return $this The current instance
+     * {@inheritdoc}
      */
     public function setChildren(array $children)
     {
@@ -125,9 +108,7 @@ class TreeExpression extends BasicExpression implements \Countable
     }
 
     /**
-     * Has the node children?
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isLeaf()
     {
