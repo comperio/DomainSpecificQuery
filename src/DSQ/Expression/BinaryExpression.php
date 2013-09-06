@@ -11,14 +11,8 @@
 namespace DSQ\Expression;
 
 
-class BinaryExpression extends BasicExpression
+class BinaryExpression extends TreeExpression
 {
-    /** @var Expression */
-    private $left;
-
-    /** @var Expression */
-    private $right;
-
     /**
      * @param string $value
      * @param string|Expression $left
@@ -33,8 +27,8 @@ class BinaryExpression extends BasicExpression
         $this
             ->setType($type)
             ->setValue($value)
-            ->setLeft($left)
-            ->setRight($right)
+            ->setChild($left, 0)
+            ->setChild($right, 1)
         ;
     }
 
@@ -47,9 +41,7 @@ class BinaryExpression extends BasicExpression
      */
     public function setLeft($left)
     {
-        $this->left = $this->buildExpression($left);
-
-        return $this;
+        return $this->setChild($left, 0);
     }
 
     /**
@@ -59,7 +51,7 @@ class BinaryExpression extends BasicExpression
      */
     public function getLeft()
     {
-        return $this->left;
+        return $this->getChild(0);
     }
 
     /**
@@ -71,9 +63,7 @@ class BinaryExpression extends BasicExpression
      */
     public function setRight($right)
     {
-        $this->right = $this->buildExpression($right);
-
-        return $this;
+        return $this->setChild($right, 1);
     }
 
     /**
@@ -83,7 +73,7 @@ class BinaryExpression extends BasicExpression
      */
     public function getRight()
     {
-        return $this->right;
+        return $this->getChild(1);
     }
 
     /**
