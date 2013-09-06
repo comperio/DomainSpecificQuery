@@ -11,10 +11,8 @@
 namespace DSQ\Expression;
 
 
-class UnaryExpression extends BasicExpression
+class UnaryExpression extends TreeExpression
 {
-    /** @var Expression */
-    private $child;
 
     /**
      * @param string $value
@@ -29,43 +27,7 @@ class UnaryExpression extends BasicExpression
         $this
             ->setType($type)
             ->setValue($value)
-            ->setChild($child)
+            ->setChild($child, 0)
         ;
-    }
-
-    /**
-     * Set Child
-     *
-     * @param string|Expression
-     *
-     * @return $this The current instance
-     */
-    public function setChild($child)
-    {
-        if (!$child instanceof Expression)
-            $child = new BasicExpression($child);
-
-        $this->child = $child;
-
-        return $this;
-    }
-
-    /**
-     * Get Child
-     *
-     * @return Expression
-     */
-    public function getChild()
-    {
-        return $this->child;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __clone()
-    {
-        parent::__clone();
-        $this->setChild(clone($this->getChild()));
     }
 } 
