@@ -11,16 +11,30 @@
 namespace DSQ\Expression;
 
 
+use mixed;
+
 class BoundedChildrenTreeExpression extends TreeExpression
 {
-    private $minChildren;
-    private $maxChildren;
+    private $minChildren = 0;
+    private $maxChildren = INF;
 
-    public function __construct($value, $type = null, $min = 0, $max = INF)
+    /**
+     * @param string $value
+     * @param null $type
+     * @param array $children
+     * @param int $min
+     * @param $max
+     */
+    public function __construct($value, array $children, $min = 0, $max = INF, $type = null)
     {
         parent::__construct($value, $type);
-        $this->minChildren = $min;
+
         $this->maxChildren = $max;
+
+        $this->checkBounds(count($children), $min, INF);
+        $this->setChildren($children);
+
+        $this->minChildren = $min;
     }
 
     /**
@@ -61,20 +75,34 @@ class BoundedChildrenTreeExpression extends TreeExpression
         return parent::setChild($child, $index = 0);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function setChildren(array $children)
+    {
+        $this->checkBounds(count($children));
+        return parent::setChildren($children);
+    }
+
 
     /**
      * @param int $n
+     * @param null|int $min
+     * @param null|int $max
      * @return $this
      * @throws \OverflowException
      * @throws \UnderflowException
      */
-    private function checkBounds($n)
+    private function checkBounds($n, $min = null, $max = null)
     {
-        if ($n < $this->minChildren)
-            throw new \UnderflowException("Class must have at least {$this->minChildren}");
+        if (!isset($min)) $min = $this->minChildren;
+        if (!isset($max)) $max = $this->maxChildren;
 
-        if ($n > $this->maxChildren)
-            throw new \OverflowException("Class must have at most {$this->minChildren}");
+        if ($n < $min)
+            throw new \UnderflowException("Class must have at least {$min} children");
+
+        if ($n > $max)
+            throw new \OverflowException("Class must have at most {$max} children");
 
         return $this;
     }
