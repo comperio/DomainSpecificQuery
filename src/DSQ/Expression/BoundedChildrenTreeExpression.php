@@ -72,7 +72,7 @@ class BoundedChildrenTreeExpression extends TreeExpression
         try { $this->getChild($index); }
         catch (\OutOfRangeException $e) { $this->checkBounds(count($this) + 1); }
 
-        return parent::setChild($child, $index = 0);
+        return parent::setChild($child, $index);
     }
 
     /**
@@ -84,6 +84,13 @@ class BoundedChildrenTreeExpression extends TreeExpression
         return parent::setChildren($children);
     }
 
+    public function __clone()
+    {
+        $oldMin = $this->minChildren;
+        $this->minChildren = 0;
+        parent::__clone();
+        $this->minChildren = $oldMin;
+    }
 
     /**
      * @param int $n

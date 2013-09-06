@@ -11,7 +11,7 @@
 namespace DSQ\Expression;
 
 
-class BinaryExpression extends TreeExpression
+class BinaryExpression extends BoundedChildrenTreeExpression
 {
     /**
      * @param string $value
@@ -24,12 +24,7 @@ class BinaryExpression extends TreeExpression
         if (!isset($type))
             $type = $value;
 
-        $this
-            ->setType($type)
-            ->setValue($value)
-            ->setChild($left, 0)
-            ->setChild($right, 1)
-        ;
+        parent::__construct($value, array($left, $right), 2, 2, $type);
     }
 
     /**
@@ -63,7 +58,8 @@ class BinaryExpression extends TreeExpression
      */
     public function setRight($right)
     {
-        return $this->setChild($right, 1);
+        $this->setChild($right, 1);
+        return $this;
     }
 
     /**

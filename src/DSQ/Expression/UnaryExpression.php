@@ -11,7 +11,7 @@
 namespace DSQ\Expression;
 
 
-class UnaryExpression extends TreeExpression
+class UnaryExpression extends BoundedChildrenTreeExpression
 {
 
     /**
@@ -24,10 +24,6 @@ class UnaryExpression extends TreeExpression
         if (!isset($type))
             $type = $value;
 
-        $this
-            ->setType($type)
-            ->setValue($value)
-            ->setChild($child, 0)
-        ;
+        parent::__construct($value, array($child), 1, 1, $type);
     }
 } 
