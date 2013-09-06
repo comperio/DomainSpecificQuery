@@ -11,7 +11,7 @@
 namespace DSQ\Expression;
 
 
-class TreeExpression extends BasicExpression
+class TreeExpression extends BasicExpression implements \Countable
 {
     /**
      * @var Expression[]
@@ -146,5 +146,14 @@ class TreeExpression extends BasicExpression
         foreach ($children as $child) {
             $this->addChild(clone($child));
         }
+    }
+
+    /**
+     * Returns the number of children
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->getChildren());
     }
 } 
