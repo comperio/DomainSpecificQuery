@@ -72,7 +72,7 @@ class HumanReadableExpr
      */
     public function toString($indentLevel = 0)
     {
-        $result = $this->getLabel() . ':  ';
+        $result = str_pad($this->getLabel() . ': ', 10);
         $value = $this->getValue();
 
         if (!is_array($value))
