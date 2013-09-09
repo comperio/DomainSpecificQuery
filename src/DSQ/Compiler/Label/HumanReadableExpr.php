@@ -72,20 +72,17 @@ class HumanReadableExpr
      */
     public function toString($indentLevel = 0)
     {
-        $result = str_pad($this->getLabel() . ': ', 10);
+        $indent = str_repeat(" ", ($indentLevel) * 4);
+        $result = $indent . $this->getLabel() . ':';
         $value = $this->getValue();
 
         if (!is_array($value))
-            return $result . $value;
-
-        $result .= "\n";
-        $indent = str_repeat(" ", ($indentLevel + 1) * 4);
+            return $result . ' ' . $value;
 
         foreach ($value as $hrExpr) {
-            $result .= $indent . $hrExpr->toString($indentLevel + 1) . "\n";
+            $result .= "\n" . $hrExpr->toString($indentLevel + 1);
         }
 
-        $result .= "\n";
         return $result;
     }
 
