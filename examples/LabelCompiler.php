@@ -25,6 +25,10 @@ $expr = $builder
             ->field('lastname', 'smith')
             ->field('lastname', 'rossi')
         ->end()
+        ->not()
+            ->field('not', 'while')
+            ->field('weare', 'together')
+        ->end()
     ->end()
     ->get()
 ;

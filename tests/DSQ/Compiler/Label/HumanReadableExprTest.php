@@ -28,5 +28,25 @@ class HumanReadableExprTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array('foo', array(array('a', 'b'), array('c', 'd'))), $hrExpr->toArray());
     }
+
+    public function testToString()
+    {
+        $hrExpr = new HumanReadableExpr('foo', 'bar');
+
+        $this->assertEquals('foo: bar', $hrExpr->toString());
+        $this->assertEquals('    foo: bar', $hrExpr->toString(1));
+        $this->assertEquals('        foo: bar', $hrExpr->toString(2));
+    }
+
+    public function testToStringWithNestedVals()
+    {
+        $hrExpr = new HumanReadableExpr('foo', array(new HumanReadableExpr('a', 'b'), new HumanReadableExpr('c', 'd')));
+        $expected = <<<EOF
+foo:
+    a: b
+    c: d
+EOF;
+        $this->assertEquals($expected, (string) $hrExpr);
+    }
 }
  
