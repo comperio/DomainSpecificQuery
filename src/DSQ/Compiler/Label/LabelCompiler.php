@@ -8,11 +8,10 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-namespace DSQ\Compiler;
+namespace DSQ\Compiler\Label;
 
-use DSQ\Compiler\Label\HumanReadableExpr;
+use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\CompositeExpression;
-use DSQ\Expression\Expression;
 use DSQ\Expression\FieldExpression;
 
 /**
