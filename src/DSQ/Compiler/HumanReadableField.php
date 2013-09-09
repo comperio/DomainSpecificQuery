@@ -14,7 +14,7 @@ namespace DSQ\Compiler;
  * Class HumanReadableExpr
  *
  * This class represents a human readable version of an expression
- * 
+ *
  * @package DSQ\Compiler
  */
 class HumanReadableExpr
@@ -23,8 +23,8 @@ class HumanReadableExpr
     private $value;
 
     /**
-     * @param $label
-     * @param $value
+     * @param string $label
+     * @param string|HumanReadableExpr[] $value
      */
     public function __construct($label, $value)
     {
@@ -46,5 +46,23 @@ class HumanReadableExpr
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Convert the object to an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        if (!is_array($this->getValue()))
+            return array($this->getLabel(), $this->getValue());
+
+        $ary = array($this->getLabel(), array());
+
+        foreach ($this->getValue() as $hrExpr)
+            $ary[1][] = $hrExpr->toArray();
+
+        return $ary;
     }
 } 
