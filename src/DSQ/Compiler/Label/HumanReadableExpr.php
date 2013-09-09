@@ -65,4 +65,35 @@ class HumanReadableExpr
 
         return $ary;
     }
+
+    /**
+     * @param int $indentLevel
+     * @return string
+     */
+    public function toString($indentLevel = 0)
+    {
+        $result = $this->getLabel() . ':  ';
+        $value = $this->getValue();
+
+        if (!is_array($value))
+            return $result . $value;
+
+        $result .= "\n";
+        $indent = str_repeat(" ", ($indentLevel + 1) * 4);
+
+        foreach ($value as $hrExpr) {
+            $result .= $indent . $hrExpr->toString($indentLevel + 1) . "\n";
+        }
+
+        $result .= "\n";
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
+    }
 } 
