@@ -10,8 +10,10 @@
 namespace DSQ\Test\Compiler;
 
 use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\UnregisteredTransformationException;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\Expression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Expression\TreeExpression;
 
 /**
@@ -122,5 +124,13 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->compiler->canCompile('DSQ\Expression\BasicExpression', 'poo'));
         $this->assertFalse($this->compiler->canCompile('*', 'moo'));
         $this->assertFalse($this->compiler->canCompile('MyClass', '*'));
+    }
+
+    /**
+     * @expectedException UnregisteredTransformationException
+     */
+    public function testCompileThrowsAnExceptionWhenNoMapMatches()
+    {
+        $this->compiler->compile(new FieldExpression('not', 'compilable'));
     }
 }
