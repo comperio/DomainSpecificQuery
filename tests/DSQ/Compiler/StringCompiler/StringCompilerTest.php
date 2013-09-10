@@ -12,6 +12,7 @@ namespace DSQ\Test\Compiler\StringCompiler;
 
 
 use DSQ\Compiler\StringCompiler\StringCompiler;
+use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
 use DSQ\Expression\FieldExpression;
 
@@ -56,6 +57,22 @@ class StringCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo: "bar baz"', $comp->fieldExpression($field, $comp));
     }
 
+    public function testBinaryExpression()
+    {
+        $comp = new StringCompiler();
 
+        $binary = new BinaryExpression('+', 'a', 'b');
+
+        $this->assertEquals("a + b", $comp->binaryExpression($binary, $comp));
+    }
+
+    public function testBinaryExpressionWithSubexpression()
+    {
+        $comp = new StringCompiler();
+
+        $binary = new BinaryExpression('*', 'a', new BinaryExpression('+', 'b', 'c'));
+
+        $this->assertEquals("a * (b + c)", $comp->binaryExpression($binary, $comp));
+    }
 }
  
