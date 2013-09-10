@@ -54,5 +54,14 @@ class LabelMapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals((string) $expected, (string) $callback($this->fieldExpr, $this->compiler));
     }
+
+    public function testValueCallback()
+    {
+        $b = new LabelMapBuilder();
+        $callback = $b->valueCallback('strtoupper');
+        $expected = new HumanReadableExpr('fieldlabel', 'VALUE');
+
+        $this->assertEquals($expected, $callback($this->fieldExpr, $this->compiler));
+    }
 }
  
