@@ -13,6 +13,7 @@ namespace DSQ\Test\Compiler\StringCompiler;
 
 use DSQ\Compiler\StringCompiler\StringCompiler;
 use DSQ\Expression\TreeExpression;
+use DSQ\Expression\FieldExpression;
 
 class StringCompilerTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,5 +44,18 @@ class StringCompilerTest extends \PHPUnit_Framework_TestCase
         $sum->setChildren(array('a'));
         $this->assertEquals("2 * a", $comp->treeExpression($tree, $comp));
     }
+
+    public function testFieldExpression()
+    {
+        $comp = new StringCompiler();
+        $field = new FieldExpression('foo', 'bar');
+
+        $this->assertEquals('foo: bar', $comp->fieldExpression($field, $comp));
+
+        $field->setValue("bar baz");
+        $this->assertEquals('foo: "bar baz"', $comp->fieldExpression($field, $comp));
+    }
+
+
 }
  
