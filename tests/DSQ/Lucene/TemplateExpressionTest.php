@@ -25,6 +25,16 @@ class TemplateExpressionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($expr->hasPrecedence(new TermExpression('a')));
     }
 
+    public function testSetAndGetEngine()
+    {
+        $engine = $this->getMock('StringTemplate\Engine');
+
+        $expr = new TemplateExpression('');
+        $expr->setEngine($engine);
+
+        $this->assertSame($engine, $expr->getEngine());
+    }
+
     public function testToStringWithScalarValue()
     {
         $template = "field1:{} OR field2:{}";
