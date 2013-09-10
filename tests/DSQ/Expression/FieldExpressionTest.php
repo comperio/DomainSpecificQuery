@@ -30,8 +30,8 @@ class FieldExpressionTest extends \PHPUnit_Framework_TestCase
     public function testSetAndGetField()
     {
         $field = new FieldExpression('foo', 'bar');
-        $field->setType('field');
-        $this->assertEquals('field', $field->getType());
+        $field->setField('field');
+        $this->assertEquals('field', $field->getField());
     }
 }
  
