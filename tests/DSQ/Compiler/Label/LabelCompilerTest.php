@@ -27,6 +27,15 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new HumanReadableExpr('foo', 'bar'), $c->compile($field));
     }
 
+    public function testFieldWithFieldCallbackMap()
+    {
+        $c = new LabelCompiler('strtoupper');
+
+        $field = new FieldExpression('foo', 'bar');
+
+        $this->assertEquals(new HumanReadableExpr('FOO', 'bar'), $c->compile($field));
+    }
+
     public function testTreeMap()
     {
         $c = new LabelCompiler();
@@ -45,6 +54,14 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
         ));
 
         $this->assertEquals($expected, $c->compile($tree));
+    }
+
+    public function testTreeMapDoesApplyFieldnameCallback()
+    {
+        $c = new LabelCompiler(function(){ return 'hello'; });
+
+       $tree = new TreeExpression('and');
+        $this->assertEquals(new HumanReadableExpr('and', array()), $c->compile($tree));
     }
 }
  

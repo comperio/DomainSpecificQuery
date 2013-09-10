@@ -22,11 +22,16 @@ use DSQ\Expression\FieldExpression;
  */
 class LabelCompiler extends TypeBasedCompiler
 {
+    private $fieldNameDefaultCallback;
     /**
      * Initialize maps
+     *
+     * @param callable|null $fieldNameDefaultCallback
      */
-    public function __construct()
+    public function __construct($fieldNameDefaultCallback = null)
     {
+        $this->fieldNameDefaultCallback = $fieldNameDefaultCallback;
+
         $this
             ->map('*:DSQ\Expression\FieldExpression', array($this, 'mapField'))
             ->map('*:DSQ\Expression\TreeExpression', array($this, 'mapTree'))
@@ -54,8 +59,20 @@ class LabelCompiler extends TypeBasedCompiler
     public function mapField(FieldExpression $expression, LabelCompiler $compiler)
     {
         return new HumanReadableExpr(
-            $expression->getField(),
+            $compiler->getFieldLabel($expression->getField()),
             $expression->getValue()
         );
+    }
+
+    /**
+     * @param $fieldname
+     * @return mixed
+     */
+    public function getFieldLabel($fieldname)
+    {
+        if (!isset($this->fieldNameDefaultCallback))
+            return $fieldname;
+
+        return call_user_func($this->fieldNameDefaultCallback, $fieldname);
     }
 } 
