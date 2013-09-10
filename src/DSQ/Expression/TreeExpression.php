@@ -100,6 +100,7 @@ class TreeExpression extends BasicExpression implements CompositeExpression
      */
     public function setChildren(array $children)
     {
+        $this->children = array();
         foreach ($children as $child) {
             $this->addChild($child);
         }

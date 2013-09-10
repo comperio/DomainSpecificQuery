@@ -75,7 +75,8 @@ class TreeExpressionTest extends \PHPUnit_Framework_TestCase
 
     public function testSetChildren()
     {
-        $children = array(new BasicExpression('child1'), new BasicExpression('child2'), new BasicExpression('child3'));
+        $this->tree->addChild(new BasicExpression('this will be erased'));
+        $children = array(new BasicExpression('foo'), new BasicExpression('bar'), new BasicExpression('baz'));
 
         $this->tree->setChildren($children);
 
