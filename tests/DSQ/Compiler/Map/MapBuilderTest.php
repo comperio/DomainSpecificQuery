@@ -18,6 +18,7 @@ use DSQ\Lucene\Compiler\LuceneCompiler;
 use DSQ\Lucene\Compiler\Map\MapBuilder;
 use DSQ\Lucene\PureExpression;
 use DSQ\Lucene\TermExpression;
+use DSQ\Compiler\UnregisteredTransformationException;
 
 class MapBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -161,6 +162,14 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $expr->setValue("mar");
         $this->assertEquals("it does not have a b", (string) $map($expr, $this->compiler));
+
+        $map = $this->builder->conditional(
+            function($expr) { return false; },
+            function ($expr, $c) {return 'will never run'; }
+        );
+
+        $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
+        $map($expr, $this->compiler);
     }
 
     public function testAttr()

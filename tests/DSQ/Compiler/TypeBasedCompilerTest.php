@@ -127,7 +127,7 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException UnregisteredTransformationException
+     * @expectedException DSQ\Compiler\UncompilableValueException
      */
     public function testCompileThrowsAnExceptionWhenNoMapMatches()
     {
