@@ -60,8 +60,17 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $c = new LabelCompiler(function(){ return 'hello'; });
 
-       $tree = new TreeExpression('and');
+        $tree = new TreeExpression('and');
         $this->assertEquals(new HumanReadableExpr('and', array()), $c->compile($tree));
+    }
+
+    public function testGetFieldLabel()
+    {
+        $c = new LabelCompiler();
+        $this->assertEquals('foo', $c->getFieldLabel('foo'));
+
+        $c = new LabelCompiler(function(){ return 'hello'; });
+        $this->assertEquals('hello', $c->getFieldLabel('foo'));
     }
 }
  
