@@ -198,7 +198,8 @@ class StringCompiler extends TypeBasedCompiler
     {
         return
             ($expression instanceof BasicExpression && $expression->getType() == 'basic')
-            || $expression instanceof FieldExpression;
+            || $expression instanceof FieldExpression
+            || ($expression instanceof TreeExpression && $expression->count() == 1);
     }
 
     /**
