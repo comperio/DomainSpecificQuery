@@ -74,5 +74,14 @@ class StringCompilerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("a * (b + c)", $comp->binaryExpression($binary, $comp));
     }
+
+    public function testBinaryExpressionWithNoSpaces()
+    {
+        $comp = new StringCompiler();
+
+        $binary = new BinaryExpression('^', 'a', new BinaryExpression('+', 'b', 'c'));
+
+        $this->assertEquals("a^(b + c)", $comp->binaryExpressionWithNoSpaces($binary, $comp));
+    }
 }
  
