@@ -86,6 +86,14 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("foo:[1 TO 2]^3.1", (string) $map($expr, $this->compiler));
     }
 
+    public function testRangeWithScalarValue()
+    {
+        $map = $this->builder->range('foo');
+
+        $expr = new FieldExpression('moo', '2012');
+        $this->assertEquals("foo:2012", (string) $map($expr, $this->compiler));
+    }
+
     public function testTemplate()
     {
         $map = $this->builder->template('foo:{}');
@@ -123,7 +131,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->regexps(array(
             '/bar/' => function ($expr) {return new TermExpression("barbar");},
-            '/.*/' => function ($expr) {return new TermExpression("ohoh");},
+            '/.+/' => function ($expr) {return new TermExpression("ohoh");},
         ));
 
         $expr = new FieldExpression('moo', 'bar');
@@ -131,6 +139,11 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $expr->setValue("baz");
         $this->assertEquals("ohoh", (string) $map($expr, $this->compiler));
+
+        $expr->setValue("");
+        $this->setExpectedException('DSQ\Compiler\UnregisteredTransformationException');
+
+        $map($expr, $this->compiler);
     }
 
     public function testConditional()
