@@ -60,8 +60,7 @@ class FilterProcess extends ExpressionProcess
      */
     private function getSubtree(TreeExpression $expr)
     {
-        foreach ($expr->getChildren() as $child)
-        {
+        foreach ($expr->getChildren() as $child) {
             if ($child->getType() == $this->operator)
                 return $child;
         }

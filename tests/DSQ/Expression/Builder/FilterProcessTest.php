@@ -52,4 +52,15 @@ class FilterProcessTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('or', $subtree->getValue());
         $this->assertEquals(array($basic), $subtree->getChildren());
     }
+
+    public function testSubvalueIsAddedToTheFirstMatchingSubtree()
+    {
+        $proc = new FilterProcess('or');
+        $context = new Context(null, $tree = new TreeExpression('and'), $proc);
+        $tree->addChild($or = new TreeExpression('or'));
+
+        $proc->subvalueBuilded($context, $basic = new BasicExpression('foo'));
+
+        $this->assertEquals(array($basic), $or->getChildren());
+    }
 }
