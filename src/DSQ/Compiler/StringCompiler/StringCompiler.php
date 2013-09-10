@@ -13,6 +13,7 @@ namespace DSQ\Compiler\StringCompiler;
 
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Expression\BasicExpression;
+use DSQ\Expression\FieldExpression;
 use DSQ\Expression\UnaryExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\Expression;
@@ -21,7 +22,8 @@ use DSQ\Expression\TreeExpression;
 /**
  * Class StringCompiler
  *
- * This is a simple compiler that converts expression using a math-style infix notation
+ * This is a simple compiler that converts expression using a math-style infix notation.
+ * It's a simple example to show how one can deal with operator precedence.
  *
  * @package DSQ\Compiler\StringCompiler
  */
@@ -36,6 +38,7 @@ class StringCompiler extends TypeBasedCompiler
             ->map('*:DSQ\Expression\UnaryExpression', array($this, 'unaryExpression'))
             ->map('*:DSQ\Expression\BinaryExpression', array($this, 'binaryExpression'))
             ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
             ->map('^', array($this, 'binaryExpressionWithNoSpaces'))
 
             ->setOpWeight('^', 1100)
@@ -74,6 +77,16 @@ class StringCompiler extends TypeBasedCompiler
         }
 
         return implode(" $op ", $pieces);
+    }
+
+    /**
+     * @param FieldExpression $expression
+     * @param StringCompiler $compiler
+     * @return string
+     */
+    public function fieldExpression(FieldExpression $expression, StringCompiler $compiler)
+    {
+        return "{$expression->getField()}: {$this->phraseExpression($expression->getValue())}";
     }
 
     /**
@@ -177,9 +190,15 @@ class StringCompiler extends TypeBasedCompiler
         return $string;
     }
 
+    /**
+     * @param Expression $expression
+     * @return bool
+     */
     private function isAtomic(Expression $expression)
     {
-        return $expression instanceof BasicExpression && $expression->getType() == 'basic';
+        return
+            ($expression instanceof BasicExpression && $expression->getType() == 'basic')
+            || $expression instanceof FieldExpression;
     }
 
     /**
