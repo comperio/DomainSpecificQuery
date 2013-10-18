@@ -27,6 +27,15 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new HumanReadableExpr('foo', 'bar'), $c->compile($field));
     }
 
+    public function testFieldMapWithArrayValue()
+    {
+        $c = new LabelCompiler;
+        $ary = array('a' => array('b', 'v', 'u'));
+        $field = new FieldExpression('foo', $ary);
+
+        $this->assertEquals(new HumanReadableExpr('foo', json_encode($ary)), $c->compile($field));
+    }
+
     public function testFieldWithFieldCallbackMap()
     {
         $c = new LabelCompiler('strtoupper');

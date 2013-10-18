@@ -60,7 +60,7 @@ class LabelCompiler extends TypeBasedCompiler
     {
         return new HumanReadableExpr(
             $compiler->getFieldLabel($expression->getField()),
-            $expression->getValue()
+            is_array($expression->getValue()) ? json_encode($expression->getValue()) : $expression->getValue()
         );
     }
 
