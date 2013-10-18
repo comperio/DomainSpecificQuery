@@ -139,7 +139,7 @@ class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterfac
                 break;
         }
 
-        return new FieldExpression($fieldname, new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight));
+        return new LuceneFieldExpression($fieldname, new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight));
     }
 
     /**

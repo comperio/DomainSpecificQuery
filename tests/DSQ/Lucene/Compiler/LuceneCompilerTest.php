@@ -89,7 +89,7 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new FieldExpression('a', new RangeExpression(12, '*', 1.0, false)),
+            new LuceneFieldExpression('a', new RangeExpression(12, '*', 1.0, false)),
             $compiled
         );
 
@@ -97,7 +97,7 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new FieldExpression('a', new RangeExpression(12, '*')),
+            new LuceneFieldExpression('a', new RangeExpression(12, '*')),
             $compiled
         );
 
@@ -105,7 +105,7 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new FieldExpression('a', new RangeExpression('*', 12, 1.0, true, false)),
+            new LuceneFieldExpression('a', new RangeExpression('*', 12, 1.0, true, false)),
             $compiled
         );
 
@@ -113,7 +113,7 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new FieldExpression('a', new RangeExpression('*', 12)),
+            new LuceneFieldExpression('a', new RangeExpression('*', 12)),
             $compiled
         );
     }
