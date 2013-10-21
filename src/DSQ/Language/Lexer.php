@@ -23,9 +23,8 @@ class Lexer extends StatefulLexer
     const FIELD_NOT_SEP = '!=';
 
     const ESCAPED_STRING_PAREN_ENCAPSED = "()=";
-    const ESCAPED_STRING_INLIST = "(), ";
     const ESCAPED_STRING_DOUBLEQUOTE_ENCAPSED = '"';
-    const ESCAPED_STRING = '()"= ';
+    const ESCAPED_STRING = '()"= ,';
 
     const WHITESPACES = " \r\n\t";
 
@@ -62,6 +61,7 @@ class Lexer extends StatefulLexer
         //inside a composite field value
         $this->state('fieldcompositevalue')
             ->regex('WHITESPACE', $this->whitespaces())
+            ->token(',', ',')
             ->token('EMPTY', '')->action(static::POP_STATE) //Pop when no more tokens are recognized
             ->token('FIELD_SEP', static::FIELD_SEP)->action('value')
             ->regex('STRING', $this->escapedSequenceRegex(static::ESCAPED_STRING, '+'))
@@ -71,11 +71,11 @@ class Lexer extends StatefulLexer
         //inside a "FIELD IN ..." expression
         $this->state('fieldin')
             ->regex('WHITESPACE', $this->whitespaces())
-            ->token(',')
-            ->token('(')
+            ->token(',')->action('value')
+            ->token('(')->action('value')
             ->token(')')->action(static::POP_STATE)
-            ->regex('STRING_INLIST', $this->escapedSequenceRegex(static::ESCAPED_STRING_INLIST, '+'))
-            ->regex('STRING_DOUBLEQUOTE_ENCAPSED', "/^\"{$this->escapedChar(static::ESCAPED_STRING_DOUBLEQUOTE_ENCAPSED)}*\"/")
+            //->regex('STRING', $this->escapedSequenceRegex(static::ESCAPED_STRING, '+'))
+            //->regex('STRING_DOUBLEQUOTE_ENCAPSED', "/^\"{$this->escapedChar(static::ESCAPED_STRING_DOUBLEQUOTE_ENCAPSED)}*\"/")
             ->skip('WHITESPACE');
 
         $this->start('outside');
@@ -93,7 +93,7 @@ class Lexer extends StatefulLexer
     {
         $escapeChar = preg_quote($escapeChar);
 
-        return "({$escapeChar}[{$charsToEscape}]|[^$charsToEscape])";
+        return "(?:{$escapeChar}[{$charsToEscape}]|[^$charsToEscape])";
     }
 
     /**
