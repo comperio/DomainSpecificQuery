@@ -50,6 +50,7 @@ class TypeBasedCompiler extends AbstractCompiler
 
         foreach ((array) $selectors as $selector) {
             list($type, $class) = $this->parseSelector($selector);
+            $type = strtolower($type);
             $this->maps[$class][$type] = $transformation;
         }
 
@@ -68,6 +69,8 @@ class TypeBasedCompiler extends AbstractCompiler
      */
     public function getMap($type, $class = '*')
     {
+        $type = strtolower($type);
+
         if (isset($this->maps[$class][$type]))
             return $this->maps[$class][$type];
 
