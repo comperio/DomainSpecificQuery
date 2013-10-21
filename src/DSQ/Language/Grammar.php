@@ -104,11 +104,11 @@ class Grammar extends \Dissect\Parser\Grammar
             ->is('FieldName', '>=', 'Value')->call($comparison)
             ->is('FieldName', '<', 'Value')->call($comparison)
             ->is('FieldName', '<=', 'Value')->call($comparison)
-            ->is('FieldName', 'FIELD_IN', '(', 'ValueList', ')')
+            ->is('FieldName', 'FIELD_IN', '(', 'ValueInList+', ')')
             ->call(function($field, $_, $__, $list, $___) use ($listCall) {
                 return $listCall($field, $list);
             })
-            ->is('FieldName', 'OP_NOT', 'FIELD_IN', '(', 'ValueList', ')')
+            ->is('FieldName', 'OP_NOT', 'FIELD_IN', '(', 'ValueInList+', ')')
             ->call(function($field, $_, $__, $___, $list, $____) use ($listCall, $notCall) {
                 return $notCall($listCall($field, $list));
             })
@@ -144,8 +144,8 @@ class Grammar extends \Dissect\Parser\Grammar
         // e.g.: "foo = bar baz = bag car = lag"
         $this('KeyValuePair+')
             ->is('KeyValuePair')->call($identity)
-            ->is('KeyValuePair+', 'KeyValuePair')
-            ->call(function($composite, $pair) { return $composite + $pair; });
+            ->is('KeyValuePair+', ',', 'KeyValuePair')
+            ->call(function($composite, $_, $pair) { return $composite + $pair; });
 
         // A single key-value pair in a composite value
         // e.g.: "foo = bar" in "field = (foo = bar goo = car)"
@@ -157,19 +157,9 @@ class Grammar extends \Dissect\Parser\Grammar
         // A list of comma separated values
         // e.g "bar, baz" in "foo IN (bar, baz)"
         $this('ValueInList+')
-            ->is('ValueInList')->call(function($value) { return array($value); })
-            ->is('ValueInList+', ',', 'ValueInList')
+            ->is('Value')->call(function($value) { return array($value); })
+            ->is('ValueInList+', ',', 'Value')
             ->call(function($list, $_, $value) { $list[] = $value; return $list; });
-
-        // A single value in a comma separated list
-        // e.g "bar" in "foo IN (bar, baz)"
-        $this('ValueInList')
-            ->is('STRING_INLIST')
-            ->call(function(CommonToken $token) {
-                return $this->unescape($token->getValue(), Lexer::ESCAPED_STRING_INLIST);
-            })
-            ->is('STRING_DOUBLEQUOTE_ENCAPSED')
-            ->call($doubleQuoteCall);
 
         $this->start('InitialExpr');
     }
