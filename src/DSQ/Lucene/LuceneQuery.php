@@ -132,4 +132,21 @@ class LuceneQuery
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $span = new SpanExpression('AND');
+
+        if (!$this->hasTrivialMainQuery())
+            $span->addExpression(new PureExpression((string) $this->getMainQuery()));
+
+        foreach ($this->getFilterQueries() as $filter) {
+            $span->addExpression(new PureExpression((string) $filter));
+        }
+
+        return (string) $span;
+    }
 }

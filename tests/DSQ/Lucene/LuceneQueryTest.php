@@ -103,4 +103,12 @@ class LuceneQueryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('foo', $query->getMainQuery());
         $this->assertSame(array('bar', 'baz'), $query->getFilterQueries());
     }
+
+    public function testToString()
+    {
+        $query = new LuceneQuery(new PureExpression('foo:mah'));
+        $query->setFilterQueries(array(new PureExpression('bar'), new PureExpression('baz')));
+
+        $this->assertEquals('(foo:mah) AND (bar) AND (baz)', (string) $query);
+    }
 }

@@ -31,5 +31,4 @@ class PureExpression extends AbstractLuceneExpression
     {
         return false;
     }
-
 } 
