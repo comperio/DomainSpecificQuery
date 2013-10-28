@@ -11,6 +11,7 @@
 namespace DSQ\Compiler;
 
 use DSQ\Expression\Expression;
+use DSQ\Expression\FieldExpression;
 use UniversalMatcher\MapMatcher;
 
 /**
@@ -33,8 +34,22 @@ class MatcherCompiler extends AbstractCompiler
         $this->matcher
             ->defineMap('class-and-type', function (Expression $expr) {
                 return get_class($expr) .':' . strtolower($expr->getType()); })
-            ->defineMap('type', function (Expression $expr) { return strtolower($expr->getType()); })
+            ->defineMap('type', function (Expression $expr) {
+                if ($expr instanceof FieldExpression && $expr->getOp() != '=')
+                    return null;
+                return strtolower($expr->getType());
+            })
             ->defineMap('class', function (Expression $expr) { return get_class($expr); })
+            ->defineMap('type-and-op', function (Expression $expr) {
+                if (!$expr instanceof FieldExpression)
+                    return null;
+                return $expr->getType() . $expr->getOp();
+            })
+            ->defineMap('class-and-op', function (Expression $expr) {
+                if (!$expr instanceof FieldExpression)
+                    return null;
+                return get_class($expr) . $expr->getOp();
+            })
         ;
     }
 
@@ -60,7 +75,6 @@ class MatcherCompiler extends AbstractCompiler
     {
         return $this->matcher;
     }
-
 
     /**
      * Register a map for the compiler, that matches on type
@@ -132,6 +146,48 @@ class MatcherCompiler extends AbstractCompiler
         foreach ((array) $class as $c) {
             foreach ((array) $type as $t) {
                 $this->getMatcher()->rule('class-and-type', "$c:$t", $transformation);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $type The typeor an array of types
+     * @param string|array $op The operator or an array of operators
+     * @param callable $transformation
+     * @return $this
+     * @throws InvalidTransformationException
+     */
+    public function mapByTypeAndOp($type, $op, $transformation)
+    {
+        if (!is_callable($transformation))
+            throw new InvalidTransformationException('Transformations must be callable objects');
+
+        foreach ((array) $type as $t) {
+            foreach ((array) $op as $o) {
+                $this->getMatcher()->rule('type-and-op', "$t$o", $transformation);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $class The class or  an array of classes
+     * @param string|array $op The operator or an array of operators
+     * @param callable $transformation
+     * @return $this
+     * @throws InvalidTransformationException
+     */
+    public function mapByClassAndOp($class, $op, $transformation)
+    {
+        if (!is_callable($transformation))
+            throw new InvalidTransformationException('Transformations must be callable objects');
+
+        foreach ((array) $class as $c) {
+            foreach ((array) $op as $o) {
+                $this->getMatcher()->rule('class-and-op', "$c$o", $transformation);
             }
         }
 

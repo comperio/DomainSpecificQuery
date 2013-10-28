@@ -43,15 +43,15 @@ class Grammar extends \Dissect\Parser\Grammar
         $listCall = function($field, array $list) {
             $tree = new TreeExpression('OR');
             foreach ($list as $value) {
-                $tree->addChild(new FieldExpression($field, $value));
+                $tree->addChild(new FieldExpression($field, $value, '='));
             }
             return $tree;
         };
 
         $identity = function($v) { return $v; };
 
-        $comparison = function($field, CommonToken $op, $value) {
-            return new BinaryExpression($op->getValue(), $field, $value);
+        $fieldExpr = function($field, CommonToken $op, $value) {
+            return new FieldExpression($field, $value, $op->getValue());
         };
 
         // A valid DSL expression
@@ -95,16 +95,13 @@ class Grammar extends \Dissect\Parser\Grammar
         $this('ExprField')
             ->is('FieldName', 'FIELD_SEP', 'Value')
             ->call(function($field, $_, $value) {
-                return new FieldExpression($field, $value);
+                return new FieldExpression($field, $value, '=');
             })
-            ->is('FieldName', 'FIELD_NOT_SEP', 'Value')
-            ->call(function($field, $_, $value) use ($notCall) {
-                return $notCall(new FieldExpression($field, $value));
-            })
-            ->is('FieldName', '>', 'Value')->call($comparison)
-            ->is('FieldName', '>=', 'Value')->call($comparison)
-            ->is('FieldName', '<', 'Value')->call($comparison)
-            ->is('FieldName', '<=', 'Value')->call($comparison)
+            ->is('FieldName', 'FIELD_NOT_SEP', 'Value')->call($fieldExpr)
+            ->is('FieldName', '>', 'Value')->call($fieldExpr)
+            ->is('FieldName', '>=', 'Value')->call($fieldExpr)
+            ->is('FieldName', '<', 'Value')->call($fieldExpr)
+            ->is('FieldName', '<=', 'Value')->call($fieldExpr)
             ->is('FieldName', 'FIELD_IN', '(', 'ValueInList+', ')')
             ->call(function($field, $_, $__, $list, $___) use ($listCall) {
                 return $listCall($field, $list);

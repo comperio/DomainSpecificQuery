@@ -44,17 +44,17 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testFieldExpression()
     {
         $this->assertEquals(
-            new FieldExpression('foo', 'bar, baz'),
+            new FieldExpression('foo', 'bar, baz', '='),
             $this->parse("foo = bar\\,\\ baz")
         );
 
         $this->assertEquals(
-            new FieldExpression('foo', 'bar baz bag'),
+            new FieldExpression('foo', 'bar baz bag', '='),
             $this->parse("foo = (bar baz bag)")
         );
 
         $this->assertEquals(
-            new FieldExpression('foo', '"quoted\\"escaped()"'),
+            new FieldExpression('foo', '"quoted\\"escaped()"', '='),
             $this->parse("foo = \"quoted\\\"escaped()\"")
         );
     }
@@ -62,7 +62,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testFieldExpressionWithCompositeValues()
     {
         $this->assertEquals(
-            new FieldExpression('foo', array('a' => array('b' => 'c', 'd' => 'e'))),
+            new FieldExpression('foo', array('a' => array('b' => 'c', 'd' => 'e')), '='),
             $this->parse("foo = (a = (b = c, d = e))")
         );
     }
@@ -105,32 +105,30 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testCompositeExpressions()
     {
         $this->assertEquals(
-            new FieldExpression('foo', array('a' => 'b', 'c' => array('d' => '"e"', 'f' => 'hi all()'))),
+            new FieldExpression('foo', array('a' => 'b', 'c' => array('d' => '"e"', 'f' => 'hi all()')), '='),
             $this->parse('foo = (a = b, c = (d = "e", f = (hi all\(\))))')
         );
     }
 
     public function testNotEqual()
     {
-        $not = new TreeExpression('NOT');
-        $not->addChild(new FieldExpression('foo', 'bar'));
         $this->assertEquals(
-            $not,
+            new FieldExpression('foo', 'bar', '!='),
             $this->parse('foo != bar')
         );
 
         $this->assertEquals(
-            new BinaryExpression('>=', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '>='),
             $this->parse('foo >= 2000')
         );
 
         $this->assertEquals(
-            new BinaryExpression('<', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '<'),
             $this->parse('foo < 2000')
         );
 
         $this->assertEquals(
-            new BinaryExpression('<=', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '<='),
             $this->parse('foo <= 2000')
         );
     }
@@ -138,22 +136,22 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testComparisons()
     {
         $this->assertEquals(
-            new BinaryExpression('>', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '>'),
             $this->parse('foo > 2000')
         );
 
         $this->assertEquals(
-            new BinaryExpression('>=', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '>='),
             $this->parse('foo >= 2000')
         );
 
         $this->assertEquals(
-            new BinaryExpression('<', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '<'),
             $this->parse('foo < 2000')
         );
 
         $this->assertEquals(
-            new BinaryExpression('<=', 'foo', '2000'),
+            new FieldExpression('foo', '2000', '<='),
             $this->parse('foo <= 2000')
         );
     }

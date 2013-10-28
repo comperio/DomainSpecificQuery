@@ -49,7 +49,7 @@ class StringCompilerTest extends \PHPUnit_Framework_TestCase
     public function testFieldExpression()
     {
         $comp = new StringCompiler();
-        $field = new FieldExpression('foo', 'bar');
+        $field = new FieldExpression('foo', 'bar', '=');
 
         $this->assertEquals('foo: bar', $comp->fieldExpression($field, $comp));
 

@@ -17,19 +17,19 @@ class FieldExpressionTest extends \PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
-        $field = new FieldExpression('foo', 'bar');
+        $field = new FieldExpression('foo', 'bar', '=');
 
         $this->assertEquals('foo', $field->getField());
         $this->assertEquals('bar', $field->getValue());
         $this->assertEquals('foo', $field->getType());
 
-        $field = new FieldExpression('foo', 'bar', 'baz');
+        $field = new FieldExpression('foo', 'bar', '=', 'baz');
         $this->assertEquals('baz', $field->getType());
     }
 
     public function testSetAndGetField()
     {
-        $field = new FieldExpression('foo', 'bar');
+        $field = new FieldExpression('foo', 'bar', '=');
         $field->setField('field');
         $this->assertEquals('field', $field->getField());
     }

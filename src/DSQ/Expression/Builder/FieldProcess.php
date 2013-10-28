@@ -23,7 +23,7 @@ class FieldProcess extends ExpressionProcess
      */
     public function build(Context $context, $field = '', $value = null, $type = null)
     {
-        $expr = new FieldExpression($field, $value, $type);
+        $expr = new FieldExpression($field, $value, '=', $type);
         $newContext = new Context($context, $expr, $this);
 
         if (!isset($value))

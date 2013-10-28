@@ -42,7 +42,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->term();
 
-        $expr = new FieldExpression('foo', 'bar');
+        $expr = new FieldExpression('foo', 'bar', '=');
 
         $this->assertEquals("bar", (string) $map($expr, $this->compiler));
 
@@ -56,7 +56,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->field('foo');
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
         $this->assertEquals("foo:bar", (string) $map($expr, $this->compiler));
 
         $expr->setValue('esca"pe');
@@ -69,7 +69,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->span(array('foo', 'goo', 'moo'), 'or');
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
         $this->assertEquals("foo:bar OR goo:bar OR moo:bar", (string) $map($expr, $this->compiler));
 
         $map = $this->builder->span(array('foo', 'goo', 'moo'), 'or', true, 3);
@@ -80,7 +80,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->range('foo');
 
-        $expr = new FieldExpression('moo', array('from' => 1, 'to' => 2));
+        $expr = new FieldExpression('moo', array('from' => 1, 'to' => 2), '=');
         $this->assertEquals("foo:[1 TO 2]", (string) $map($expr, $this->compiler));
 
         $map = $this->builder->range('foo', 3.1);
@@ -91,7 +91,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->range('foo');
 
-        $expr = new FieldExpression('moo', '2012');
+        $expr = new FieldExpression('moo', '2012', '=');
         $this->assertEquals("foo:2012", (string) $map($expr, $this->compiler));
     }
 
@@ -99,7 +99,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->template('foo:{}');
 
-        $expr = new FieldExpression('moo', 'a:b:c');
+        $expr = new FieldExpression('moo', 'a:b:c', '=');
         $this->assertEquals("foo:a\:b\:c", (string) $map($expr, $this->compiler));
 
         $map = $this->builder->template('foo:{}', true, true, 3);
@@ -110,7 +110,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $map = $this->builder->template('foo:{subvalue}');
 
-        $expr = new FieldExpression('moo', array('subvalue' => 'bar'));
+        $expr = new FieldExpression('moo', array('subvalue' => 'bar'), '=');
         $this->assertEquals("foo:bar", (string) $map($expr, $this->compiler));
     }
 
@@ -123,7 +123,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
             function ($expr) {return new TermExpression("baz");}
         );
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
 
         $this->assertEquals("foo OR bar OR baz", (string) $map($expr, $this->compiler));
     }
@@ -135,7 +135,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
             '/.+/' => function ($expr) {return new TermExpression("ohoh");},
         ));
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
         $this->assertEquals("barbar", (string) $map($expr, $this->compiler));
 
         $expr->setValue("baz");
@@ -157,7 +157,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
             function ($expr, $c) {return new TermExpression("it does not have a b");}
         );
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
         $this->assertEquals("it has a b", (string) $map($expr, $this->compiler));
 
         $expr->setValue("mar");
@@ -191,7 +191,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $rval = function($expr) { return $expr->getValue(); };
 
-        $expr = new FieldExpression('moo', 'bar');
+        $expr = new FieldExpression('moo', 'bar', '=');
         $map = $this->builder->subval($rval, 'key');
         $this->assertEquals('bar', $map($expr, $this->compiler));
 
@@ -205,7 +205,7 @@ class MapBuilderTest extends \PHPUnit_Framework_TestCase
     public function testHasSubval()
     {
         $condition = $this->builder->hasSubval('key');
-        $expr = new FieldExpression('foo', 'bar');
+        $expr = new FieldExpression('foo', 'bar', '=');
 
         $this->assertFalse($condition($expr));
 

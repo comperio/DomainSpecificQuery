@@ -38,7 +38,7 @@ class LabelMapBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->builder = new LabelMapBuilder;
 
-        $this->fieldExpr = new FieldExpression('field', 'value');
+        $this->fieldExpr = new FieldExpression('field', 'value', '=');
     }
 
     public function testAry()

@@ -40,7 +40,7 @@ class FilterProcess extends ExpressionProcess
         if (!isset($field) || !isset($value))
             return $newContext;
 
-        $this->subvalueBuilded($newContext, new FieldExpression($field, $value));
+        $this->subvalueBuilded($newContext, new FieldExpression($field, $value, '='));
 
         return null;
     }

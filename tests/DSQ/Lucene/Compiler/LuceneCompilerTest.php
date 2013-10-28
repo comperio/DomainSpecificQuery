@@ -31,9 +31,12 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->compiler = new LuceneCompiler;
-        $this->compiler->map('foo', function (FieldExpression $f) {
-            return new LuceneFieldExpression('foo', $f->getValue());
-        });
+        $this->compiler
+            ->map('foo', function (FieldExpression $f) {
+                return new LuceneFieldExpression('foolucene', $f->getValue());
+            })
+            ->mapByTypeAndOp('foo', array('>', '<', '>=', '<='), array($this->compiler, 'comparisonFieldExpression'))
+        ;
     }
 
     public function testCompileBasicExpression()
@@ -46,41 +49,33 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
 
     public function testCompileFieldExpression()
     {
-        $expr = new FieldExpression('foo', 'bar');
+        $expr = new FieldExpression('foo', 'bar', '=');
         $this->compiler->mapByClass('DSQ\Expression\FieldExpression', array($this->compiler, 'fieldExpression'));
         $compiled = $this->compiler->compile($expr);
 
-        $this->assertEquals(new LuceneFieldExpression('foo', 'bar'), $compiled);
-    }
-
-    public function testRangeExpression()
-    {
-        $expr = new BinaryExpression('range', 'foo', 'bar');
-        $compiled = $this->compiler->compile($expr);
-
-        $this->assertEquals(new RangeExpression('foo', 'bar'), $compiled);
+        $this->assertEquals(new LuceneFieldExpression('foolucene', 'bar'), $compiled);
     }
 
     public function testCompileTreeExpression()
     {
         $expr = new TreeExpression('and');
-        $expr->setChildren(array(new FieldExpression('foo', 'val'), 'b', 'c'));
+        $expr->setChildren(array(new FieldExpression('foo', 'val', '='), 'b', 'c'));
         $compiled = $this->compiler->compile($expr);
 
-        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
+        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foolucene', new TermExpression('val')), 'b', 'c')), $compiled);
 
         $expr->setType('or')->setValue('or');
         $compiled = $this->compiler->compile($expr);
-        $this->assertEquals(new SpanExpression('OR', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
+        $this->assertEquals(new SpanExpression('OR', array(new LuceneFieldExpression('foolucene', new TermExpression('val')), 'b', 'c')), $compiled);
     }
 
     public function testCompileTreeExpressionIsCaseInsensitive()
     {
         $expr = new TreeExpression('AnD');
-        $expr->setChildren(array(new FieldExpression('foo', 'val'), 'b', 'c'));
+        $expr->setChildren(array(new FieldExpression('foo', 'val', '='), 'b', 'c'));
         $compiled = $this->compiler->compile($expr);
 
-        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
+        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foolucene', new TermExpression('val')), 'b', 'c')), $compiled);
     }
 
     public function testCompileNotExpression()
@@ -95,37 +90,31 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCompileComparisonExpression()
+    public function testCompileNotFieldExpression()
     {
-        $expr = new BinaryExpression('>', 'a', 12);
+        $compiled = $this->compiler->compile(new FieldExpression('foo', 'bar', '!='));
+
+        $this->assertEquals(
+            new BooleanExpression(BooleanExpression::MUST_NOT, array(new LuceneFieldExpression('foolucene', 'bar'))),
+            $compiled
+        );
+    }
+
+    public function testCompileFieldExpressionWithComparisons()
+    {
+        $expr = new FieldExpression('foo', 12, '>');
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new LuceneFieldExpression('a', new RangeExpression(12, '*', 1.0, false)),
+            new LuceneFieldExpression('foolucene', new RangeExpression(12, '*', 1.0, false)),
             $compiled
         );
 
-        $expr = new BinaryExpression('>=', 'a', 12);
+        $expr = new FieldExpression('foo', 12, '>=');
         $compiled = $this->compiler->compile($expr);
 
         $this->assertEquals(
-            new LuceneFieldExpression('a', new RangeExpression(12, '*')),
-            $compiled
-        );
-
-        $expr = new BinaryExpression('<', 'a', 12);
-        $compiled = $this->compiler->compile($expr);
-
-        $this->assertEquals(
-            new LuceneFieldExpression('a', new RangeExpression('*', 12, 1.0, true, false)),
-            $compiled
-        );
-
-        $expr = new BinaryExpression('<=', 'a', 12);
-        $compiled = $this->compiler->compile($expr);
-
-        $this->assertEquals(
-            new LuceneFieldExpression('a', new RangeExpression('*', 12)),
+            new LuceneFieldExpression('foolucene', new RangeExpression(12, '*')),
             $compiled
         );
     }

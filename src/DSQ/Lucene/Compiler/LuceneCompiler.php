@@ -39,9 +39,8 @@ class LuceneCompiler extends MatcherCompiler implements LuceneCompilerInterface
         $this
             ->mapByClassAndType('DSQ\Expression\TreeExpression', array('and', 'or'), array($this, 'treeExpression'))
             ->mapByClassAndType('DSQ\Expression\TreeExpression', 'not', array($this, 'notExpression'))
-            ->mapByClassAndType('DSQ\Expression\BinaryExpression', 'range', array($this, 'rangeExpression'))
-            ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
             ->mapByClass('DSQ\Expression\BasicExpression', array($this, 'basicExpression'))
+            ->mapByClassAndOp('DSQ\Expression\FieldExpression', '!=', array($this, 'notFieldExpression'))
             //->mapByClass('DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
         ;
     }
@@ -109,39 +108,57 @@ class LuceneCompiler extends MatcherCompiler implements LuceneCompilerInterface
     }
 
     /**
-     * @param BinaryExpression $expr
+     * Delegate a "not equal" field expression to the previous map
+     * @param FieldExpression $expr
+     * @param LuceneCompiler $compiler
+     * @return BooleanExpression
+     */
+    public function notFieldExpression(FieldExpression $expr, self $compiler)
+    {
+        $not = new TreeExpression('not');
+        $not->addChild(new FieldExpression($expr->getField(), $expr->getValue()));
+
+        return $this->notExpression($not, $compiler);
+    }
+
+    /**
+     * @param FieldExpression $expr
      * @param LuceneCompiler $compiler
      * @return FieldExpression
      */
-    public function comparisonExpression(BinaryExpression $expr, self $compiler)
+    public function comparisonFieldExpression(FieldExpression $expr, self $compiler)
     {
-        $fieldname = $expr->getLeft()->getValue();
-        $val = $compiler->transform($expr->getRight()->getValue());
+        /** @var LuceneFieldExpression $luceneFieldExpression */
+        $luceneFieldExpression = $compiler->compile(new FieldExpression($expr->getField(), $expr->getValue()));
 
         $from = '*';
         $to = '*';
         $includeLeft = true;
         $includeRight = true;
+        $value = (string) $luceneFieldExpression->getValue();
 
-        switch ($expr->getValue())
+        switch ($expr->getOp())
         {
             case '>':
-                $from = $val;
+                $from = $value;
                 $includeLeft = false;
                 break;
             case '>=':
-                $from = $val;
+                $from = $value;
                 break;
             case '<':
-                $to = $val;
+                $to = $value;
                 $includeRight = false;
                 break;
             case '<=':
-                $to = $val;
+                $to = $value;
                 break;
         }
 
-        return new LuceneFieldExpression($fieldname, new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight));
+        return new LuceneFieldExpression(
+            $luceneFieldExpression->getType(),
+            new RangeExpression($from, $to, 1.0, $includeLeft, $includeRight)
+        );
     }
 
     /**

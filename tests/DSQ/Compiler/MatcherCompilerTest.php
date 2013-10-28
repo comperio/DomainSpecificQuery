@@ -30,6 +30,7 @@ class MatcherCompilerTest extends \PHPUnit_Framework_TestCase
     protected $mapFoo;
     protected $mapBar;
     protected $mapNic;
+    protected $mapComparison;
 
     public function setUp()
     {
@@ -47,10 +48,15 @@ class MatcherCompilerTest extends \PHPUnit_Framework_TestCase
             return 'nic:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
         };
 
+        $this->mapComparison = function(FieldExpression $exp, MatcherCompiler $c) {
+            return 'comparison:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
+        };
+
         $this->compiler
             ->mapByClassAndType('DSQ\Expression\BasicExpression', 'nic', $this->mapNic)
             ->map('foo', $this->mapFoo)
             ->mapByClass('DSQ\Expression\BasicExpression', $this->mapBar)
+            ->mapByTypeAndOp('comparison', array('>', '<', '>=', '<='), $this->mapComparison)
         ;
     }
 
@@ -61,10 +67,12 @@ class MatcherCompilerTest extends \PHPUnit_Framework_TestCase
         $exp1 = new TreeExpression('ciao', 'foo');
         $exp2 = new BasicExpression('ciao', 'bar');
         $exp3 = new BasicExpression('ciao', 'nic');
+        $comparison = new FieldExpression('comparison', '2000', '>=');
 
         $this->assertEquals(call_user_func($this->mapFoo, $exp1, $compiler), $compiler->compile($exp1));
         $this->assertEquals(call_user_func($this->mapBar, $exp2, $compiler), $compiler->compile($exp2));
         $this->assertEquals(call_user_func($this->mapNic, $exp3, $compiler), $compiler->compile($exp3));
+        $this->assertEquals(call_user_func($this->mapComparison, $comparison, $compiler), $compiler->compile($comparison));
     }
 
     public function testRegisterTransformationWithArrayClassesAndTypes()
@@ -123,6 +131,6 @@ class MatcherCompilerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCompileThrowsAnExceptionWhenNoMapMatches()
     {
-        $this->compiler->compile(new FieldExpression('not', 'compilable'));
+        $this->compiler->compile(new FieldExpression('not', 'compilable', '='));
     }
 }

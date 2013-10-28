@@ -22,7 +22,7 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $c = new LabelCompiler;
 
-        $field = new FieldExpression('foo', 'bar');
+        $field = new FieldExpression('foo', 'bar', '=');
 
         $this->assertEquals(new HumanReadableExpr('foo', 'bar'), $c->compile($field));
     }
@@ -31,7 +31,7 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $c = new LabelCompiler;
         $ary = array('a' => array('b', 'v', 'u'));
-        $field = new FieldExpression('foo', $ary);
+        $field = new FieldExpression('foo', $ary, '=');
 
         $this->assertEquals(new HumanReadableExpr('foo', json_encode($ary)), $c->compile($field));
     }
@@ -40,7 +40,7 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $c = new LabelCompiler('strtoupper');
 
-        $field = new FieldExpression('foo', 'bar');
+        $field = new FieldExpression('foo', 'bar', '=');
 
         $this->assertEquals(new HumanReadableExpr('FOO', 'bar'), $c->compile($field));
     }
@@ -51,9 +51,9 @@ class LabelCompilerTest extends \PHPUnit_Framework_TestCase
 
         $tree = new TreeExpression('and');
         $tree
-            ->addChild($child0 = new FieldExpression('foo', 'bar'))
-            ->addChild($child1 = new FieldExpression('bel', 'mar'))
-            ->addChild($child2 = new FieldExpression('ero', 'uno'))
+            ->addChild($child0 = new FieldExpression('foo', 'bar', '='))
+            ->addChild($child1 = new FieldExpression('bel', 'mar', '='))
+            ->addChild($child2 = new FieldExpression('ero', 'uno', '='))
         ;
 
         $expected = new HumanReadableExpr('and', array(

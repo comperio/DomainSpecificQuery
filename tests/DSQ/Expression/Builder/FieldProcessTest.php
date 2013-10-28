@@ -24,7 +24,7 @@ class FieldProcessTest extends \PHPUnit_Framework_TestCase
         $context = new Context(null, '', new DummyProcess());
 
         $newContext = $proc->build($context, 'field');
-        $expectedContext = new Context($context, new FieldExpression('field', null), $proc);
+        $expectedContext = new Context($context, new FieldExpression('field', null, '='), $proc);
 
         $this->assertEquals($expectedContext, $newContext);
     }
@@ -33,7 +33,7 @@ class FieldProcessTest extends \PHPUnit_Framework_TestCase
     {
         $context = new Context(null, '', new DummyProcess());
         $proc = $this->getMock('DSQ\Expression\Builder\FieldProcess', array('finalize'));
-        $tempContext = new Context($context, new FieldExpression('field', 'value'), $proc);
+        $tempContext = new Context($context, new FieldExpression('field', 'value', '='), $proc);
 
         $proc->expects($this->once())->method('finalize')->with($this->equalTo($tempContext));
 
@@ -43,10 +43,10 @@ class FieldProcessTest extends \PHPUnit_Framework_TestCase
     public function testSubvalueBuilded()
     {
         $proc = new FieldProcess;
-        $context = new Context(null, new FieldExpression('field', null), $proc);
+        $context = new Context(null, new FieldExpression('field', null, '='), $proc);
 
         $proc->subvalueBuilded($context, 'value');
-        $this->assertEquals(new FieldExpression('field', 'value'), $context->object);
+        $this->assertEquals(new FieldExpression('field', 'value', '='), $context->object);
     }
 }
  
