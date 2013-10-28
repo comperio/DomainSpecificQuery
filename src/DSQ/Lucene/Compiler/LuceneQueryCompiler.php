@@ -11,22 +11,24 @@
 namespace DSQ\Lucene\Compiler;
 
 
-use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\MatcherCompiler;
 use DSQ\Lucene\BooleanExpression;
 use DSQ\Lucene\LuceneExpression;
 use DSQ\Lucene\LuceneQuery;
 use DSQ\Lucene\SpanExpression;
 use DSQ\Lucene\TreeExpression;
 
-class LuceneQueryCompiler extends TypeBasedCompiler
+class LuceneQueryCompiler extends MatcherCompiler
 {
     /**
      * Register maps
      */
     public function __construct()
     {
+        parent::__construct();
+        $this->getMatcher()->setNoMatchValue(array($this, 'mapExpression'));
+
         $this
-            ->map('*', array($this, 'mapExpression'))
             ->map(array('AND', '+'), array($this, 'mapAnd'))
             ->map('-', array($this, 'mapNot'))
         ;

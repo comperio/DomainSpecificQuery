@@ -10,7 +10,6 @@
 
 namespace DSQ\Compiler;
 
-
 use DSQ\Expression\Expression;
 use UniversalMatcher\MapMatcher;
 
@@ -86,11 +85,17 @@ class MatcherCompiler extends AbstractCompiler
     /**
      * @param string $type
      * @param string $mapName
+     * @throws UnregisteredTransformationException
      * @return mixed
      */
     public function getMap($type, $mapName = 'type')
     {
-        return $this->getMatcher()->matchByMapValue($mapName, $type);
+        $map = $this->getMatcher()->matchByMapValue($mapName, $type);
+
+        if (is_callable($map))
+            return $map;
+
+        throw new UnregisteredTransformationException("There is no map registered of kind '$mapName' and of type '$type'");
     }
 
     /**
@@ -112,18 +117,21 @@ class MatcherCompiler extends AbstractCompiler
     }
 
     /**
-     * @param string $classAndType A string in the form ClassName:type
+     * @param string|array $class The class name or an array of class names
+     * @param string|array $type The type value or an array of type values
      * @param callable $transformation
      * @return $this
      * @throws InvalidTransformationException
      */
-    public function mapByClassAndType($classAndType, $transformation)
+    public function mapByClassAndType($class, $type, $transformation)
     {
         if (!is_callable($transformation))
             throw new InvalidTransformationException('Transformations must be callable objects');
 
-        foreach ((array) $classAndType as $ct) {
-            $this->getMatcher()->rule('class-and-type', $ct, $transformation);
+        foreach ((array) $class as $c) {
+            foreach ((array) $type as $t) {
+                $this->getMatcher()->rule('class-and-type', "$c:$t", $transformation);
+            }
         }
 
         return $this;
@@ -134,12 +142,11 @@ class MatcherCompiler extends AbstractCompiler
      */
     public function compile(Expression $expression)
     {
-        try {
-            $transformation = $this->getMatcher()->match($expression);
-        } catch (UnregisteredTransformationException $e) {
-            throw new UncompilableValueException($e->getMessage());
-        }
+        $transformation = $this->getMatcher()->match($expression);
 
-        return call_user_func($transformation, $expression, $this);
+        if (is_callable($transformation) )
+            return call_user_func($transformation, $expression, $this);
+
+        throw new UncompilableValueException('There are no registered tranformations that match the given expression');
     }
 }

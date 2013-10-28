@@ -10,7 +10,7 @@
 
 namespace DSQ\Compiler\Label;
 
-use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\MatcherCompiler;
 use DSQ\Expression\CompositeExpression;
 use DSQ\Expression\FieldExpression;
 
@@ -20,9 +20,10 @@ use DSQ\Expression\FieldExpression;
  * Class LabelCompiler
  * @package DSQ\Compiler
  */
-class LabelCompiler extends TypeBasedCompiler
+class LabelCompiler extends MatcherCompiler
 {
     private $fieldNameDefaultCallback;
+
     /**
      * Initialize maps
      *
@@ -30,11 +31,13 @@ class LabelCompiler extends TypeBasedCompiler
      */
     public function __construct($fieldNameDefaultCallback = null)
     {
+        parent::__construct();
+        
         $this->fieldNameDefaultCallback = $fieldNameDefaultCallback;
 
         $this
-            ->map('*:DSQ\Expression\FieldExpression', array($this, 'mapField'))
-            ->map('*:DSQ\Expression\TreeExpression', array($this, 'mapTree'))
+            ->mapByClass('DSQ\Expression\FieldExpression', array($this, 'mapField'))
+            ->mapByClass('DSQ\Expression\TreeExpression', array($this, 'mapTree'))
         ;
     }
 

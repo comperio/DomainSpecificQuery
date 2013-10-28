@@ -48,7 +48,7 @@ class CompositeLuceneCompiler extends LuceneCompiler
 
         parent::__construct();
 
-        $this->map('*:DSQ\Expression\FieldExpression', array($this, 'terminalExpression'));
+        $this->mapByClass('DSQ\Expression\FieldExpression', array($this, 'terminalExpression'));
     }
 
     /**
