@@ -29,7 +29,7 @@ class LuceneQueryCompiler extends MatcherCompiler
         $this->getMatcher()->setNoMatchValue(array($this, 'mapExpression'));
 
         $this
-            ->map(array('AND', '+'), array($this, 'mapAnd'))
+            ->map(array('and', '+'), array($this, 'mapAnd'))
             ->map('-', array($this, 'mapNot'))
         ;
     }

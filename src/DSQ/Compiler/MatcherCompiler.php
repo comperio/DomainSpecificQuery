@@ -31,8 +31,9 @@ class MatcherCompiler extends AbstractCompiler
         $this->matcher = new MapMatcher;
 
         $this->matcher
-            ->defineMap('class-and-type', function (Expression $expr) { return get_class($expr) .':' . $expr->getType(); })
-            ->defineMap('type', function (Expression $expr) { return $expr->getType(); })
+            ->defineMap('class-and-type', function (Expression $expr) {
+                return get_class($expr) .':' . strtolower($expr->getType()); })
+            ->defineMap('type', function (Expression $expr) { return strtolower($expr->getType()); })
             ->defineMap('class', function (Expression $expr) { return get_class($expr); })
         ;
     }

@@ -74,6 +74,15 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new SpanExpression('OR', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
     }
 
+    public function testCompileTreeExpressionIsCaseInsensitive()
+    {
+        $expr = new TreeExpression('AnD');
+        $expr->setChildren(array(new FieldExpression('foo', 'val'), 'b', 'c'));
+        $compiled = $this->compiler->compile($expr);
+
+        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
+    }
+
     public function testCompileNotExpression()
     {
         $expr = new TreeExpression('not');
