@@ -31,6 +31,9 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->compiler = new LuceneCompiler;
+        $this->compiler->map('foo', function (FieldExpression $f) {
+            return new LuceneFieldExpression('foo', $f->getValue());
+        });
     }
 
     public function testCompileBasicExpression()
@@ -61,14 +64,14 @@ class LuceneCompilerTest extends \PHPUnit_Framework_TestCase
     public function testCompileTreeExpression()
     {
         $expr = new TreeExpression('and');
-        $expr->setChildren(array('a', 'b', 'c'));
+        $expr->setChildren(array(new FieldExpression('foo', 'val'), 'b', 'c'));
         $compiled = $this->compiler->compile($expr);
 
-        $this->assertEquals(new SpanExpression('AND', array('a', 'b', 'c')), $compiled);
+        $this->assertEquals(new SpanExpression('AND', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
 
         $expr->setType('or')->setValue('or');
         $compiled = $this->compiler->compile($expr);
-        $this->assertEquals(new SpanExpression('OR', array('a', 'b', 'c')), $compiled);
+        $this->assertEquals(new SpanExpression('OR', array(new LuceneFieldExpression('foo', new TermExpression('val')), 'b', 'c')), $compiled);
     }
 
     public function testCompileNotExpression()

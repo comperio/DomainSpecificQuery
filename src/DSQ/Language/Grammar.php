@@ -14,7 +14,6 @@ use Dissect\Lexer\CommonToken;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\FieldExpression;
 use DSQ\Expression\TreeExpression;
-use DSQ\Lucene\RangeExpression;
 
 /**
  * The Grammar definition of our DSL
