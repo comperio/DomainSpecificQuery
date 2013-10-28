@@ -10,7 +10,7 @@
 
 namespace DSQ\Lucene\Compiler;
 
-use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\MatcherCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\TreeExpression;
@@ -30,17 +30,19 @@ use DSQ\Lucene\FieldExpression as LuceneFieldExpression;
  *
  * @package DSQ\Lucene\Compiler
  */
-class LuceneCompiler extends TypeBasedCompiler implements LuceneCompilerInterface
+class LuceneCompiler extends MatcherCompiler implements LuceneCompilerInterface
 {
     public function __construct()
     {
+        parent::__construct();
+
         $this
-            ->map(array('and:DSQ\Expression\TreeExpression', 'or:DSQ\Expression\TreeExpression'), array($this, 'treeExpression'))
-            ->map('not:DSQ\Expression\TreeExpression', array($this, 'notExpression'))
-            ->map('range:DSQ\Expression\BinaryExpression', array($this, 'rangeExpression'))
+            ->mapByClassAndType('DSQ\Expression\TreeExpression', array('and', 'or'), array($this, 'treeExpression'))
+            ->mapByClassAndType('DSQ\Expression\TreeExpression', 'not', array($this, 'notExpression'))
+            ->mapByClassAndType('DSQ\Expression\BinaryExpression', 'range', array($this, 'rangeExpression'))
             ->map(array('>', '>=', '<', '<='), array($this, 'comparisonExpression'))
-            ->map('*:DSQ\Expression\BasicExpression', array($this, 'basicExpression'))
-            //->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
+            ->mapByClass('DSQ\Expression\BasicExpression', array($this, 'basicExpression'))
+            //->mapByClass('DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
         ;
     }
 

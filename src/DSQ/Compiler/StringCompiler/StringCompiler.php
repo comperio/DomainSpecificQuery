@@ -11,7 +11,7 @@
 namespace DSQ\Compiler\StringCompiler;
 
 
-use DSQ\Compiler\TypeBasedCompiler;
+use DSQ\Compiler\MatcherCompiler;
 use DSQ\Expression\BasicExpression;
 use DSQ\Expression\FieldExpression;
 use DSQ\Expression\UnaryExpression;
@@ -27,18 +27,22 @@ use DSQ\Expression\TreeExpression;
  *
  * @package DSQ\Compiler\StringCompiler
  */
-class StringCompiler extends TypeBasedCompiler
+class StringCompiler extends MatcherCompiler
 {
     private $opsWeights = array();
 
     public function __construct()
     {
+        parent::__construct();
+
+        $matcher = $this->getMatcher();
+        $matcher->setNoMatchValue(array($this, 'basicExpression'));
+
         $this
-            ->map('*', array($this, 'basicExpression'))
-            ->map('*:DSQ\Expression\UnaryExpression', array($this, 'unaryExpression'))
-            ->map('*:DSQ\Expression\BinaryExpression', array($this, 'binaryExpression'))
-            ->map('*:DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
-            ->map('*:DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
+            ->mapByClass('DSQ\Expression\UnaryExpression', array($this, 'unaryExpression'))
+            ->mapByClass('DSQ\Expression\BinaryExpression', array($this, 'binaryExpression'))
+            ->mapByClass('DSQ\Expression\TreeExpression', array($this, 'treeExpression'))
+            ->mapByClass('DSQ\Expression\FieldExpression', array($this, 'fieldExpression'))
             ->map('^', array($this, 'binaryExpressionWithNoSpaces'))
 
             ->setOpWeight('^', 1100)

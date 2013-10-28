@@ -27,10 +27,12 @@ class Grammar extends \Dissect\Parser\Grammar
      */
     public function __construct()
     {
-        $doubleQuoteCall = function(CommonToken $token) {
+        $that = $this;
+
+        $doubleQuoteCall = function(CommonToken $token) use ($that) {
             $str = substr($token->getValue(), 1, -1);
             $unescapeChars = str_replace('"', '', Lexer::ESCAPED_STRING_DOUBLEQUOTE_ENCAPSED);
-            return '"' . $this->unescape($str, $unescapeChars) . '"';
+            return '"' . $that->unescape($str, $unescapeChars) . '"';
         };
 
         $notCall = function ($expr) {
@@ -126,13 +128,13 @@ class Grammar extends \Dissect\Parser\Grammar
         // e.g.: "bar" in "foo = bar"
         $this('Value')
             ->is('STRING')
-            ->call(function(CommonToken $token) {
-                return $this->unescape($token->getValue(), Lexer::ESCAPED_STRING);
+            ->call(function(CommonToken $token) use ($that) {
+                return $that->unescape($token->getValue(), Lexer::ESCAPED_STRING);
             })
             ->is('STRING_PAREN_ENCAPSED')
-            ->call(function(CommonToken $token) {
+            ->call(function(CommonToken $token) use ($that) {
                 $str = substr($token->getValue(), 1, -1);
-                return $this->unescape($str, Lexer::ESCAPED_STRING_PAREN_ENCAPSED);
+                return $that->unescape($str, Lexer::ESCAPED_STRING_PAREN_ENCAPSED);
             })
             ->is('STRING_DOUBLEQUOTE_ENCAPSED')
             ->call($doubleQuoteCall)

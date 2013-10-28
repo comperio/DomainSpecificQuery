@@ -9,6 +9,7 @@
  */
 namespace DSQ\Test\Compiler;
 
+use DSQ\Compiler\MatcherCompiler;
 use DSQ\Compiler\TypeBasedCompiler;
 use DSQ\Compiler\UnregisteredTransformationException;
 use DSQ\Expression\BasicExpression;
@@ -19,10 +20,10 @@ use DSQ\Expression\TreeExpression;
 /**
  * Unit tests for class FirstClass
  */
-class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
+class MatcherCompilerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TypeBasedCompiler
+     * @var MatcherCompiler
      */
     protected $compiler;
 
@@ -32,24 +33,24 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->compiler = new TypeBasedCompiler;
+        $this->compiler = new MatcherCompiler;
 
-        $this->mapFoo = function(Expression $exp, TypeBasedCompiler $c) {
+        $this->mapFoo = function(Expression $exp, MatcherCompiler $c) {
             return 'foo:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
         };
 
-        $this->mapBar = function(Expression $exp, TypeBasedCompiler $c) {
+        $this->mapBar = function(Expression $exp, MatcherCompiler $c) {
             return 'bar:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
         };
 
-        $this->mapNic = function(Expression $exp, TypeBasedCompiler $c) {
+        $this->mapNic = function(Expression $exp, MatcherCompiler $c) {
             return 'nic:' . spl_object_hash($c) . '-' . spl_object_hash($exp);
         };
 
         $this->compiler
-            ->map('nic:DSQ\Expression\BasicExpression', $this->mapNic)
+            ->mapByClassAndType('DSQ\Expression\BasicExpression', 'nic', $this->mapNic)
             ->map('foo', $this->mapFoo)
-            ->map('*:DSQ\Expression\BasicExpression', $this->mapBar)
+            ->mapByClass('DSQ\Expression\BasicExpression', $this->mapBar)
         ;
     }
 
@@ -68,7 +69,7 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
 
     public function testRegisterTransformationWithArrayClassesAndTypes()
     {
-        $compiler = new TypeBasedCompiler;
+        $compiler = new MatcherCompiler;
 
         $compiler->map(
             'type', $map = function () {
@@ -76,28 +77,28 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertEquals($map, $compiler->getMap('type', 'DSQ\Expression\BasicExpression'));
-        $this->assertEquals($map, $compiler->getMap('type', 'DSQ\Expression\TreeExpression'));
+        $this->assertEquals($map, $compiler->getMap('type'));
+        $this->assertEquals($map, $compiler->getMap('type'));
 
-        $compiler = new TypeBasedCompiler;
+        $compiler = new MatcherCompiler;
         $compiler->map(
             array('type1', 'type2'), $map = function () {
                 return 'foo';
             }
         );
-        $this->assertEquals($map, $compiler->getMap('type1', 'MyClass'));
-        $this->assertEquals($map, $compiler->getMap('type2', 'MyClass'));
+        $this->assertEquals($map, $compiler->getMap('type1'));
+        $this->assertEquals($map, $compiler->getMap('type2'));
 
-        $compiler = new TypeBasedCompiler;
+        $compiler = new MatcherCompiler;
         $compiler->map(
             array('type1', 'type2'), $map = function () {
                 return 'foo';
             }
         );
-        $this->assertEquals($map, $compiler->getMap('type1', 'Class1'));
-        $this->assertEquals($map, $compiler->getMap('type2', 'Class1'));
-        $this->assertEquals($map, $compiler->getMap('type1', 'Class2'));
-        $this->assertEquals($map, $compiler->getMap('type2', 'Class2'));
+        $this->assertEquals($map, $compiler->getMap('type1'));
+        $this->assertEquals($map, $compiler->getMap('type2'));
+        $this->assertEquals($map, $compiler->getMap('type1'));
+        $this->assertEquals($map, $compiler->getMap('type2'));
     }
 
     public function testGetTransformationThrowsAnExceptionWhenRequestingAnUnregistedTransformation()
@@ -115,15 +116,6 @@ class TypeBasedCompilerTest extends \PHPUnit_Framework_TestCase
     public function testRegisterTransformationWithInvalidArgumentThrowsAnException()
     {
         $this->compiler->map('asdasdasd', 'foo');
-    }
-
-    public function testCanCompile()
-    {
-        $this->assertTrue($this->compiler->canCompile('MyClass', 'foo'));
-        $this->assertTrue($this->compiler->canCompile('DSQ\Expression\BasicExpression'));
-        $this->assertTrue($this->compiler->canCompile('DSQ\Expression\BasicExpression', 'poo'));
-        $this->assertFalse($this->compiler->canCompile('*', 'moo'));
-        $this->assertFalse($this->compiler->canCompile('MyClass', '*'));
     }
 
     /**
