@@ -11,6 +11,7 @@
 namespace DSQ\Test\Language\Compiler;
 
 
+use DSQ\Expression\TreeExpression;
 use DSQ\Language\Compiler\LanguageCompiler;
 use DSQ\Expression\FieldExpression;
 
@@ -35,8 +36,57 @@ class LanguageCompilerTest extends \PHPUnit_Framework_TestCase
             'foo = (first = a, second = "b", third = (c c), fourth = (d = e))',
             $compiler->compile(new FieldExpression('foo', array('first' => 'a', 'second' => '"b"', 'third' => 'c c', 'fourth' => array('d' => 'e'))))
         );
+    }
 
-        $this->assertEquals('foo > 2100', $compiler->compile(new FieldExpression('foo', '2100', '>')));
+    public function testCompileTreeExpression()
+    {
+        $compiler = new LanguageCompiler();
+        $tree = new TreeExpression('and');
+        $tree
+            ->addChild(new FieldExpression('foo', 'bar'))
+            ->addChild(new FieldExpression('baz', 'bag'))
+        ;
+
+        $this->assertEquals(
+            'foo = bar and baz = bag',
+            $compiler->compile($tree)
+        );
+
+        $tree->addChild($subtree = new TreeExpression('or'));
+        $subtree
+            ->addChild(new FieldExpression('nic', 'mart'))
+            ->addChild(new FieldExpression('hello', 'whole world'))
+        ;
+
+        $this->assertEquals(
+            'foo = bar and baz = bag and (nic = mart or hello = (whole world))',
+            $compiler->compile($tree)
+        );
+    }
+
+    public function testCompileNotExpression()
+    {
+        $compiler = new LanguageCompiler();
+        $tree = new TreeExpression('not');
+        $tree
+            ->addChild(new FieldExpression('foo', 'bar'))
+        ;
+
+        $this->assertEquals(
+            'not foo = bar',
+            $compiler->compile($tree)
+        );
+
+        $tree->addChild($subtree = new TreeExpression('or'));
+        $subtree
+            ->addChild(new FieldExpression('nic', 'mart'))
+            ->addChild(new FieldExpression('hello', 'whole world'))
+        ;
+
+        $this->assertEquals(
+            'not (foo = bar or (nic = mart or hello = (whole world)))',
+            $compiler->compile($tree)
+        );
     }
 }
  
