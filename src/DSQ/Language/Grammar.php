@@ -11,7 +11,6 @@
 namespace DSQ\Language;
 
 use Dissect\Lexer\CommonToken;
-use DSQ\Expression\BinaryExpression;
 use DSQ\Expression\FieldExpression;
 use DSQ\Expression\TreeExpression;
 
