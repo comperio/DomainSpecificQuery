@@ -26,5 +26,17 @@ class LanguageCompilerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('foo > 2100', $compiler->compile(new FieldExpression('foo', '2100', '>')));
     }
+
+    public function testCompileWithCompositeValues()
+    {
+        $compiler = new LanguageCompiler();
+
+        $this->assertEquals(
+            'foo = (first = a, second = "b", third = (c c), fourth = (d = e))',
+            $compiler->compile(new FieldExpression('foo', array('first' => 'a', 'second' => '"b"', 'third' => 'c c', 'fourth' => array('d' => 'e'))))
+        );
+
+        $this->assertEquals('foo > 2100', $compiler->compile(new FieldExpression('foo', '2100', '>')));
+    }
 }
  
