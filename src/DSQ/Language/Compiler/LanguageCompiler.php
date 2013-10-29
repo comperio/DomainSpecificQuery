@@ -36,62 +36,6 @@ class LanguageCompiler extends MatcherCompiler
         $this->mapByClassAndType('DSQ\Expression\TreeExpression', 'not', $this->notExpression());
     }
 
-    private function fieldExpression()
-    {
-        return function(FieldExpression $expr, LanguageCompiler $compiler)
-        {
-            $field = $compiler->identifier($expr->getField());
-            $value = $compiler->value($expr->getValue());
-
-            return "$field {$expr->getOp()} $value";
-        };
-    }
-
-    private function treeExpression()
-    {
-        return function(TreeExpression $expr, LanguageCompiler $compiler)
-        {
-            if ($compiler->isAnInExpression($expr)) {
-                $pieces = array();
-                $fieldname = null;
-
-                foreach ($expr->getChildren() as $child) {
-                    if (!$fieldname)
-                        $fieldname = $child->getField();
-                    $pieces[] = $compiler->value($child->getValue());
-                }
-
-                return sprintf("%s in (%s)", $compiler->identifier($fieldname), implode(', ', $pieces));
-            }
-
-            $pieces = array();
-            foreach ($expr->getChildren() as $child) {
-                $compiled = $compiler->compile($child);
-                if ($compiler->needParenthesis($child))
-                    $compiled = "($compiled)";
-                $pieces[] = $compiled;
-            }
-
-            $op = strtolower($expr->getValue());
-            return implode(" $op ", $pieces);
-        };
-    }
-
-    private function notExpression()
-    {
-        return function(TreeExpression $expr, LanguageCompiler $compiler)
-        {
-            $or = new TreeExpression('or');
-            $or->setChildren($expr->getChildren());
-
-            $subexpr = $compiler->compile($or);
-            if ($compiler->needParenthesis($or))
-                $subexpr = "($subexpr)";
-
-            return "not $subexpr";
-        };
-    }
-
     /**
      * Compile a value
      *
@@ -166,5 +110,61 @@ class LanguageCompiler extends MatcherCompiler
         }
 
         return true;
+    }
+
+    private function fieldExpression()
+    {
+        return function(FieldExpression $expr, LanguageCompiler $compiler)
+        {
+            $field = $compiler->identifier($expr->getField());
+            $value = $compiler->value($expr->getValue());
+
+            return "$field {$expr->getOp()} $value";
+        };
+    }
+
+    private function treeExpression()
+    {
+        return function(TreeExpression $expr, LanguageCompiler $compiler)
+        {
+            if ($compiler->isAnInExpression($expr)) {
+                $pieces = array();
+                $fieldname = null;
+
+                foreach ($expr->getChildren() as $child) {
+                    if (!$fieldname)
+                        $fieldname = $child->getField();
+                    $pieces[] = $compiler->value($child->getValue());
+                }
+
+                return sprintf("%s in (%s)", $compiler->identifier($fieldname), implode(', ', $pieces));
+            }
+
+            $pieces = array();
+            foreach ($expr->getChildren() as $child) {
+                $compiled = $compiler->compile($child);
+                if ($compiler->needParenthesis($child))
+                    $compiled = "($compiled)";
+                $pieces[] = $compiled;
+            }
+
+            $op = strtolower($expr->getValue());
+            return implode(" $op ", $pieces);
+        };
+    }
+
+    private function notExpression()
+    {
+        return function(TreeExpression $expr, LanguageCompiler $compiler)
+        {
+            $or = new TreeExpression('or');
+            $or->setChildren($expr->getChildren());
+
+            $subexpr = $compiler->compile($or);
+            if ($compiler->needParenthesis($or))
+                $subexpr = "($subexpr)";
+
+            return "not $subexpr";
+        };
     }
 } 

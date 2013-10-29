@@ -10,7 +10,6 @@
 
 namespace DSQ\Test\Language\Compiler;
 
-
 use DSQ\Expression\TreeExpression;
 use DSQ\Language\Compiler\LanguageCompiler;
 use DSQ\Expression\FieldExpression;
@@ -103,6 +102,62 @@ class LanguageCompilerTest extends \PHPUnit_Framework_TestCase
             'foo in (bar, baz, bag)',
             $compiler->compile($tree)
         );
+    }
+
+    public function testValue()
+    {
+        $compiler = new LanguageCompiler;
+
+        $this->assertEquals('foo', $compiler->value('foo'));
+        $this->assertEquals('(foo \(\)\=)', $compiler->value('foo ()='));
+        $this->assertEquals('"hello \"world\""', $compiler->value('"hello \"world\""'));
+        $this->assertEquals(
+            '(foo = (a = b, c = d), foo1 = (a b), foo2 = "c")',
+            $compiler->value(array('foo' => array('a' => 'b', 'c' => 'd'), 'foo1' => 'a b', 'foo2' => '"c"'))
+        );
+    }
+
+    public function testIdentifier()
+    {
+        $compiler = new LanguageCompiler;
+
+        $this->assertEquals('foobar', $compiler->identifier('foobar'));
+
+        $this->assertEquals('foo\ \=\(\)', $compiler->identifier('foo =()'));
+    }
+
+    public function testNeedParenthesis()
+    {
+        $compiler = new LanguageCompiler;
+
+        $this->assertFalse($compiler->needParenthesis(new FieldExpression('foo', array('a', 'b'))));
+
+        $tree = new TreeExpression('not');
+        $tree->addChild(new FieldExpression('foo', 'bar'));
+        $this->assertFalse($compiler->needParenthesis($tree));
+
+        $tree = new TreeExpression('or');
+        $tree->addChild(new FieldExpression('foo', 'bar'))->addChild(new FieldExpression('foo', 'bar'));
+        $this->assertTrue($compiler->needParenthesis($tree));
+    }
+
+    public function testIsAnInExpression()
+    {
+        $compiler = new LanguageCompiler;
+        $field1 = new FieldExpression('foo', 'bar');
+        $field2 = new FieldExpression('foo', 'baz');
+        $field3 = new FieldExpression('baz', 'bar');
+
+        $tree = new TreeExpression('and');
+        $tree->addChild($field1)->addChild($field2);
+
+        $this->assertFalse($compiler->isAnInExpression($tree));
+
+        $tree->setValue('or');
+        $this->assertTrue($compiler->isAnInExpression($tree));
+
+        $tree->addChild($field3);
+        $this->assertFalse($compiler->isAnInExpression($tree));
     }
 }
  
