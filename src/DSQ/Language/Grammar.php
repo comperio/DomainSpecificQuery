@@ -170,7 +170,7 @@ class Grammar extends \Dissect\Parser\Grammar
      * @param string $escapeChar
      * @return string
      */
-    private function unescape($string, $chars, $escapeChar = "\\")
+    public function unescape($string, $chars, $escapeChar = "\\")
     {
         if (!$chars)
             return $string;
