@@ -51,6 +51,19 @@ class LanguageCompiler extends MatcherCompiler
     {
         return function(TreeExpression $expr, LanguageCompiler $compiler)
         {
+            if ($compiler->isAnInExpression($expr)) {
+                $pieces = array();
+                $fieldname = null;
+
+                foreach ($expr->getChildren() as $child) {
+                    if (!$fieldname)
+                        $fieldname = $child->getField();
+                    $pieces[] = $compiler->value($child->getValue());
+                }
+
+                return sprintf("%s in (%s)", $compiler->identifier($fieldname), implode(', ', $pieces));
+            }
+
             $pieces = array();
             foreach ($expr->getChildren() as $child) {
                 $compiled = $compiler->compile($child);
@@ -126,6 +139,31 @@ class LanguageCompiler extends MatcherCompiler
 
         if ($expr instanceof TreeExpression && $expr->count() <= 1)
             return false;
+
+        return true;
+    }
+
+    /**
+     * Can be the tree expression converted in a "FIELD IN ..." expression?
+     * @param TreeExpression $expr
+     * @return bool
+     */
+    public function isAnInExpression(TreeExpression $expr)
+    {
+        $count = $expr->count();
+        if ($count <= 1 || strtolower($expr->getValue()) != 'or' )
+            return false;
+
+        $children = $expr->getChildren();
+        if (!$children[0] instanceof FieldExpression)
+            return false;
+
+        for ($i = 1; $i < $count; $i++) {
+            if (!$children[$i] instanceof FieldExpression)
+                return false;
+            if ($children[$i]->getField() != $children[$i-1]->getField())
+                return false;
+        }
 
         return true;
     }

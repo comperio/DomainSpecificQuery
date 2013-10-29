@@ -88,5 +88,21 @@ class LanguageCompilerTest extends \PHPUnit_Framework_TestCase
             $compiler->compile($tree)
         );
     }
+
+    public function testCompileToFieldInExpression()
+    {
+        $compiler = new LanguageCompiler();
+        $tree = new TreeExpression('or');
+        $tree
+            ->addChild(new FieldExpression('foo', 'bar'))
+            ->addChild(new FieldExpression('foo', 'baz'))
+            ->addChild(new FieldExpression('foo', 'bag'))
+        ;
+
+        $this->assertEquals(
+            'foo in (bar, baz, bag)',
+            $compiler->compile($tree)
+        );
+    }
 }
  
