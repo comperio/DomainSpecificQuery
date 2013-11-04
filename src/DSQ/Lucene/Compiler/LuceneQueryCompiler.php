@@ -26,7 +26,7 @@ class LuceneQueryCompiler extends MatcherCompiler
     public function __construct()
     {
         parent::__construct();
-        $this->getMatcher()->setNoMatchValue(array($this, 'mapExpression'));
+        $this->getMatcher()->setDefault(array($this, 'mapExpression'));
 
         $this
             ->map(array('and', '+'), array($this, 'mapAnd'))

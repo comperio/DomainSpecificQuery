@@ -36,7 +36,7 @@ class StringCompiler extends MatcherCompiler
         parent::__construct();
 
         $matcher = $this->getMatcher();
-        $matcher->setNoMatchValue(array($this, 'basicExpression'));
+        $matcher->setDefault(array($this, 'basicExpression'));
 
         $this
             ->mapByClass('DSQ\Expression\UnaryExpression', array($this, 'unaryExpression'))
