@@ -146,12 +146,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nicmart/UniversalMatcher.git",
-                "reference": "cd767d9fc95dca3ec57892bd6eb5eaa6e669cf8f"
+                "reference": "96161b40d0df005a8c7c0a2eb24557586ba5b736"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nicmart/UniversalMatcher/zipball/cd767d9fc95dca3ec57892bd6eb5eaa6e669cf8f",
-                "reference": "cd767d9fc95dca3ec57892bd6eb5eaa6e669cf8f",
+                "url": "https://api.github.com/repos/nicmart/UniversalMatcher/zipball/96161b40d0df005a8c7c0a2eb24557586ba5b736",
+                "reference": "96161b40d0df005a8c7c0a2eb24557586ba5b736",
                 "shasum": ""
             },
             "require": {
@@ -179,7 +179,7 @@
                 }
             ],
             "description": "A rules based matcher engine for php",
-            "time": "2013-11-03 18:30:05"
+            "time": "2013-11-04 15:12:18"
         }
     ],
     "packages-dev": [
