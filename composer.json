@@ -12,9 +12,9 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "nicmart/string-template": "dev-master",
-        "nicmart/building": "dev-master",
-        "nicmart/universal-matcher": "dev-master",
+        "nicmart/string-template": "~0.1",
+        "nicmart/building": "~0.1",
+        "nicmart/universal-matcher": "~0.1",
         "jakubledl/dissect": "~1"
     },
     "require-dev": {
