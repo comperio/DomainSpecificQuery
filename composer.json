@@ -11,8 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4",
         "nicmart/string-template": "~0.1",
+        "nicmart/dsq-expression": "~0.1",
         "nicmart/building": "~0.1",
         "nicmart/universal-matcher": "~0.1",
         "jakubledl/dissect": "~1"
