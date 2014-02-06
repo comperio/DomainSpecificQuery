@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "761e0584e5ce8ad02987cb7158783c88",
+    "hash": "98f8596b32546191b538674eacf72314",
     "packages": [
         {
             "name": "jakubledl/dissect",

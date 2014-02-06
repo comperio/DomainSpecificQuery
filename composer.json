@@ -22,9 +22,9 @@
         "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "DSQ": "src/",
-            "DSQ\\Test": "tests"
+        "psr-4": {
+            "DSQ\\": "src/",
+            "DSQ\\Test\\": "tests/"
         }
     }
 }
